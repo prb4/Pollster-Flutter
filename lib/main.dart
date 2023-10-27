@@ -13,12 +13,13 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Center(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
+          child: FractionallySizedBox(
+            alignment: Alignment.bottomCenter,
+            heightFactor: 0.4,
             child: Column(
               children: [
 
-                SafeArea(child: MyTextField("This will be a question")),
+                QuestionTextBox("This will be a question"),
                 OutlinedButtonExample("Answer #1"),
                 OutlinedButtonExample("Answer #2"),
                 OutlinedButtonExample("Answer #3"),
@@ -33,14 +34,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyTextField extends StatelessWidget {
-  //const MyTextField({super.key});
+class QuestionTextBox extends StatelessWidget {
   final String msg;
-  const MyTextField(this.msg);
+  const QuestionTextBox(this.msg);
 
   @override
   Widget build(BuildContext context) {
-    return Text(msg);
+    return Text(msg,
+                style: const TextStyle(fontSize: 20)
+              );
   }
 }
 
@@ -52,7 +54,7 @@ class OutlinedButtonExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(5.0),
       child: SizedBox(
       width: 300.0, 
       height: 50,
