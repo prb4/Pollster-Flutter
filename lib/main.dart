@@ -1,37 +1,132 @@
 import 'package:flutter/material.dart';
+import 'http.dart';
 
+/*
 void main() {
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
+ 
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Center(
-          child: FractionallySizedBox(
-            alignment: Alignment.bottomCenter,
-            heightFactor: 0.4,
-            child: Column(
-              children: [
-
-                QuestionTextBox("This will be a question"),
-                OutlinedButtonExample("Answer #1"),
-                OutlinedButtonExample("Answer #2"),
-                OutlinedButtonExample("Answer #3"),
-                OutlinedButtonExample("Answer #4")
-
-              ],
-            )
-          ),
+          child: QuestionAnswerLayout(), //With no const MaterialApp
         )
       )
     );
   }
+}
+*/
+
+void main() => runApp(const MyApp());
+
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+
+    @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  //Class that actually fetches the data
+  late Future<Question> futureQuestion;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    futureQuestion = fetchQuestion();
+    debugPrint("Have futureQuestion");
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center (
+          child: FutureBuilder<Question> (
+            future: futureQuestion,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                debugPrint("snapshot has data");
+                //return Text(snapshot.data!.question);
+                return QuestionAnswerLayout(
+                  question: snapshot.data!.question, 
+                  answers: snapshot.data!.answers);
+              } else if (snapshot.hasError) {
+                return const Text("Snapshot error"); // TODO - improve
+              }
+              return const CircularProgressIndicator();
+            }
+          )
+        )
+      )
+    );
+  }
+}
+
+class QuestionAnswerLayout extends StatelessWidget {
+
+  final String question;
+  final List<String> answers;
+
+  const QuestionAnswerLayout({
+    required this.question,
+    required this.answers,
+  });
+  
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("QuestionAnswerLayout");  
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+                  QuestionTextBox(question),
+                  AnswerList(answers),
+            ],
+        ),
+      )
+    );
+  }
+}
+
+class AnswerList extends StatelessWidget {
+  final List<String> answers;
+
+  const AnswerList(this.answers);
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("in AnswerList");
+    return Column(
+      children: <Widget>[
+        Card(child: ListTile(title: Text(answers[0]))),
+        Card(child: ListTile(title: Text(answers[1]))),
+        Card(child: ListTile(title: Text(answers[2]))),
+        Card(child: ListTile(title: Text(answers[3]))),
+      ]
+    );
+  }
+/*    return ListView.builder(
+                  itemCount: answers.length,
+                  itemBuilder: (context, index) {
+                    return OutlinedButtonExample(answers[index]);
+                  },
+                );
+  }
+*/
 }
 
 class QuestionTextBox extends StatelessWidget {
