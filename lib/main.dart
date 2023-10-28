@@ -102,14 +102,18 @@ class QuestionAnswerLayout extends StatelessWidget {
   }
 }
 
-class AnswerList extends StatelessWidget {
+class AnswerList extends StatefulWidget {
   final List<String> answers;
 
   const AnswerList(this.answers);
 
+  State <AnswerList> createState() => _AnswerListState(this.answers);
+/*
   @override
   Widget build(BuildContext context) {
     debugPrint("in AnswerList");
+    
+
     return Column(
       children: <Widget>[
         Card(child: ListTile(title: Text(answers[0]))),
@@ -118,15 +122,40 @@ class AnswerList extends StatelessWidget {
         Card(child: ListTile(title: Text(answers[3]))),
       ]
     );
+    
   }
-/*    return ListView.builder(
-                  itemCount: answers.length,
-                  itemBuilder: (context, index) {
-                    return OutlinedButtonExample(answers[index]);
-                  },
-                );
+  */
+}
+
+class _AnswerListState extends State<AnswerList> {
+  final List<String> answers;
+  _AnswerListState(this.answers);
+
+  bool isClicked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint("in _AnswerListState");
+
+    return Column(
+      children: <Widget>[
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              // Toggle light when tapped.
+              isClicked = !isClicked;
+              debugPrint("Clicked answer");
+            });
+          },
+          child: Card(
+            child: ListTile(
+              title: Text(answers.first)
+            )
+          ),
+        ),
+      ],
+    );
   }
-*/
 }
 
 class QuestionTextBox extends StatelessWidget {
