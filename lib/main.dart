@@ -139,6 +139,10 @@ class _AnswerListState extends State<AnswerList> {
     });
   }
 
+  int getSelectedCard() {
+    return selectedCardIndex;
+  }
+
   bool isClicked = false;
 
   @override
@@ -159,7 +163,20 @@ class _AnswerListState extends State<AnswerList> {
             );
           }
         ),
-        const OutlinedButtonExample("Submit"),
+        SizedBox(
+          width: 300.0, 
+          height: 50,
+          child: OutlinedButton(
+            onPressed:() {
+              debugPrint("Submit click: ${getSelectedCard()}");
+              Map<String, dynamic> data = {
+                "answer": answers[getSelectedCard()]
+              };
+              sendPostRequest(data);
+            },
+            child: const Text("Submit"),
+          )
+        )
       ]
     );
   }
