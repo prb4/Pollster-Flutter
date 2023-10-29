@@ -137,23 +137,22 @@ class _AnswerListState extends State<AnswerList> {
   Widget build(BuildContext context) {
     debugPrint("in _AnswerListState");
 
-    return Column(
-      children: <Widget>[
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              // Toggle light when tapped.
-              isClicked = !isClicked;
-              debugPrint("Clicked answer");
-            });
-          },
-          child: Card(
+    return ListView.builder(
+      shrinkWrap: true, //TODO - this may not be the best solution, but it works
+      itemCount: answers.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Card(
+          clipBehavior: Clip.hardEdge,
+          child: InkWell(
+            onTap: () {
+              debugPrint('Card ${index.toString()} tapped');
+            },
             child: ListTile(
-              title: Text(answers.first)
+              title: Text(answers[index])
             )
           ),
-        ),
-      ],
+        );  
+      }
     );
   }
 }
