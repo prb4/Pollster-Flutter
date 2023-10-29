@@ -62,6 +62,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_contacts:
+    dependency: "direct main"
+    description:
+      name: flutter_contacts
+      sha256: "4fb4910fbe401ff234bc672304ef37f90319144920e940d1349b96fe089c6da7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.7+1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -210,3 +218,4 @@ packages:
     version: "0.1.4-beta"
 sdks:
   dart: ">=3.1.4 <4.0.0"
+  flutter: ">=1.12.0"
