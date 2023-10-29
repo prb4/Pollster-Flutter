@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'http.dart';
+import 'clickable_card.dart';
 
 /*
 void main() {
@@ -129,7 +130,14 @@ class AnswerList extends StatefulWidget {
 
 class _AnswerListState extends State<AnswerList> {
   final List<String> answers;
+  int selectedCardIndex = -1;
   _AnswerListState(this.answers);
+
+  void selectCard(int index) {
+    setState(() {
+      selectedCardIndex = index;
+    });
+  }
 
   bool isClicked = false;
 
@@ -137,22 +145,22 @@ class _AnswerListState extends State<AnswerList> {
   Widget build(BuildContext context) {
     debugPrint("in _AnswerListState");
 
-    return ListView.builder(
-      shrinkWrap: true, //TODO - this may not be the best solution, but it works
-      itemCount: answers.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Card(
-          clipBehavior: Clip.hardEdge,
-          child: InkWell(
-            onTap: () {
-              debugPrint('Card ${index.toString()} tapped');
-            },
-            child: ListTile(
-              title: Text(answers[index])
-            )
-          ),
-        );  
-      }
+    return Column(
+      children: [
+        ListView.builder(
+          shrinkWrap: true, //TODO - this may not be the best solution, but it works
+          itemCount: answers.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ClickableCard(
+              index: index,
+              isSelected: selectedCardIndex == index,
+              onPressed: selectCard,
+              message: answers[index],
+            );
+          }
+        ),
+        const OutlinedButtonExample("Submit"),
+      ]
     );
   }
 }
