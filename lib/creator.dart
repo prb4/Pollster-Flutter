@@ -30,10 +30,54 @@ class BuildPoll extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        Navigator.pop(context);
-      },
-      child: const Text('Start building'));
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RequiredEditText("Enter question"),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16)),
+        RequiredEditText("Enter answer"),
+      ]
+    );
+  }
+}
+
+class RequiredEditText extends StatelessWidget {
+  final String messageHint;
+  const RequiredEditText(this.messageHint);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        child: TextField(
+          decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          hintText: messageHint,
+          ),
+        )
+      )
+    );
+  }
+}
+
+class OptionalEditText extends StatelessWidget {
+  //TODO - add the ability to delete this option
+  final String messageHint;
+  const OptionalEditText(this.messageHint);
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        child: TextField(
+          decoration: InputDecoration(
+          border: const OutlineInputBorder(),
+          hintText: messageHint,
+          ),
+        )
+      )
+    );
   }
 }
