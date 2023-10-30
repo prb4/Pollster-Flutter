@@ -15,7 +15,7 @@ class Creator extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const BuildPoll()),
+                MaterialPageRoute(builder: (context) => BuildPoll()),
               );
             },
           )
@@ -25,9 +25,45 @@ class Creator extends StatelessWidget {
   }
 }
 
-class BuildPoll extends StatelessWidget {
-  const BuildPoll({super.key});
+class BuildPoll extends StatefulWidget {
+  @override
+  _BuildPollState createState() => _BuildPollState();
+}
 
+class _BuildPollState extends State<BuildPoll> {
+  List<Widget> textFields = [];
+  
+  
+  @override
+  Widget build(BuildContext context) {
+    //textFields.add(const RequiredEditText("Enter questions"));
+    //textFields.add(const RequiredEditText("Enter answer"));
+
+    return const Scaffold(
+        body:Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget> [
+          RequiredEditText("Enter question"),
+          RequiredEditText("Enter answer"),
+          OptionalEditText("Enter optional answer"),
+        //  Expanded(
+        //    child: ListView(
+        //      children: textFields),
+        //      ),
+        //  ElevatedButton(
+        //    onPressed: () {
+        //      setState(() {
+        //        textFields.add(const TextField());
+        //      });
+        //    },
+        //    child: const OptionalEditText("Enter answer"),
+        //    )
+        ],
+      )
+    );
+  }
+}
+/*
   @override
   Widget build(BuildContext context) {
     return const Column(
@@ -40,7 +76,7 @@ class BuildPoll extends StatelessWidget {
     );
   }
 }
-
+*/
 class RequiredEditText extends StatelessWidget {
   final String messageHint;
   const RequiredEditText(this.messageHint);
@@ -75,6 +111,7 @@ class OptionalEditText extends StatelessWidget {
           decoration: InputDecoration(
           border: const OutlineInputBorder(),
           hintText: messageHint,
+          suffixIcon: const Icon(Icons.remove_circle_outline),
           ),
         )
       )
