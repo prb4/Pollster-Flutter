@@ -11,8 +11,8 @@ class ClickableCard extends StatelessWidget {
     required this.isSelected,
     required this.onPressed,
     required this.message,
-  });
 
+  });
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
