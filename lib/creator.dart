@@ -35,14 +35,14 @@ class BuildPoll extends StatefulWidget {
 
 class _BuildPollState extends State<BuildPoll> {
   List<Widget> textFields = [];
-  
-  
+  List<PollItem> pollItemList = [];
   @override
   Widget build(BuildContext context) {
 
-    List<PollItem> _pollItemList = [];
-    _pollItemList.add(PollItem(input: "Add question", isQuestion: true, isOptional: false));
-    _pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: false));
+    
+
+    //pollItemList.add(PollItem(input: "Add question", isQuestion: true, isOptional: false));
+    //pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: false));
 
     return Scaffold(
       appBar: AppBar(
@@ -76,9 +76,8 @@ class _BuildPollState extends State<BuildPoll> {
                   MaterialButton(
                       onPressed: () {
                           setState(() {
-                            debugPrint("Clicking add answer button: ${_pollItemList.length}");
-                            _pollItemList.add(PollItem(input: "Add optional answer", isQuestion: false, isOptional: true));
-                            debugPrint("Clicked add answer button: ${_pollItemList.length}");
+                            debugPrint("Adding pollItem");
+                            pollItemList.add(PollItem(input: "Add optional answer", isQuestion: false, isOptional: true));
                           });
                       },
                       color: const Color(0xffd4d411),
@@ -92,20 +91,18 @@ class _BuildPollState extends State<BuildPoll> {
 
                     ),
                     const OutlinedButtonExample("Add answer"),
-                  
                 ],
               ),
-              
-              //Expanded(
-                //child: ListView.separated(
+                PollItem(input: "Add question", isQuestion: true, isOptional: false),
+                PollItem(input: "Add answer", isQuestion: false, isOptional: false),
                   ListView.separated(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     primary: false,
-                    itemCount: _pollItemList.length,
+                    itemCount: pollItemList.length,
                     itemBuilder: (BuildContext context, int index) {
-                      PollItem _pollItem = _pollItemList[index];
-                      debugPrint("pollItem - ${index} - ${_pollItemList.length}");
+                      PollItem _pollItem = pollItemList[index];
+                      debugPrint("pollItem - ${index} - ${pollItemList.length}");
                       /*
                       setState(() {
                         _pollItemList.removeAt(index);
@@ -116,56 +113,10 @@ class _BuildPollState extends State<BuildPoll> {
                   },
                   separatorBuilder: (_, __) => const Divider(),
                   )
-              //)
-              
-              // _contact == null ? Container() : CaregiversList(_contact.fullName),
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class RequiredEditText extends StatelessWidget {
-  final String messageHint;
-  final bool isQuestion;
-  const RequiredEditText(this.messageHint, this.isQuestion);
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: TextField(
-          decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          prefixIcon: isQuestion ? const Icon(Icons.question_mark_sharp) : null,
-          hintText: messageHint,
-          ),
-        )
-      )
-    );
-  }
-}
-
-class OptionalEditText extends StatelessWidget {
-  final String messageHint;
-  const OptionalEditText(this.messageHint);
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: TextField(
-          decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          hintText: messageHint,
-          suffixIcon: const Icon(Icons.remove_circle_outline),
-          ),
-        )
-      )
     );
   }
 }
@@ -215,6 +166,4 @@ class PollItem extends StatelessWidget{
       )
     );
   }
-
-
 }
