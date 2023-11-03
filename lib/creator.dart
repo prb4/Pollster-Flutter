@@ -39,12 +39,6 @@ class _BuildPollState extends State<BuildPoll> {
   List<PollItem> pollItemList = [];
   @override
   Widget build(BuildContext context) {
-
-    
-
-    //pollItemList.add(PollItem(input: "Add question", isQuestion: true, isOptional: false));
-    //pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: false));
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(

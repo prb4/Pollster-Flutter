@@ -9,6 +9,7 @@ class FlutterContactsExample extends StatefulWidget {
 
 class _FlutterContactsExampleState extends State<FlutterContactsExample> {
   List<Contact>? _contacts;
+  List<Contact>? selectedContacts = [];
   bool _permissionDenied = false;
 
   @override
@@ -26,6 +27,8 @@ class _FlutterContactsExampleState extends State<FlutterContactsExample> {
     }
   }
 
+
+
   @override
   Widget build(BuildContext context) => MaterialApp(
       home: Scaffold(
@@ -41,7 +44,10 @@ class _FlutterContactsExampleState extends State<FlutterContactsExample> {
 
 class ContactsDisplay extends StatelessWidget {
   final List<Contact>? _contacts;
+  
   const ContactsDisplay(this._contacts);
+
+  //final List<Contact>? selectedContacts = [];
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +57,23 @@ class ContactsDisplay extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [ 
+              /*
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                primary: false,
+                itemCount: selectedContacts!.length,
+                itemBuilder: (context, i) => ListTile(
+                    title: Text(selectedContacts![i].displayName),
+                    onTap: () async {
+                      setState(() {
+                            debugPrint("Removing contact from list: ${selectedContacts![i].name}");
+                            selectedContacts!.removeAt(i);
+                          });
+                    })
+                  ),
+*/
+
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: TextField(
@@ -60,24 +83,23 @@ class ContactsDisplay extends StatelessWidget {
                   //  FilteringTextInputFormatter.digitsOnly, // Only allows digits (0-9).
                   //],
                   decoration: InputDecoration(
+                    border: OutlineInputBorder(),
                     labelText: 'Phone Number',
                     hintText: 'Enter your phone number',
                   ),
+
                 )
               ),
 
               ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 primary: false,
                 itemCount: _contacts!.length,
                 itemBuilder: (context, i) => ListTile(
                     title: Text(_contacts![i].displayName),
-                    onTap: () async {
-                      final fullContact =
-                          await FlutterContacts.getContact(_contacts![i].id);
-                      await Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => ContactPage(fullContact!)));
+                    onTap: () {
+                      debugPrint("Adding contact to list");
                     })
                   ),
 
