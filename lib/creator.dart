@@ -2,6 +2,7 @@
 //import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/contacts.dart';
 //import 'contacts.dart';
 
 
@@ -90,29 +91,32 @@ class _BuildPollState extends State<BuildPoll> {
                       ),
 
                     ),
-                    const OutlinedButtonExample("Add answer"),
+                    
                 ],
               ),
                 PollItem(input: "Add question", isQuestion: true, isOptional: false),
                 PollItem(input: "Add answer", isQuestion: false, isOptional: false),
-                  ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    primary: false,
-                    itemCount: pollItemList.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      PollItem _pollItem = pollItemList[index];
-                      debugPrint("pollItem - ${index} - ${pollItemList.length}");
-                      /*
-                      setState(() {
-                        _pollItemList.removeAt(index);
-                        _pollItemList.insert(index, _pollItem);
-                      });
-                      */
-                      return _pollItem;
+                ListView.separated(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  primary: false,
+                  itemCount: pollItemList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    PollItem _pollItem = pollItemList[index];
+                    debugPrint("pollItem - ${index} - ${pollItemList.length}");
+                    return _pollItem;
                   },
                   separatorBuilder: (_, __) => const Divider(),
-                  )
+                ),
+                ElevatedButton(
+                  child: const Text('Next'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FlutterContactsExample()),
+                    );
+                  },
+                )
             ],
           ),
         ),

@@ -83,23 +83,7 @@ class AnswerList extends StatefulWidget {
   const AnswerList(this.answers);
 
   State <AnswerList> createState() => _AnswerListState(this.answers);
-/*
-  @override
-  Widget build(BuildContext context) {
-    debugPrint("in AnswerList");
-    
 
-    return Column(
-      children: <Widget>[
-        Card(child: ListTile(title: Text(answers[0]))),
-        Card(child: ListTile(title: Text(answers[1]))),
-        Card(child: ListTile(title: Text(answers[2]))),
-        Card(child: ListTile(title: Text(answers[3]))),
-      ]
-    );
-    
-  }
-  */
 }
 
 class _AnswerListState extends State<AnswerList> {

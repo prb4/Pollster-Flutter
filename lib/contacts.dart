@@ -35,16 +35,65 @@ class _FlutterContactsExampleState extends State<FlutterContactsExample> {
   Widget _body() {
     if (_permissionDenied) return Center(child: Text('Permission denied'));
     if (_contacts == null) return Center(child: CircularProgressIndicator());
-    return ListView.builder(
-        itemCount: _contacts!.length,
-        itemBuilder: (context, i) => ListTile(
-            title: Text(_contacts![i].displayName),
-            onTap: () async {
-              final fullContact =
-                  await FlutterContacts.getContact(_contacts![i].id);
-              await Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => ContactPage(fullContact!)));
-            }));
+    return ContactsDisplay(_contacts);
+  }
+}
+
+class ContactsDisplay extends StatelessWidget {
+  final List<Contact>? _contacts;
+  const ContactsDisplay(this._contacts);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [ 
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: TextField(
+                  //controller: _phoneNumberController,
+                  keyboardType: TextInputType.phone, // Restricts input to numbers and symbols commonly used in phone numbers.
+                  //inputFormatters: [
+                  //  FilteringTextInputFormatter.digitsOnly, // Only allows digits (0-9).
+                  //],
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    hintText: 'Enter your phone number',
+                  ),
+                )
+              ),
+
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                primary: false,
+                itemCount: _contacts!.length,
+                itemBuilder: (context, i) => ListTile(
+                    title: Text(_contacts![i].displayName),
+                    onTap: () async {
+                      final fullContact =
+                          await FlutterContacts.getContact(_contacts![i].id);
+                      await Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => ContactPage(fullContact!)));
+                    })
+                  ),
+
+                  ElevatedButton(
+                        child: const Text('Next'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => FlutterContactsExample()),
+                          );
+                        },
+                      )
+              ]
+            )
+        )
+    );
   }
 }
 
