@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/contacts.dart';
 //import 'contacts.dart';
+import 'package:pollster_flutter/state_contacts.dart';
 
 
 class Creator extends StatelessWidget {
@@ -107,7 +108,8 @@ class _BuildPollState extends State<BuildPoll> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => FlutterContactsExample()),
+                      //MaterialPageRoute(builder: (context) => FlutterContactsExample()),
+                      MaterialPageRoute(builder: (context) => stateContacts()),
                     );
                   },
                 )
