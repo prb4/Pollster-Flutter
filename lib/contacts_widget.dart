@@ -19,7 +19,6 @@ final myContactsProvider = ChangeNotifierProvider((ref) => MyContactsChangeNotif
 
 Widget contactsWidget() {
   return const ProviderScope(child: _ContactsWidget());
-  
 }
 
 class _ContactsWidget extends ConsumerWidget {

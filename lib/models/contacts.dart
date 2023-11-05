@@ -10,10 +10,14 @@ class MyContactsChangeNotifier with ChangeNotifier {
   }
 
   void addContact(int i) {
-    debugPrint("Adding contact: ${i}: ${selectedContacts.length}");
-    selectedContacts.add(contacts[i]);
-    notifyListeners();
-    debugPrint("Current size: ${selectedContacts.length}");
+    if (! selectedContacts.contains(contacts[i])){
+      debugPrint("Adding contact: ${i}: ${selectedContacts.length}");
+      selectedContacts.add(contacts[i]);
+      notifyListeners();
+      debugPrint("Current size: ${selectedContacts.length}");
+    } else {
+      debugPrint("Contact already in selectedContacts list: ${contacts[i].displayName}");
+    }
   }
 
   void removeContact(int i) {
@@ -25,7 +29,7 @@ class MyContactsChangeNotifier with ChangeNotifier {
   Future _fetchContacts() async {
       //Call initially and with an 'refresh contacts' button
     if (!await FlutterContacts.requestPermission(readonly: true)) {
-      //permissionDenied = true;
+      //permissionDenied = true; //TODO - may need to fix this
       //notifyListeners();
       debugPrint("Failed to get permissions");
       //TODO - this is bad

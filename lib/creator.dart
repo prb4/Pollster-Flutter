@@ -2,11 +2,9 @@
 //import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
-import 'package:pollster_flutter/contacts.dart';
+import 'package:pollster_flutter/models/contacts.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
 //import 'contacts.dart';
-import 'package:pollster_flutter/state_contacts.dart';
-import 'package:pollster_flutter/contacts_digital_ocean_provider.dart';
 
 
 class Creator extends StatelessWidget {
