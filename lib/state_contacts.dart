@@ -9,15 +9,6 @@ Widget stateContacts() {
     create: (context) => Updates(),
     child: FlutterContactsExample(),
   );
-  /*
-  return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<GetContacts>(create: (context) => GetContacts()),
-        ChangeNotifierProvider<UpdateSelectedContacts>(create: (context) => UpdateSelectedContacts()),
-      ],
-      child: _FlutterContactsExample(),
-    );
-  */
 }
 
 class Updates with ChangeNotifier {
@@ -26,20 +17,15 @@ class Updates with ChangeNotifier {
 
   void addContact(int i) {
     debugPrint("Adding contact: ${i}: ${selectedContacts!.length}");
-   selectedContacts!.add(_contacts![i]);
-   notifyListeners();
-   debugPrint("Current size: ${selectedContacts!.length}");
+    selectedContacts!.add(_contacts![i]);
+    notifyListeners();
+    debugPrint("Current size: ${selectedContacts!.length}");
   }
 
   void removeContact() {
     debugPrint("Removing contact");
   }
 
-/*
-class GetContacts with ChangeNotifier {
-  List<Contact>? _contacts = [];
-  //bool _permissionDenied = false;
-*/
   Future _fetchContacts() async {
     if (!await FlutterContacts.requestPermission(readonly: true)) {
       //permissionDenied = true;
@@ -59,17 +45,13 @@ class GetContacts with ChangeNotifier {
 class _FlutterContactsExample extends StatelessWidget {
 
   _FlutterContactsExample() {
-    //var checkPermissions = CheckPermissions();
-    //checkPermissions.checkPermissions();
-
-    var update = Updates()._fetchContacts();
-    //GetContacts()._fetchContacts();
-    debugPrint("Finishing constructor");
+      Updates()._fetchContacts();
+      debugPrint("Finishing constructor");
     }
 
   Widget build(BuildContext context) {
       return Scaffold(
-          appBar: AppBar(title: Text('flutter_contacts_example')),
+          appBar: AppBar(title: const Text('flutter_contacts_example')),
           body: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
@@ -102,7 +84,7 @@ class _FlutterContactsExample extends StatelessWidget {
                     //  FilteringTextInputFormatter.digitsOnly, // Only allows digits (0-9).
                     //],
                     decoration: InputDecoration(
-                      border: OutlineInputBorder(),
+                      //border: OutlineInputBorder(),
                       labelText: 'Phone Number',
                       hintText: 'Enter your phone number',
                     ),
@@ -119,10 +101,9 @@ class _FlutterContactsExample extends StatelessWidget {
                     itemBuilder: (context, i) => ListTile(
                       title: Text(context.watch<Updates>()._contacts![i].displayName),
                       onTap: () {
-                        debugPrint("Adding contact to list");
-                        //var updates = context.read<Updates>();
-                        //updates.addContact(i);
-                        //debugPrint("Done adding contact to list");
+                        debugPrint("[-] Adding contact to list: ${i.toString()}");
+                        context.read<Updates>().addContact(i);
+                        debugPrint("Done adding contact to list");
                       }
                     )
                   ),

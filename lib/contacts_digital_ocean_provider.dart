@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/contacts.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
+
+/*
 
 class FlutterContactsExample extends StatefulWidget {
   @override
@@ -8,32 +12,24 @@ class FlutterContactsExample extends StatefulWidget {
 }
 
 class _FlutterContactsExampleState extends State<FlutterContactsExample> {
-  List<Contact>? _contacts;
-  List<Contact>? selectedContacts = [];
-  bool _permissionDenied = false;
+  
+class DO_FlutterContactsExampleState extends StatelessWidget {  
+  //List<Contact>? _contacts;
+  //List<Contact>? selectedContacts = [];
+  //bool _permissionDenied = false;
 
   @override
-  void initState() {
-    super.initState();
-    _fetchContacts();
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<MyContacts>(create: (_) => MyContacts()),
+      ],
+      child: MaterialApp(
+        home: Scaffold(
+            appBar: AppBar(title: Text('flutter_contacts_example')),
+            body: ContactsDisplay())));
   }
 
-  Future _fetchContacts() async {
-    if (!await FlutterContacts.requestPermission(readonly: true)) {
-      setState(() => _permissionDenied = true);
-    } else {
-      final contacts = await FlutterContacts.getContacts();
-      setState(() => _contacts = contacts);
-    }
-  }
-
-
-
-  @override
-  Widget build(BuildContext context) => MaterialApp(
-      home: Scaffold(
-          appBar: AppBar(title: Text('flutter_contacts_example')),
-          body: _body()));
 
   Widget _body() {
     if (_permissionDenied) return Center(child: Text('Permission denied'));
@@ -42,10 +38,13 @@ class _FlutterContactsExampleState extends State<FlutterContactsExample> {
   }
 }
 
+}
+
 class ContactsDisplay extends StatelessWidget {
-  final List<Contact>? _contacts;
+//  final List<Contact>? _contacts;
   
-  const ContactsDisplay(this._contacts);
+//  const ContactsDisplay(this._contacts);
+  const ContactsDisplay();
 
   //final List<Contact>? selectedContacts = [];
 
@@ -95,9 +94,9 @@ class ContactsDisplay extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 primary: false,
-                itemCount: _contacts!.length,
+                itemCount: Provider.of<MyContacts>(context).contacts!.length,
                 itemBuilder: (context, i) => ListTile(
-                    title: Text(_contacts![i].displayName),
+                    title: Text(Provider.of<MyContacts>(context).contacts![i].displayName),
                     onTap: () {
                       debugPrint("Adding contact to list");
                     })
@@ -106,10 +105,13 @@ class ContactsDisplay extends StatelessWidget {
                   ElevatedButton(
                         child: const Text('Next'),
                         onPressed: () {
+                          /*
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => FlutterContactsExample()),
                           );
+                          */
+                          debugPrint("Clicked on NEXT");
                         },
                       )
               ]
@@ -135,4 +137,4 @@ class ContactPage extends StatelessWidget {
             'Email address: ${contact.emails.isNotEmpty ? contact.emails.first.address : '(none)'}'),
       ]));
 }
-
+*/

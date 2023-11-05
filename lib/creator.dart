@@ -3,8 +3,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/contacts.dart';
+import 'package:pollster_flutter/contacts_riverpod.dart';
 //import 'contacts.dart';
 import 'package:pollster_flutter/state_contacts.dart';
+import 'package:pollster_flutter/contacts_digital_ocean_provider.dart';
 
 
 class Creator extends StatelessWidget {
@@ -109,7 +111,9 @@ class _BuildPollState extends State<BuildPoll> {
                     Navigator.push(
                       context,
                       //MaterialPageRoute(builder: (context) => FlutterContactsExample()),
-                      MaterialPageRoute(builder: (context) => stateContacts()),
+                      //MaterialPageRoute(builder: (context) => stateContacts()),
+                      MaterialPageRoute(builder: (context) => riverpodContacts()),
+                      //MaterialPageRoute(builder: (context) => DO_FlutterContactsExampleState()),
                     );
                   },
                 )
