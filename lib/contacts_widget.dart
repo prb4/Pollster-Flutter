@@ -27,6 +27,7 @@ class _ContactsWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
+      theme: ThemeData(useMaterial3: true),
       home: Scaffold(
         body: Center(
           child: SingleChildScrollView(
@@ -78,29 +79,41 @@ class SelectedContactsListing extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final myContactsWatcher = ref.watch(myContactsProvider);
-    return ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            primary: false,
-            itemCount: myContactsWatcher.selectedContacts.length,
-            itemBuilder: (context, i) {
-              if (myContactsWatcher.selectedContacts.isEmpty) {
-                return const Center(child: Text("List is empty"));
-              } else {
-                return ListTile(
-                  title: Text(myContactsWatcher.selectedContacts[i].displayName),
-                  onTap: () {
-                    debugPrint("[-] Removing contact to list: ${i.toString()}");
-                    ref.read(myContactsProvider).removeContact(i);
-                    debugPrint("Done adding contact to list");
-                  }
-                );
-              }
-            }
+    return Wrap(
+      children: myContactsWatcher.selectedContacts.map(
+        (selectedContact) {
+          return MyClickableChip(
+            label: selectedContact.displayName,
+            onTap: () {
+              final index = myContactsWatcher.selectedContacts.indexOf(selectedContact);
+              debugPrint("[-] Removing contact from list: ${index.toString()} : ${selectedContact.displayName}");
+              ref.read(myContactsProvider).removeContact(index);
+            },
           );
-      }
+        }
+      ).toList(),
+    );
   }
+}
 
+class MyClickableChip extends StatelessWidget {
+  final String label;
+  final Function onTap;
+
+  const MyClickableChip({required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Chip(
+        label: Text(label),
+      ),
+    );
+  }
+}
 
 class ContactsListing extends ConsumerWidget {
   const ContactsListing();
@@ -115,15 +128,17 @@ class ContactsListing extends ConsumerWidget {
             itemCount: myContactsWatcher.contacts.length,
             itemBuilder: (context, i) {
               if (myContactsWatcher.contacts.isEmpty) {
-                return const Center(child: Text("List is empty"));
+                return const Center(child: Text("No contacts found"));
               } else {
-                return ListTile(
-                  title: Text(myContactsWatcher.contacts[i].displayName),
-                  onTap: () {
-                    debugPrint("[-] Adding contact to list: ${i.toString()}");
-                    ref.read(myContactsProvider).addContact(i);
-                    debugPrint("Done adding contact to list");
-                  }
+                return Card(
+                  child: ListTile(
+                    title: Text(myContactsWatcher.contacts[i].displayName),
+                    onTap: () {
+                      debugPrint("[-] Adding contact to list: ${i.toString()}");
+                      ref.read(myContactsProvider).addContact(i);
+                      debugPrint("Done adding contact to list");
+                    }
+                  )
                 );
               }
             }
