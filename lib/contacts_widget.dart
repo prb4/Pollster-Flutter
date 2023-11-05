@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pollster_flutter/models/contacts.dart';
-//import 'package:provider/provider.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 /*
 
@@ -20,13 +17,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 */
 final myContactsProvider = ChangeNotifierProvider((ref) => MyContactsChangeNotifier());
 
-Widget riverpodContacts() {
-  return const ProviderScope(child: MyApp());
+Widget contactsWidget() {
+  return const ProviderScope(child: _ContactsWidget());
   
 }
 
-class MyApp extends ConsumerWidget {
-  const MyApp({Key? key}) : super(key: key);
+class _ContactsWidget extends ConsumerWidget {
+  const _ContactsWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,6 +36,7 @@ class MyApp extends ConsumerWidget {
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [ 
+                  SelectedContactsListing(),
                   PhoneNumberEntry(),
                   ContactsListing(),
                 ]
@@ -75,26 +73,53 @@ class PhoneNumberEntry extends StatelessWidget {
   }
 }
 
+class SelectedContactsListing extends ConsumerWidget {
+  const SelectedContactsListing();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final myContactsWatcher = ref.watch(myContactsProvider);
+    return ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            primary: false,
+            itemCount: myContactsWatcher.selectedContacts.length,
+            itemBuilder: (context, i) {
+              if (myContactsWatcher.selectedContacts.isEmpty) {
+                return const Center(child: Text("List is empty"));
+              } else {
+                return ListTile(
+                  title: Text(myContactsWatcher.selectedContacts[i].displayName),
+                  onTap: () {
+                    debugPrint("[-] Removing contact to list: ${i.toString()}");
+                    ref.read(myContactsProvider).removeContact(i);
+                    debugPrint("Done adding contact to list");
+                  }
+                );
+              }
+            }
+          );
+      }
+  }
+
+
 class ContactsListing extends ConsumerWidget {
   const ContactsListing();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final myContacts = ref.watch(myContactsProvider);
-    return Consumer(
-      builder: (context, ref, child) {
-        
-        return ListView.builder(
+    final myContactsWatcher = ref.watch(myContactsProvider);
+    return ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             primary: false,
-            itemCount: myContacts.contacts.length,
+            itemCount: myContactsWatcher.contacts.length,
             itemBuilder: (context, i) {
-              if (myContacts.contacts.isEmpty) {
+              if (myContactsWatcher.contacts.isEmpty) {
                 return const Center(child: Text("List is empty"));
               } else {
                 return ListTile(
-                  title: Text(myContacts.contacts[i].displayName),
+                  title: Text(myContactsWatcher.contacts[i].displayName),
                   onTap: () {
                     debugPrint("[-] Adding contact to list: ${i.toString()}");
                     ref.read(myContactsProvider).addContact(i);
@@ -105,7 +130,4 @@ class ContactsListing extends ConsumerWidget {
             }
           );
       }
-        //return const Center(child: Text("List is empty"));
-    );
   }
-}
