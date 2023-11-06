@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
+import 'package:pollster_flutter/models/poll.dart';
 
 
 class Creator extends StatelessWidget {
@@ -33,6 +34,20 @@ class BuildPoll extends StatefulWidget {
 class _BuildPollState extends State<BuildPoll> {
   List<Widget> textFields = [];
   List<PollItem> pollItemList = [];
+  List<String> answers = [];
+  String question = "";
+
+  void saveAnswer(String input) {
+    debugPrint("Saving answer: $input");
+    answers.add(input);
+  }
+
+  void saveQuestion(String input) {
+    debugPrint("Saving question: $input");
+    question = input;
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +83,10 @@ class _BuildPollState extends State<BuildPoll> {
                       onPressed: () {
                           setState(() {
                             debugPrint("Adding pollItem");
-                            pollItemList.add(PollItem(input: "Add optional answer", isQuestion: false, isOptional: true));
+                            pollItemList.add(PollItem(input: "Add optional answer", isQuestion: false, isOptional: true,
+                              onSubmitted: (String value) {
+                                saveAnswer(value);
+                              },));
                           });
                       },
                       color: const Color(0xffd4d411),
@@ -84,8 +102,16 @@ class _BuildPollState extends State<BuildPoll> {
                     
                 ],
               ),
-                PollItem(input: "Add question", isQuestion: true, isOptional: false),
-                PollItem(input: "Add answer", isQuestion: false, isOptional: false),
+                PollItem(input: "Add question", isQuestion: true, isOptional: false, 
+                  onSubmitted: (String value) {
+                    debugPrint("Saving question");
+                    saveQuestion(value);
+                  },),
+                PollItem(input: "Add answer", isQuestion: false, isOptional: false, 
+                  onSubmitted: (String value) {
+                    debugPrint("Saving answer: $value");
+                    answers.add(value);
+                  },),
                 ListView.separated(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -101,9 +127,10 @@ class _BuildPollState extends State<BuildPoll> {
                 ElevatedButton(
                   child: const Text('Next'),
                   onPressed: () {
+                    debugPrint("Creator - question: $question, answers: ${answers.toString()}");
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => contactsWidget()),
+                      MaterialPageRoute(builder: (context) => contactsWidget(question: question, answers: answers)),
                     );
                   },
                 )
@@ -137,27 +164,3 @@ class OutlinedButtonExample extends StatelessWidget {
   }
 }
 
-class PollItem extends StatelessWidget{
-  final String input;
-  final bool isQuestion;
-  final bool isOptional;
-
-  PollItem({required this.input, required this.isQuestion, required this.isOptional});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: TextField(
-          decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          prefixIcon: isQuestion ? const Icon(Icons.question_mark_sharp) : null,
-          suffixIcon: isOptional ? const Icon(Icons.remove_circle_outline) : null,
-          hintText: input,
-          ),
-        )
-      )
-    );
-  }
-}

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pollster_flutter/confirmation.dart';
 import 'package:pollster_flutter/models/contacts.dart';
 import 'package:masked_text/masked_text.dart';
+import 'package:pollster_flutter/models/poll.dart';
 /*
 
 @riverpod
@@ -17,12 +19,24 @@ import 'package:masked_text/masked_text.dart';
 */
 final myContactsProvider = ChangeNotifierProvider((ref) => MyContactsChangeNotifier());
 
-Widget contactsWidget() {
-  return const ProviderScope(child: _ContactsWidget());
+class contactsWidget extends StatelessWidget{
+//  final List<PollItem> pollItems;
+  final String question;
+  final List<String>? answers;
+
+  const contactsWidget({required this.question, this.answers});
+
+  @override
+  Widget build(BuildContext context) {
+    return ProviderScope(child: _ContactsWidget(question: question, answers: answers));
+  }
 }
 
 class _ContactsWidget extends ConsumerWidget {
-  const _ContactsWidget({Key? key}) : super(key: key);
+  //final List<PollItem> pollItems;
+  final String question;
+  final List<String>? answers;
+  const _ContactsWidget({required this.question, required this.answers});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,9 +57,9 @@ class _ContactsWidget extends ConsumerWidget {
                       child: ContactsListing()
                     ),
                   ),
-                  const Align(
+                  Align(
                     alignment: Alignment.bottomCenter,
-                    child: ContinueButton(),
+                    child: ContinueButton(question: question, answers: answers),
                   ),
                 ]
             )
@@ -167,19 +181,23 @@ class ContactsListing extends ConsumerWidget {
 
 
 class ContinueButton extends ConsumerWidget {
-  const ContinueButton();
+  //final List<PollItem> pollItems;
+  final String question;
+  final List<String>? answers;
+  const ContinueButton({required this.question, required this.answers});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final myContactsReader = ref.read(myContactsProvider);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
         child: const Text('Continue'),
         onPressed: () {
-          debugPrint("Clicked on continue button");
+          debugPrint("Clicked on continue button: $question - ${answers.toString()}");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => contactsWidget()),
+            MaterialPageRoute(builder: (context) => Confirmation(selectedContacts: myContactsReader.selectedContacts, question: question, answers: answers)),
           );
         },
       )
