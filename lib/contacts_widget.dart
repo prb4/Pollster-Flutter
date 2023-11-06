@@ -30,19 +30,25 @@ class _ContactsWidget extends ConsumerWidget {
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
         body: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
+          //child: SingleChildScrollView(
+            //child: Container(
+            //  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [ 
                   const SelectedContactsListing(),
                   PhoneNumberEntry(),
-                  const ContactsListing(),
+                  const Expanded(
+                    child:SingleChildScrollView(
+                      child: ContactsListing()
+                    ),
+                  ),
+                  const Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ContinueButton(),
+                  ),
                 ]
-              )
             )
-          )
         )
       )
     );
@@ -68,7 +74,7 @@ class PhoneNumberEntry extends ConsumerWidget {
         controller: _textController,
         mask: "(###)-###-####", //TODO - make this region specific, or language pack specific
         keyboardType: TextInputType.phone, // Restricts input to numbers and symbols commonly used in phone numbers.
-        //inputFormatters: [
+        //inputFormatters: [a
         //  FilteringTextInputFormatter.digitsOnly, // Only allows digits (0-9).
         //],
         decoration: const InputDecoration(
@@ -158,3 +164,25 @@ class ContactsListing extends ConsumerWidget {
           );
       }
   }
+
+
+class ContinueButton extends ConsumerWidget {
+  const ContinueButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        child: const Text('Continue'),
+        onPressed: () {
+          debugPrint("Clicked on continue button");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => contactsWidget()),
+          );
+        },
+      )
+    );
+  }
+}

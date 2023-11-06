@@ -3,8 +3,34 @@ import 'package:pollster_flutter/creator.dart';
 import 'creator.dart';
 //import 'responder.dart';
 
+//void main() => runApp(const Creator());
 void main() => runApp(const Creator());
 
+
+/*
+class MyApp extends StatelessWidget {
+  const MyApp();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home:Scaffold(
+        body:Center(
+          child: ElevatedButton(
+            child: const Text('Creator'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Creator()),
+              );
+            },
+          )
+        )
+      )
+    );
+  }
+}
+*/
 /*
 void main() => runApp(const MyApp());
 
