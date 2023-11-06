@@ -40,6 +40,7 @@ dependencies:
   provider: ^6.0.5
   flutter_riverpod: ^2.4.5
   riverpod_annotation: ^2.3.0
+  masked_text: ^1.1.2
 
 dev_dependencies:
   flutter_test:

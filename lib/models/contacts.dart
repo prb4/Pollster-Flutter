@@ -26,6 +26,25 @@ class MyContactsChangeNotifier with ChangeNotifier {
     notifyListeners();
   }
 
+  Contact createContact(String number) {
+    final newContact = Contact();
+    newContact.displayName = number;
+    newContact.phones = [Phone(number)];
+
+    return newContact;
+  }
+
+  void addNumber(String number) {
+    if (! selectedContacts.contains(number)){
+      debugPrint("Adding contact: $number");
+      selectedContacts.add(createContact(number));
+      notifyListeners();
+      debugPrint("Current size: ${selectedContacts.length}");
+    } else {
+      debugPrint("Contact already in selectedContacts list: $number");
+    }
+  }
+
   Future _fetchContacts() async {
       //Call initially and with an 'refresh contacts' button
     if (!await FlutterContacts.requestPermission(readonly: true)) {

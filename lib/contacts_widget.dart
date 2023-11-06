@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pollster_flutter/models/contacts.dart';
-
+import 'package:masked_text/masked_text.dart';
 /*
 
 @riverpod
@@ -33,12 +33,12 @@ class _ContactsWidget extends ConsumerWidget {
           child: SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [ 
-                  SelectedContactsListing(),
+                  const SelectedContactsListing(),
                   PhoneNumberEntry(),
-                  ContactsListing(),
+                  const ContactsListing(),
                 ]
               )
             )
@@ -50,24 +50,37 @@ class _ContactsWidget extends ConsumerWidget {
 }
 
 
-class PhoneNumberEntry extends StatelessWidget {
-  const PhoneNumberEntry();
+class PhoneNumberEntry extends ConsumerWidget {
+  PhoneNumberEntry();
+  final _textController = TextEditingController();
+
+  void clearTextField() {
+    _textController.clear();
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(16.0),
-      child: TextField(
-        //controller: _phoneNumberController,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final myContactsReader = ref.watch(myContactsProvider);
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: MaskedTextField(
+        controller: _textController,
+        mask: "(###)-###-####", //TODO - make this region specific, or language pack specific
         keyboardType: TextInputType.phone, // Restricts input to numbers and symbols commonly used in phone numbers.
         //inputFormatters: [
         //  FilteringTextInputFormatter.digitsOnly, // Only allows digits (0-9).
         //],
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: 'Phone Number',
           hintText: 'Enter your phone number',
         ),
+        onFieldSubmitted: (String number) {
+          debugPrint("[-] Adding contact to list: $number");
+          myContactsReader.addNumber(number);
+          clearTextField();
+        },
       ),
     );
   }
