@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/user.dart';
-
-
+import 'package:pollster_flutter/signup.dart';
+import 'package:pollster_flutter/creator.dart';
 
 class LoginPage extends StatelessWidget {
   String password = "";
@@ -28,48 +28,59 @@ class LoginPage extends StatelessWidget {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  TextField(
-                    decoration: InputDecoration(labelText: 'Username'),
-                    onChanged: (String value) {
-                      updateUsername(value);
-                    },                  
-                  ),
-                  const SizedBox(height: 10),
-                  TextField(
-                    decoration: InputDecoration(labelText: 'Password'),
-                    obscureText: true, // To hide password input
-                    onChanged: (String value) {
-                      updatePassword(value);
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle login button click
-                      User user = User(username: username, password: password);
-                      sendPostRequest(user.toJson(), "login");
+            child: Builder(
+              builder: (context) => Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    TextField(
+                      decoration: const InputDecoration(labelText: 'Username'),
+                      onChanged: (String value) {
+                        updateUsername(value);
+                      },                  
+                    ),
+                    const SizedBox(height: 10),
+                    TextField(
+                      decoration: const InputDecoration(labelText: 'Password'),
+                      obscureText: true, // To hide password input
+                      onChanged: (String value) {
+                        updatePassword(value);
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle login button click
+                        User user = User(username: username, password: password);
+                        sendPostRequest(user.toJson(), "login");
+                        //TODO - improve authentication
 
-                    },
-                    child: const Text('Login'),
-                  ),
-                  const SizedBox(height: 10),
-                  TextButton(
-                    onPressed: () {
-                      // Handle "Forgot Password" button click
-                    },
-                    child: const Text('Forgot Password?'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Handle "Sign Up" button click
-                    },
-                    child: const Text('Sign Up'),
-                  ),
-                ],
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Creator()),
+                        ); 
+
+                      },
+                      child: const Text('Login'),
+                    ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () {
+                        // Handle "Forgot Password" button click
+                      },
+                      child: const Text('Forgot Password?'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignUp()),
+                        ); 
+                      },
+                      child: const Text('Sign Up'),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

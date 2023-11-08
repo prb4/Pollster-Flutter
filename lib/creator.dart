@@ -124,16 +124,28 @@ class _BuildPollState extends State<BuildPoll> {
                   },
                   separatorBuilder: (_, __) => const Divider(),
                 ),
-                ElevatedButton(
-                  child: const Text('Next'),
-                  onPressed: () {
-                    debugPrint("Creator - question: $question, answers: ${answers.toString()}");
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => ContactsWidget(question: question, answers: answers)),
-                    );
-                  },
-                )
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      child: const Text('New Question'),
+                      onPressed: () {
+                        debugPrint("New Question clicked");
+                      },
+                    ),
+
+                    ElevatedButton(
+                      child: const Text('Next'),
+                      onPressed: () {
+                        debugPrint("Creator - question: $question, answers: ${answers.toString()}");
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => ContactsWidget(question: question, answers: answers)),
+                        );
+                      },
+                    )
+                  ]
+                ),
             ],
           ),
         ),
