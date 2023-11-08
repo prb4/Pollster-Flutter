@@ -130,7 +130,7 @@ class _BuildPollState extends State<BuildPoll> {
                     debugPrint("Creator - question: $question, answers: ${answers.toString()}");
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => contactsWidget(question: question, answers: answers)),
+                      MaterialPageRoute(builder: (context) => ContactsWidget(question: question, answers: answers)),
                     );
                   },
                 )

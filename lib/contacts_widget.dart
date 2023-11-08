@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pollster_flutter/confirmation.dart';
 import 'package:pollster_flutter/models/contacts.dart';
 import 'package:masked_text/masked_text.dart';
-import 'package:pollster_flutter/models/poll.dart';
 /*
 
 @riverpod
@@ -19,12 +18,12 @@ import 'package:pollster_flutter/models/poll.dart';
 */
 final myContactsProvider = ChangeNotifierProvider((ref) => MyContactsChangeNotifier());
 
-class contactsWidget extends StatelessWidget{
+class ContactsWidget extends StatelessWidget{
 //  final List<PollItem> pollItems;
   final String question;
   final List<String>? answers;
 
-  const contactsWidget({required this.question, this.answers});
+  const ContactsWidget({required this.question, this.answers});
 
   @override
   Widget build(BuildContext context) {

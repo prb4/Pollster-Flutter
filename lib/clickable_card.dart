@@ -6,7 +6,7 @@ class ClickableCard extends StatelessWidget {
   final Function(int) onPressed;
   final String message;
 
-  ClickableCard({
+  const ClickableCard({
     required this.index,
     required this.isSelected,
     required this.onPressed,

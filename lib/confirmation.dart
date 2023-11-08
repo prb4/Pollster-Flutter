@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:pollster_flutter/models/poll.dart';
-//import 'package:pollster_flutter/contacts_widget.dart';
+import 'package:pollster_flutter/http.dart';
 
 
 class Confirmation extends StatelessWidget {
@@ -15,6 +14,11 @@ class Confirmation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint("In confirmation: $selectedContacts, $question, $answers");
+    CreatingQuestion createdQuestion = CreatingQuestion(question: question, answers:answers, contacts: selectedContacts);
+
+    debugPrint("Sending question to POST endpoint");
+    sendPostRequest(createdQuestion.toJson(), "submit/question");
+
     return const Text("In confirmation");
     
   }

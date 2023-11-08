@@ -33,9 +33,22 @@ class _ResponderState extends State<Responder> {
               if (snapshot.hasData) {
                 debugPrint("snapshot has data");
                 //return Text(snapshot.data!.question);
+                String question;  //This is probably not the best way to handle the fact that these values cant be null
+                if (snapshot.data!.question!.isEmpty) {
+                  question = "";
+                } else {
+                  question = snapshot.data!.question!;
+                }
+
+                List<String> answers;
+                if (snapshot.data!.answers!.isEmpty){
+                    answers = [];
+                } else {
+                  answers = snapshot.data!.answers!;
+                }
                 return QuestionAnswerLayout(
-                  question: snapshot.data!.question, 
-                  answers: snapshot.data!.answers);
+                  question: question, 
+                  answers: answers);
               } else if (snapshot.hasError) {
                 return const Text("Snapshot error"); // TODO - improve
               }
@@ -130,7 +143,7 @@ class _AnswerListState extends State<AnswerList> {
               Map<String, dynamic> data = {
                 "answer": answers[getSelectedCard()]
               };
-              sendPostRequest(data);
+              sendPostRequest(data, "submit/answer");
             },
             child: const Text("Submit"),
           )
