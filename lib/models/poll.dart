@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class PollItem extends StatelessWidget{
   final String input;
   final bool isQuestion;
   final bool isOptional;
-  final Function onSubmitted;
+  final Function onChanged;
   final TextEditingController textController;
 
-  const PollItem({required this.input, required this.isQuestion, required this.isOptional, required this.onSubmitted, required this.textController});
+  const PollItem({required this.input, required this.isQuestion, required this.isOptional, required this.onChanged, required this.textController});
 
   //TODO - maybe change to onChanged method so it doesnt require the submit button on the key pad
   @override
@@ -17,13 +18,13 @@ class PollItem extends StatelessWidget{
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
         child: TextField(
           decoration: InputDecoration(
-          border: const OutlineInputBorder(),
-          prefixIcon: isQuestion ? const Icon(Icons.question_mark_sharp) : null,
-          suffixIcon: isOptional ? const Icon(Icons.remove_circle_outline) : null,
-          hintText: input,
+            border: const OutlineInputBorder(),
+            prefixIcon: isQuestion ? const Icon(Icons.question_mark_sharp) : null,
+            suffixIcon: isOptional ? const Icon(Icons.remove_circle_outline) : null,
+            hintText: input,
           ),
-          onSubmitted: (String input){
-            onSubmitted(input);
+          onChanged: (String input){
+            onChanged(input);
           },
           controller: textController,
         )

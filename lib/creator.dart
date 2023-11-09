@@ -32,20 +32,36 @@ class BuildPoll extends StatefulWidget {
 }
 
 class _BuildPollState extends State<BuildPoll> {
-  List<Widget> textFields = [];
   List<PollItem> pollItemList = [];
-  List<String> answers = [];
+  List<TextEditingController> textControllers = [];
+  String answer = "";
+  List<String> additioanlAnswers = [];
   String question = "";
   List<Poll> polls = [];
-  final _textController = TextEditingController();
+  
 
-  void clearTextField() {
-    _textController.clear();
+  void clearTextFields() {
+    for (var controller in textControllers){
+      controller.clear();
+    }
   }
 
   void saveAnswer(String input) {
     debugPrint("Saving answer: $input");
-    answers.add(input);
+    answer = input;
+  }
+
+  void saveAdditionalAnswer(String input, int index){
+    debugPrint("Saving additional answer: $input[$index]");
+    if (index == additioanlAnswers.length){
+      //Need to add an answer onto the list
+      debugPrint("New additional answer: $input");
+      additioanlAnswers.add(input);
+    }else {
+      //Interacting with an answer that's already accounted for
+      debugPrint("Existing additional answer: $input");
+      additioanlAnswers[index] = input;
+    }
   }
 
   void saveQuestion(String input) {
@@ -53,9 +69,16 @@ class _BuildPollState extends State<BuildPoll> {
     question = input;
   }
 
-  void savePoll(Poll poll) {
-    debugPrint("Saving poll: ${poll.question}");
+  void savePoll() {
+    debugPrint("Saving poll");
 
+    //Save and join the answers that are currently on the screen and convert them into a poll
+    List<String> currentAnswers = joinAnswers();
+    Poll poll = createPoll(question, currentAnswers);
+
+
+    //Check if the poll has been added to the on-going list yet. 
+    //TODO - def needs work.
     int i = 0;
     bool flag = false;
     for (i = 0; i < polls.length; i++){
@@ -63,6 +86,8 @@ class _BuildPollState extends State<BuildPoll> {
         flag = true;
       }
     }
+
+    //Add the current / new poll to the existing list
     if (!flag){
       debugPrint("Poll is being saved");
       polls.add(poll);
@@ -71,6 +96,32 @@ class _BuildPollState extends State<BuildPoll> {
 
   void clearPollItemList() {
     pollItemList = [];
+    //debugPrint("Resizing textControllers: ${textControllers.length}");
+    //textControllers = textControllers.sublist(0,2);
+    //debugPrint("Resized textControllers: ${textControllers.length}");
+  }
+
+  List<String> joinAnswers() {
+    debugPrint("join Answers");
+    List<String> allAnswers = [];
+    allAnswers.add(answer);
+
+    debugPrint("Length of additional answers: ${additioanlAnswers.length}");
+    debugPrint("Length of allAnswersanswers: ${allAnswers.length}");
+
+    int i = 0;
+    if (additioanlAnswers.isNotEmpty){
+      int max = additioanlAnswers.length;
+      for (i = 0; i < max; i++){
+        if (additioanlAnswers[i].isNotEmpty){
+          String item = additioanlAnswers[i];
+          debugPrint("Adding $item");
+          allAnswers.add(item);
+        }
+      }
+    }
+
+    return allAnswers;
   }
 
   Poll createPoll(String pollQuestion, List<String> pollAnswers) {
@@ -79,8 +130,56 @@ class _BuildPollState extends State<BuildPoll> {
     return tmpPoll;
   }
 
+  void initiateList() {
+    debugPrint("Initiating list");
+    setState(() {
+      TextEditingController questionTextController = TextEditingController();
+      pollItemList.add(PollItem(input: "Add question", isQuestion: true, isOptional: false, 
+        onChanged: (String value) {
+          debugPrint("Saving question");
+          saveQuestion(value);
+        },
+        textController: questionTextController
+        ));
+        textControllers.add(questionTextController);
+
+      TextEditingController answerTextController = TextEditingController();
+      pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: false, 
+        onChanged: (String value) {
+          debugPrint("Saving answer: $value");
+          saveAnswer(value);
+        },
+        textController: answerTextController
+        ));
+        textControllers.add(answerTextController);
+    });
+
+  }
+
+  void appendAnswerBox() {
+    debugPrint("Appending answer box");
+    setState(() {
+      //This value isnt used in the additional answers, but its kept for easy of operability with the data structure given the question and first answer require a textController
+      TextEditingController textController = TextEditingController();
+      int index = additioanlAnswers.length;
+      pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: true, 
+        onChanged: (String value) {
+          debugPrint("Saving answer: $value");
+          saveAdditionalAnswer(value, index);
+        },
+        textController: textController
+        ));
+        textControllers.add(textController);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (pollItemList.isEmpty){
+      //TODO - had to add this if statement as this function seemed to be called after the 'add answer' button was clicked
+      initiateList();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -112,15 +211,7 @@ class _BuildPollState extends State<BuildPoll> {
                 children: [
                   MaterialButton(
                       onPressed: () {
-                          setState(() {
-                            debugPrint("Adding pollItem");
-                            pollItemList.add(PollItem(input: "Add optional answer", isQuestion: false, isOptional: true,
-                              onSubmitted: (String value) {
-                                saveAnswer(value);
-                              },
-                              textController: _textController
-                              ));
-                          });
+                          appendAnswerBox();
                       },
                       color: const Color(0xffd4d411),
                       textColor: Colors.white,
@@ -135,20 +226,8 @@ class _BuildPollState extends State<BuildPoll> {
                     
                 ],
               ),
-                PollItem(input: "Add question", isQuestion: true, isOptional: false, 
-                  onSubmitted: (String value) {
-                    debugPrint("Saving question");
-                    saveQuestion(value);
-                  },
-                  textController: _textController),
-                PollItem(input: "Add answer", isQuestion: false, isOptional: false, 
-                  onSubmitted: (String value) {
-                    debugPrint("Saving answer: $value");
-                    answers.add(value);
-                  },
-                  textController: _textController,),
                 ListView.separated(
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   primary: false,
                   itemCount: pollItemList.length,
@@ -166,13 +245,19 @@ class _BuildPollState extends State<BuildPoll> {
                       child: const Text('New Question'),
                       onPressed: () {
                         debugPrint("New Question clicked");
-                        Poll newPoll = createPoll(question, answers);
-                        savePoll(newPoll);
+
+                        //save what we currently have
+                        savePoll();
 
                         //Go back to 1 question and 1 answer format - clear _pollItemList
                         clearPollItemList();
 
                         //Clear all text
+                        //clearTextFields();
+
+                        textControllers = [];
+
+                        initiateList();
 
                       },
                     ),
@@ -180,11 +265,14 @@ class _BuildPollState extends State<BuildPoll> {
                     ElevatedButton(
                       child: const Text('Next'),
                       onPressed: () {
-                        debugPrint("Creator - question: $question, answers: ${answers.toString()}");
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ContactsWidget(question: question, answers: answers)),
-                        );
+                        debugPrint("Creator - question: $question, answers: $answer");
+
+                        savePoll();
+
+                        //Navigator.push(
+                        //  context,
+                        //  MaterialPageRoute(builder: (context) => ContactsWidget(question: question, answers: allAnswers)),
+                        //);
                       },
                     )
                   ]

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
 
-String ip = "http://192.168.1.219:5000/";
+String ip = "http://192.168.1.220:5000/";
 
 
 
