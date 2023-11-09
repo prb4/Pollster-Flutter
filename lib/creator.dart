@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pollster_flutter/contacts_widget.dart';
 import 'package:pollster_flutter/models/poll.dart';
 
 
@@ -33,18 +32,11 @@ class BuildPoll extends StatefulWidget {
 
 class _BuildPollState extends State<BuildPoll> {
   List<PollItem> pollItemList = [];
-  List<TextEditingController> textControllers = [];
   String answer = "";
   List<String> additioanlAnswers = [];
   String question = "";
   List<Poll> polls = [];
   
-
-  void clearTextFields() {
-    for (var controller in textControllers){
-      controller.clear();
-    }
-  }
 
   void saveAnswer(String input) {
     debugPrint("Saving answer: $input");
@@ -96,9 +88,6 @@ class _BuildPollState extends State<BuildPoll> {
 
   void clearPollItemList() {
     pollItemList = [];
-    //debugPrint("Resizing textControllers: ${textControllers.length}");
-    //textControllers = textControllers.sublist(0,2);
-    //debugPrint("Resized textControllers: ${textControllers.length}");
   }
 
   List<String> joinAnswers() {
@@ -133,43 +122,33 @@ class _BuildPollState extends State<BuildPoll> {
   void initiateList() {
     debugPrint("Initiating list");
     setState(() {
-      TextEditingController questionTextController = TextEditingController();
       pollItemList.add(PollItem(input: "Add question", isQuestion: true, isOptional: false, 
         onChanged: (String value) {
           debugPrint("Saving question");
           saveQuestion(value);
         },
-        textController: questionTextController
         ));
-        textControllers.add(questionTextController);
 
-      TextEditingController answerTextController = TextEditingController();
       pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: false, 
         onChanged: (String value) {
           debugPrint("Saving answer: $value");
           saveAnswer(value);
         },
-        textController: answerTextController
         ));
-        textControllers.add(answerTextController);
     });
-
   }
 
   void appendAnswerBox() {
     debugPrint("Appending answer box");
     setState(() {
       //This value isnt used in the additional answers, but its kept for easy of operability with the data structure given the question and first answer require a textController
-      TextEditingController textController = TextEditingController();
       int index = additioanlAnswers.length;
       pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: true, 
         onChanged: (String value) {
           debugPrint("Saving answer: $value");
           saveAdditionalAnswer(value, index);
         },
-        textController: textController
         ));
-        textControllers.add(textController);
     });
   }
 
@@ -252,11 +231,7 @@ class _BuildPollState extends State<BuildPoll> {
                         //Go back to 1 question and 1 answer format - clear _pollItemList
                         clearPollItemList();
 
-                        //Clear all text
-                        //clearTextFields();
-
-                        textControllers = [];
-
+                        //Initiate list like a new screen
                         initiateList();
 
                       },
