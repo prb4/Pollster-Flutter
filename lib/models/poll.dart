@@ -5,8 +5,9 @@ class PollItem extends StatelessWidget{
   final bool isQuestion;
   final bool isOptional;
   final Function onSubmitted;
+  final TextEditingController textController;
 
-  const PollItem({required this.input, required this.isQuestion, required this.isOptional, required this.onSubmitted});
+  const PollItem({required this.input, required this.isQuestion, required this.isOptional, required this.onSubmitted, required this.textController});
 
   //TODO - maybe change to onChanged method so it doesnt require the submit button on the key pad
   @override
@@ -23,9 +24,37 @@ class PollItem extends StatelessWidget{
           ),
           onSubmitted: (String input){
             onSubmitted(input);
-          }
+          },
+          controller: textController,
         )
       )
     );
   }
+}
+
+class Poll {
+  final String? question;
+  final List<String>? answers;
+
+  const Poll({
+    required this.question,
+    required this.answers,
+  });
+
+  factory Poll.fromJson(Map<String, dynamic> json) {
+    debugPrint("Converting poll");
+    final List<dynamic> answersList = json['answers'];
+    final List<String> parsedAnswers = List<String>.from(answersList);
+
+    debugPrint(parsedAnswers.toString());
+    return Poll(
+      question: json['question'] as String,
+      answers: parsedAnswers,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'question': question,
+    'answers': answers,
+  };
 }

@@ -36,6 +36,12 @@ class _BuildPollState extends State<BuildPoll> {
   List<PollItem> pollItemList = [];
   List<String> answers = [];
   String question = "";
+  List<Poll> polls = [];
+  final _textController = TextEditingController();
+
+  void clearTextField() {
+    _textController.clear();
+  }
 
   void saveAnswer(String input) {
     debugPrint("Saving answer: $input");
@@ -45,7 +51,32 @@ class _BuildPollState extends State<BuildPoll> {
   void saveQuestion(String input) {
     debugPrint("Saving question: $input");
     question = input;
-    
+  }
+
+  void savePoll(Poll poll) {
+    debugPrint("Saving poll: ${poll.question}");
+
+    int i = 0;
+    bool flag = false;
+    for (i = 0; i < polls.length; i++){
+      if (polls[i].question == question){ //TODO - probably need to do this by some created ID value
+        flag = true;
+      }
+    }
+    if (!flag){
+      debugPrint("Poll is being saved");
+      polls.add(poll);
+    }
+  }
+
+  void clearPollItemList() {
+    pollItemList = [];
+  }
+
+  Poll createPoll(String pollQuestion, List<String> pollAnswers) {
+    debugPrint("Creating poll with $pollQuestion, ${pollAnswers.toString()}");
+    Poll tmpPoll = Poll(question: pollQuestion, answers: pollAnswers);
+    return tmpPoll;
   }
 
   @override
@@ -86,7 +117,9 @@ class _BuildPollState extends State<BuildPoll> {
                             pollItemList.add(PollItem(input: "Add optional answer", isQuestion: false, isOptional: true,
                               onSubmitted: (String value) {
                                 saveAnswer(value);
-                              },));
+                              },
+                              textController: _textController
+                              ));
                           });
                       },
                       color: const Color(0xffd4d411),
@@ -106,12 +139,14 @@ class _BuildPollState extends State<BuildPoll> {
                   onSubmitted: (String value) {
                     debugPrint("Saving question");
                     saveQuestion(value);
-                  },),
+                  },
+                  textController: _textController),
                 PollItem(input: "Add answer", isQuestion: false, isOptional: false, 
                   onSubmitted: (String value) {
                     debugPrint("Saving answer: $value");
                     answers.add(value);
-                  },),
+                  },
+                  textController: _textController,),
                 ListView.separated(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
@@ -131,6 +166,14 @@ class _BuildPollState extends State<BuildPoll> {
                       child: const Text('New Question'),
                       onPressed: () {
                         debugPrint("New Question clicked");
+                        Poll newPoll = createPoll(question, answers);
+                        savePoll(newPoll);
+
+                        //Go back to 1 question and 1 answer format - clear _pollItemList
+                        clearPollItemList();
+
+                        //Clear all text
+
                       },
                     ),
 
