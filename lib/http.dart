@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
+import 'package:pollster_flutter/models/poll.dart';
 
 String ip = "http://192.168.1.220:5000/";
 
@@ -49,13 +50,11 @@ class Question {
 }
 
 class CreatingQuestion {
-  final String? question;
-  final List<String>? answers;
+  final Poll poll;
   final List<Contact>? contacts;
 
   const CreatingQuestion({
-    required this.question,
-    required this.answers,
+    required this.poll,
     required this.contacts,
   });
 
@@ -67,17 +66,19 @@ class CreatingQuestion {
     final List<dynamic> contactsList = json['contacts'];
     final List<Contact> parsedContacts = List<Contact>.from(contactsList);
 
+    Poll newPoll = Poll(question: json['question'], answers: parsedAnswers);
+
     debugPrint(parsedAnswers.toString());
     return CreatingQuestion(
-      question: json['question'] as String,
-      answers: parsedAnswers,
+      //TODO - this rework may break
+      poll: newPoll,
       contacts: parsedContacts,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'question': question,
-    'answers': answers,
+    'question': poll.question,
+    'answers': poll.answers,
     'contacts': contacts,
   };
 }

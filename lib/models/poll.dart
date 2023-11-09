@@ -6,8 +6,9 @@ class PollItem extends StatelessWidget{
   final bool isQuestion;
   final bool isOptional;
   final Function onChanged;
+  final TextEditingController textController;
 
-  const PollItem({required this.input, required this.isQuestion, required this.isOptional, required this.onChanged});
+  const PollItem({required this.input, required this.isQuestion, required this.isOptional, required this.onChanged, required this.textController});
 
   //TODO - maybe change to onChanged method so it doesnt require the submit button on the key pad
   @override
@@ -25,6 +26,7 @@ class PollItem extends StatelessWidget{
           onChanged: (String input){
             onChanged(input);
           },
+          controller: textController,
         )
       )
     );
