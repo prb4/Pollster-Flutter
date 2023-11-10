@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/poll.dart';
-
+import 'package:pollster_flutter/contacts_widget.dart';
 
 class Confirmation extends StatelessWidget {
   final List<Contact> selectedContacts;
@@ -23,6 +23,20 @@ class Confirmation extends StatelessWidget {
       body: SafeArea(
         child: Column(
         children: [
+          Wrap(
+            children: selectedContacts.map(
+              (selectedContact) {
+                return MyClickableChip(
+                  label: selectedContact.displayName,
+                  onTap: () {
+                    final index = selectedContacts.indexOf(selectedContact);
+                    debugPrint("[-] Removing contact from list: ${index.toString()} : ${selectedContact.displayName}");
+                    //ref.read(myContactsProvider).removeContact(index);
+                  },
+                );
+              }
+            ).toList(),
+          ),
           Expanded(
             child: ListView.builder( //TODO - too close to the top
               padding: const EdgeInsets.all(8),
