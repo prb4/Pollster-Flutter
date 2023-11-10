@@ -20,7 +20,8 @@ class Confirmation extends StatelessWidget {
     //sendPostRequest(finalPoll.toJson(), "submit/poll");
 
     return Scaffold(
-      body: Column(
+      body: SafeArea(
+        child: Column(
         children: [
           Expanded(
             child: ListView.builder( //TODO - too close to the top
@@ -42,6 +43,7 @@ class Confirmation extends StatelessWidget {
           ),
         ]
       )
+      )
     );    
   }
 }
@@ -62,26 +64,63 @@ class PollReview extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(12)),
         ),
         
-        child: Column(
-          children: [ 
-              Text(poll.question!),
-            //Expanded(
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                primary: false,
-                padding: const EdgeInsets.all(8),
-                itemCount: poll.answers!.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return SizedBox(
-                    height: 50,
-                    child: Center(child: Text(poll.answers![index])),
-                  );
-                }
-              ),
+        child: Stack(
+          children: [
+            Column(
+              children: [ 
+                  Text(poll.question!),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    primary: false,
+                    padding: const EdgeInsets.all(8),
+                    itemCount: poll.answers!.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return SizedBox(
+                        height: 50,
+                        child: Center(child: Text(poll.answers![index])),
+                      );
+                    }
+                  ),
 
-            ]
+              ]
+            ),
+            CornerIcon(icon: Icons.edit, color: Colors.black, alignment: Alignment.topLeft, onTap: () {
+              debugPrint("Clicked on edit button");
+            },),
+            CornerIcon(icon: Icons.delete, color: Colors.red, alignment: Alignment.topRight, onTap: () {
+              debugPrint("Clicked on delete button");
+            },)
+          ]
         )
       );
     }
+}
+
+class CornerIcon extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final Alignment alignment;
+  final Function onTap;
+
+  const CornerIcon({required this.icon, required this.color, required this.alignment, required this.onTap});
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: alignment,
+      child: GestureDetector(
+        onTap: () {
+          onTap();
+        },
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Icon(
+            icon,
+            size: 24.0,
+            color: color,
+          ),
+        )
+      )
+    );
+  }
 }
