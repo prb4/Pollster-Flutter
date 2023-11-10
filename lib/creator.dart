@@ -151,6 +151,13 @@ class _BuildPollState extends State<BuildPoll> {
     });
   }
 
+  void removeItem(int index) {
+    debugPrint("Removing answer at ${index.toString()}");
+    setState(() {
+      pollItemList.removeAt(index);  
+    });
+  }
+
   void appendAnswerBox() {
     debugPrint("Appending answer box");
     setState(() {
@@ -163,6 +170,11 @@ class _BuildPollState extends State<BuildPoll> {
           saveAdditionalAnswer(value, index);
         },
         textController: textController,
+        onClickedSuffixIcon: () {
+          int index = pollItemList.length - 1;
+          debugPrint("Clicked on remove button: $index");
+          removeItem(index);
+        },
         ));
 
         textControllers.add(textController);

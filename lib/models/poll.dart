@@ -7,8 +7,9 @@ class PollItem extends StatelessWidget{
   final bool isOptional;
   final Function onChanged;
   final TextEditingController textController;
+  final Function? onClickedSuffixIcon;
 
-  const PollItem({required this.input, required this.isQuestion, required this.isOptional, required this.onChanged, required this.textController});
+  const PollItem({required this.input, required this.isQuestion, required this.isOptional, required this.onChanged, required this.textController, this.onClickedSuffixIcon});
 
   //TODO - maybe change to onChanged method so it doesnt require the submit button on the key pad
   @override
@@ -20,7 +21,15 @@ class PollItem extends StatelessWidget{
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             prefixIcon: isQuestion ? const Icon(Icons.question_mark_sharp) : null,
-            suffixIcon: isOptional ? const Icon(Icons.remove_circle_outline) : null,
+            //suffixIcon: isOptional ? const Icon(Icons.remove_circle_outline) : null,
+
+            suffixIcon: isOptional ? IconButton( 
+                icon: const Icon(Icons.remove_circle_outline), 
+                onPressed: () {
+                  onClickedSuffixIcon!();
+                }, 
+              ) : null, 
+
             hintText: input,
           ),
           onChanged: (String input){

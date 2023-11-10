@@ -84,7 +84,7 @@ class CreatingQuestion {
 }
 
 class FinalPoll {
-  final List<Poll> polls;
+  final List<Poll>? polls;
   final List<Contact>? contacts;
 
   const FinalPoll({
