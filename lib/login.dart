@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/home_page.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/user.dart';
 import 'package:pollster_flutter/signup.dart';
-import 'package:pollster_flutter/creator.dart';
 
 class LoginPage extends StatelessWidget {
   String password = "";
@@ -57,7 +57,7 @@ class LoginPage extends StatelessWidget {
 
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const Creator()),
+                          MaterialPageRoute(builder: (context) => const Home()),
                         ); 
 
                       },

@@ -38,7 +38,7 @@ class Confirmation extends StatelessWidget {
             ).toList(),
           ),
           Expanded(
-            child: ListView.builder( //TODO - too close to the top
+            child: ListView.builder(
               padding: const EdgeInsets.all(8),
               itemCount: polls.length,
               itemBuilder: (context, index) =>
@@ -47,6 +47,7 @@ class Confirmation extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
+              //TODO - go to home screen
           //                  Navigator.push(
           //                    context,
           //                    MaterialPageRoute(builder: (context) => const Creator()),
@@ -99,12 +100,14 @@ class PollReview extends StatelessWidget {
 
               ]
             ),
+            /*
             CornerIcon(icon: Icons.edit, color: Colors.black, alignment: Alignment.topLeft, onTap: () {
               debugPrint("Clicked on edit button");
             },),
             CornerIcon(icon: Icons.delete, color: Colors.red, alignment: Alignment.topRight, onTap: () {
               debugPrint("Clicked on delete button");
             },)
+            */
           ]
         )
       );
