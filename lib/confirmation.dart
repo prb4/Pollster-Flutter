@@ -15,16 +15,21 @@ class Confirmation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("In confirmation: $selectedContacts, ${polls[0].question}, ${polls[0].answers}");
+    debugPrint("In confirmation");
+    /*
     for (var poll in polls){
+      debugPrint("Creating question: question: ${poll.question}, answers: ${poll.answers!.toList()}");
       CreatingQuestion createdQuestion = CreatingQuestion(poll: poll, contacts: selectedContacts);  
       createdQuestions.add(createdQuestion);
 
     }
+    */
+
+    FinalPoll finalPoll = FinalPoll(polls: polls, contacts: selectedContacts);
     debugPrint("Sending question to POST endpoint");
     
     //TODO - handle sending a list to the server
-    //sendPostRequest(createdQuestion.toJson(), "submit/question");
+    sendPostRequest(finalPoll.toJson(), "submit/poll");
 
     return const Text("In confirmation");
     

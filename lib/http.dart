@@ -83,6 +83,21 @@ class CreatingQuestion {
   };
 }
 
+class FinalPoll {
+  final List<Poll> polls;
+  final List<Contact>? contacts;
+
+  const FinalPoll({
+    required this.polls,
+    required this.contacts,
+  });
+
+  Map<String, dynamic> toJson() => {
+    'polls': polls,
+    'contacts': contacts,
+  };
+}
+
 Future<void> sendPostRequest(Map<String, dynamic> data, String endpoint) async {
   String address = ip + endpoint;
 
