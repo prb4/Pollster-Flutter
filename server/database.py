@@ -137,11 +137,17 @@ class Database():
         #TODO - send push notification notifying about poll
 
 
-    def answered_poll(self, recipient: str, poll_id: str):
+    def answered_poll(self, recipient_id: int, poll_uuid: str):
         '''
         For when a poll gets answered, update it in the recipient poll
         '''
-        pass
+
+        sql = "UPDATE RECIPIENT SET ANSWERED = 1 WHERE RECIPIENT = %s AND POLL_UUID = %s"
+        val = (recipient_id, poll_uuid)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+        self.dataBase.commit()
 
     def _convert_to_id(self, sql: str, val: tuple):
         cursor = self.dataBase.cursor()
@@ -177,7 +183,26 @@ class Database():
 
         return self._convert_to_id(sql, val)
 
-    def open_polls(self, user_id: int):
+    def _get_polls(self, sql, val):
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        matching_rows = cursor.fetchall()
+        return matching_rows
+
+
+    def get_open_polls(self, user_id: int):
+        '''
+        Returns open polls that a user needs to answer
+
+        user_id: the unique user_id value
+        '''
+        sql = "SELECT CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
+        val = (user_id,)
+
+        return self._get_polls(sql, val)
+
+    def get_all_polls(self, user_id: int):
         '''
         Returns open polls that a user needs to answer
 
@@ -186,12 +211,7 @@ class Database():
         sql = "SELECT CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s"
         val = (user_id,)
 
-        cursor = self.dataBase.cursor()
-        cursor.execute(sql, val)
-
-        matching_rows = cursor.fetchall()
-        return matching_rows
-
+        return self._get_polls(sql, val)
 
 def setup_database():
     db = Database(host, user, password)
