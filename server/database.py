@@ -54,12 +54,10 @@ class Database():
         cursor.execute(sql, val)
         self.dataBase.commit()
 
-    def validate_polls(self, polls: list):
-        for poll in polls:
-            if not isinstance(poll['contacts'], list):
-                print("Contacts failed validation: {}".format(poll['contacts']))
-                return None
-
+    def _validate_polls(self, polls: list):
+        #Dont need contacts anymore, get ride of it
+        polls.pop('contacts')
+        for poll in polls['polls']:
             if not isinstance(poll['question'], str):
                 print("Question failed validation: {}".format(poll['question']))
                 return None
@@ -70,17 +68,15 @@ class Database():
 
         return polls
 
-    def normalize_polls(self, polls: list):
-        for poll in polls:
-            contact_ids = []
-            #Convert the username / phonenumbers to the internal user_id value
-            for contact in poll['contacts']:
-                contact_id = self.convert_username_to_id(contact)
-                contact_ids.append(contact_id)
+    def _normalize_polls(self, polls: list):
+        contact_ids = []
+        #Convert the username / phonenumbers to the internal user_id value
+        for contact in polls['contacts']:
+            contact_id = self.convert_username_to_id(contact)
+            contact_ids.append(contact_id)
 
-            poll['contacts'] = contact_ids
-
-        return self.validate_polls(polls)
+        polls = self._validate_polls(polls)
+        return contact_ids, polls
 
 
     def add_poll_creator(self, creator: str, polls) -> str:
@@ -101,7 +97,7 @@ class Database():
 
         created = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
-        polls = self.normalize_polls(polls)
+        contacts, polls = self._normalize_polls(polls)
         
         if not polls:
             return None
@@ -112,7 +108,7 @@ class Database():
 
         sql = "INSERT INTO CREATOR (POLL_UUID, CREATOR, POLL, CREATED) VALUES (%s, %s, %s, %s)"
 
-        for poll in polls:
+        for poll in polls['polls']:
             val = (poll_uuid, creator, json.dumps(poll), created)
 
             cursor = self.dataBase.cursor()
@@ -180,6 +176,22 @@ class Database():
         val = (username,)
 
         return self._convert_to_id(sql, val)
+
+    def open_polls(self, user_id: int):
+        '''
+        Returns open polls that a user needs to answer
+
+        user_id: the unique user_id value
+        '''
+        sql = "SELECT CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s"
+        val = (user_id,)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        matching_rows = cursor.fetchall()
+        return matching_rows
+
 
 def setup_database():
     db = Database(host, user, password)
