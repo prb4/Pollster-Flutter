@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request, make_response
 from pprint import pprint
 import pdb
 
+import middleware as mid
+
 app = Flask(__name__)
 
 @app.route("/submit/answer", methods=['POST'])
@@ -23,7 +25,12 @@ def login():
     data = request.get_json()
     pprint(data)
 
-    return make_response(jsonify(message="OK"), 200)
+    logged_in = mid.validate_login(data['username'], data['password'])
+    if logged_in:
+        return make_response(jsonify(message="OK"), 200)
+    else:
+        return make_response(jsonify(message="Login failure"), 200)
+
 
 @app.route("/signup", methods=['POST'])
 def signup():
@@ -31,8 +38,6 @@ def signup():
     pprint(data)
 
     return make_response(jsonify(message="OK"), 200)
-
-
 
 @app.route("/fetch", methods=['GET'])
 def fetch():

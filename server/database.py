@@ -213,6 +213,21 @@ class Database():
 
         return self._get_polls(sql, val)
 
+    def get_password(self, user_id: int):
+        '''
+        Returns open polls that a user needs to answer
+
+        user_id: the unique user_id value
+        '''
+        sql = "SELECT PASSWORD FROM USERS WHERE USER_ID = %s"
+        val = (user_id,)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        matching_rows = cursor.fetchall()
+        return matching_rows[0][0]
+
 def setup_database():
     db = Database(host, user, password)
     return db

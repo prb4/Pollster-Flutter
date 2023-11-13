@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/crypto.dart';
 import 'package:pollster_flutter/home_page.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/user.dart';
@@ -10,7 +11,8 @@ class LoginPage extends StatelessWidget {
 
   void updatePassword(String value){
     debugPrint("Password: $value");
-    password = value;
+    password = encrypt(value);
+    //password = value;
   }
 
   void updateUsername(String value){
@@ -49,16 +51,21 @@ class LoginPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         // Handle login button click
                         User user = User(username: username, password: password);
-                        sendPostRequest(user.toJson(), "login");
+                        final response = await sendPostRequest(user.toJson(), "login");
                         //TODO - improve authentication
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Home()),
-                        ); 
+                        debugPrint("Response: " + response.toString());
+                        if (response['message'] == "OK") {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Home()),
+                          ); 
+                        } else {
+                          debugPrint("[!] Failed to authenticate properly");
+                          //TODO
+                        }
 
                       },
                       child: const Text('Login'),

@@ -98,7 +98,7 @@ class FinalPoll {
   };
 }
 
-Future<void> sendPostRequest(Map<String, dynamic> data, String endpoint) async {
+Future<Map<String, dynamic>> sendPostRequest(Map<String, dynamic> data, String endpoint) async {
   String address = ip + endpoint;
 
   debugPrint("SendingPostRequest");
@@ -113,8 +113,13 @@ Future<void> sendPostRequest(Map<String, dynamic> data, String endpoint) async {
 
   if (response.statusCode == 200){
     debugPrint("Sent successfully");
+    debugPrint(response.body.toString());
+    var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+    debugPrint(jsonResponse.toString());
+    return jsonResponse;
   } else {
     debugPrint("Failed to send");
+    throw Exception('Post failed');
   }
 }
 
