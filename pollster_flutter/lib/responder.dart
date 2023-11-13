@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'http.dart';
 import 'clickable_card.dart';
+import 'package:pollster_flutter/models/poll.dart';
 
 class Responder extends StatefulWidget {
   const Responder({super.key});
@@ -11,13 +12,14 @@ class Responder extends StatefulWidget {
 
 class _ResponderState extends State<Responder> {
   //Class that actually fetches the data
-  late Future<Question> futureQuestion;
+  late Future<List<Poll>> futurePolls;
 
   @override
   void initState() {
     super.initState();
     
-    futureQuestion = fetchQuestion();
+    futurePolls = fetchPolls();
+    Poll poll = Poll(question: "Test question", answers: ["Answer1"]);
     debugPrint("Have futureQuestion");
 
   }
@@ -27,11 +29,15 @@ class _ResponderState extends State<Responder> {
     return MaterialApp(
       home: Scaffold(
         body: Center (
-          child: FutureBuilder<Question> (
-            future: futureQuestion,
+          child: FutureBuilder<List<Poll>> (
+            future: futurePolls,
             builder: (context, snapshot) {
+              
               if (snapshot.hasData) {
                 debugPrint("snapshot has data");
+                debugPrint(snapshot.data!.toString());
+                /*
+                //TODO - un-do
                 //return Text(snapshot.data!.question);
                 String question;  //This is probably not the best way to handle the fact that these values cant be null
                 if (snapshot.data!.question!.isEmpty) {
@@ -49,6 +55,7 @@ class _ResponderState extends State<Responder> {
                 return QuestionAnswerLayout(
                   question: question, 
                   answers: answers);
+              */
               } else if (snapshot.hasError) {
                 return const Text("Snapshot error"); // TODO - improve
               }

@@ -9,20 +9,30 @@ String ip = "http://192.168.1.220:5000/";
 
 
 
-Future<Question> fetchQuestion() async {
-  String address = ip + "fetch";
+Future<List<Poll>> fetchPolls() async {
+  //TODO - fix this
+  String address = ip + "fetch?user_id=1";
+
   final response = await http
     .get(Uri.parse(address));
 
   if (response.statusCode == 200) {
     debugPrint("Response code is 200");
-    return Question.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    final data = jsonDecode(response.body);
+
+    final List<Poll> polls = [];
+
+    for (var i = 0; i < data.length; i++) {
+      polls.add(Poll.fromJson(data[i]));
+    }
+    return polls;
+    //return Poll.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   } else {
     debugPrint("Response code is NOT 200");
     throw Exception("Failed to load question");
   }
 }
-
+/*
 class Question {
   final String? question;
   final List<String>? answers;
@@ -48,7 +58,7 @@ class Question {
     'answers': answers
   };
 }
-
+*/
 class CreatingQuestion {
   final Poll poll;
   final List<Contact>? contacts;

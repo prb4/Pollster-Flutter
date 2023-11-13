@@ -41,19 +41,11 @@ def signup():
 
 @app.route("/fetch", methods=['GET'])
 def fetch():
-    data = {}
-    data['question'] = "A magnificant question"
+    data = request.args
+    polls = mid.get_open_polls(data['user_id'])
 
-    answers = []
-    answers.append("This is answer 1")
-    answers.append("This is answer 2")
-    answers.append("This is answer 3")
-    answers.append("This is answer 4")
-
-    data['answers'] = answers
-#    data['answers'] = "This is answer 0"
-
-    return jsonify(data)
+    #TODO - add a return code
+    return jsonify(polls)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
