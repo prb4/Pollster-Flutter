@@ -1,4 +1,6 @@
 import mysql.connector
+import json
+import uuid
 import datetime
 import pdb
 
@@ -37,19 +39,147 @@ class Database():
         cursor = self.dataBase.cursor()
         cursor.execute(statement)
 
-    def add_user(self, email, password, phonenumber):
+    def add_user(self, email, password, phonenumber, username):
+        '''
+        For when a user has signed up for the first time
+        '''
         last_access = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         start_date = last_access.split(" ")[0] #Only want the date
 
-        sql = "INSERT INTO USERS (EMAIL, PASSWORD, PHONENUMBER, START_DATE, LAST_ACCESS) VALUES (%s, %s, %s, %s, %s)"
-        val = (email, password, phonenumber, start_date, last_access)
+        sql = "INSERT INTO USERS (EMAIL, PASSWORD, PHONENUMBER, USERNAME, START_DATE, LAST_ACCESS) VALUES (%s, %s, %s, %s, %s, %s)"
+        val = (email, password, phonenumber, username, start_date, last_access)
 
 
         cursor = self.dataBase.cursor()
         cursor.execute(sql, val)
         self.dataBase.commit()
 
+    def validate_polls(self, polls: list):
+        for poll in polls:
+            if not isinstance(poll['contacts'], list):
+                print("Contacts failed validation: {}".format(poll['contacts']))
+                return None
 
+            if not isinstance(poll['question'], str):
+                print("Question failed validation: {}".format(poll['question']))
+                return None
+
+            if not isinstance(poll['answers'], list):
+                print("Answers failed validation: {}".format(poll['answers']))
+                return None
+
+        return polls
+
+    def normalize_polls(self, polls: list):
+        for poll in polls:
+            contact_ids = []
+            #Convert the username / phonenumbers to the internal user_id value
+            for contact in poll['contacts']:
+                contact_id = self.convert_username_to_id(contact)
+                contact_ids.append(contact_id)
+
+            poll['contacts'] = contact_ids
+
+        return self.validate_polls(polls)
+
+
+    def add_poll_creator(self, creator: str, polls) -> str:
+        '''
+        For when a poll is created. Store the poll in the creator table. There will be a seperate table for recipeints. A poll with 3 questions will have 3 entries in this table, 1 for each poll
+        creator - id of the person that created the poll (not the username, but the int/uuid value)
+        polls - the actual poll question(s)
+            poll = [
+                    {'contacts': [contacts],
+                     'question': question,
+                     'answers': [answers]
+                    }
+                   ]
+        recipients - id's of the people that the poll is being sent to
+
+        returns the uuid of the poll
+        '''
+
+        created = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+
+        polls = self.normalize_polls(polls)
+        
+        if not polls:
+            return None
+
+        poll_uuid = str(uuid.uuid4())
+        #Add creator's id in front of poll id number to prevent collisions
+        poll_uuid = poll_uuid + "-" + str(creator)
+
+        sql = "INSERT INTO CREATOR (POLL_UUID, CREATOR, POLL, CREATED) VALUES (%s, %s, %s, %s)"
+
+        for poll in polls:
+            val = (poll_uuid, creator, json.dumps(poll), created)
+
+            cursor = self.dataBase.cursor()
+            cursor.execute(sql, val)
+            self.dataBase.commit()
+
+        return poll_uuid
+
+    def add_poll_recipient(self, recipient: str, poll_uuid: str, answered: bool = False):
+        '''
+        For when a new poll gets created, a way to track who the polls should be pushed to and if they are answered. When called, the poll will be marked as unanswered.
+
+        recipient: the ID of someone to answer the poll. Not the username, but the int/uuid value
+        poll_uuid: The id to find the poll question(s) in the CREATOR table
+        answered: Tracks if this poll has been answered by the <reciepient>
+        '''
+
+        sql = "INSERT INTO RECIPIENT (RECIPIENT, POLL_UUID, ANSWERED) VALUES (%s, %s, %s)"
+
+        val = (recipient, poll_uuid, False)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+        self.dataBase.commit()
+
+        #TODO - send push notification notifying about poll
+
+
+    def answered_poll(self, recipient: str, poll_id: str):
+        '''
+        For when a poll gets answered, update it in the recipient poll
+        '''
+        pass
+
+    def _convert_to_id(self, sql: str, val: tuple):
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        matching_rows = cursor.fetchall()
+        if len(matching_rows) > 1:
+            print("[!] Found too many users: {}".format(username))
+            return None
+
+        elif len(matching_rows) == 0:
+            print("[!] Didn't find any users: {}".format(username))
+            return None
+
+        return matching_rows[0][0]
+
+
+    def convert_username_to_id(self, username: str) -> int: 
+        '''
+        Convert username to id
+        '''
+        sql = "SELECT USER_ID FROM USERS WHERE USERNAME = %s"
+        val = (username,)
+
+        return self._convert_to_id(sql, val)
+
+    def convert_phonenumber_to_id(self, phonenumber: str) -> int: 
+        '''
+        Convert phonenumber to id
+        '''
+        sql = "SELECT USER_ID FROM PHONENUMBER WHERE USERNAME = %s"
+        val = (username,)
+
+        return self._convert_to_id(sql, val)
 
 def setup_database():
     db = Database(host, user, password)
@@ -62,15 +192,31 @@ if __name__ == "__main__":
     database.create_database(db_name)
 
     database = Database(host, user, password, db_name)
-    table_statement = """CREATE TABLE USERS (
+    users_table_statement = """CREATE TABLE IF NOT EXISTS USERS (
                         USER_ID INT AUTO_INCREMENT PRIMARY KEY,
                         EMAIL VARCHAR(50) NOT NULL,
                         PASSWORD VARCHAR(50) NOT NULL,
                         PHONENUMBER VARCHAR(15) NOT NULL,
+                        USERNAME VARCHAR(20) NOT NULL,
                         START_DATE DATE NOT NULL,
                         LAST_ACCESS DATETIME NOT NULL
                         )"""
-    database.create_table(table_statement)
+    database.create_table(users_table_statement)
 
+    creator_table_statement = """CREATE TABLE IF NOT EXISTS CREATOR (
+                        POLL_ID INT AUTO_INCREMENT PRIMARY KEY,
+                        POLL_UUID VARCHAR(50) NOT NULL,
+                        CREATOR INT NOT NULL,
+                        POLL VARCHAR(500) NOT NULL,
+                        CREATED DATE NOT NULL
+                        )"""
+    database.create_table(creator_table_statement)
 
+    recipient_table_statement = """CREATE TABLE IF NOT EXISTS RECIPIENT (
+                        RECIPIENT_ID INT AUTO_INCREMENT PRIMARY KEY,
+                        RECIPIENT INT NOT NULL,
+                        POLL_UUID VARCHAR(50) NOT NULL,
+                        ANSWERED BOOLEAN NOT NULL
+                        )"""
+    database.create_table(recipient_table_statement)
 
