@@ -35,27 +35,18 @@ class _ResponderState extends State<Responder> {
               
               if (snapshot.hasData) {
                 debugPrint("snapshot has data");
-                debugPrint(snapshot.data!.toString());
-                /*
-                //TODO - un-do
-                //return Text(snapshot.data!.question);
-                String question;  //This is probably not the best way to handle the fact that these values cant be null
-                if (snapshot.data!.question!.isEmpty) {
-                  question = "";
-                } else {
-                  question = snapshot.data!.question!;
+
+                List<Poll> polls = [];
+                for (var item in snapshot.data!){
+                  debugPrint(item.toString());
+                  Poll poll = Poll(question: item.question, answers: item.answers);
+                  polls.add(poll);
                 }
 
-                List<String> answers;
-                if (snapshot.data!.answers!.isEmpty){
-                    answers = [];
-                } else {
-                  answers = snapshot.data!.answers!;
-                }
                 return QuestionAnswerLayout(
-                  question: question, 
-                  answers: answers);
-              */
+                  question: polls[0].question!, 
+                  answers: polls[0].answers!);
+
               } else if (snapshot.hasError) {
                 return const Text("Snapshot error"); // TODO - improve
               }

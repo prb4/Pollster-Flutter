@@ -241,8 +241,8 @@ if __name__ == "__main__":
     database = Database(host, user, password, db_name)
     users_table_statement = """CREATE TABLE IF NOT EXISTS USERS (
                         USER_ID INT AUTO_INCREMENT PRIMARY KEY,
-                        EMAIL VARCHAR(50) NOT NULL,
-                        PASSWORD VARCHAR(50) NOT NULL,
+                        EMAIL VARCHAR(100) NOT NULL,
+                        PASSWORD VARCHAR(100) NOT NULL,
                         PHONENUMBER VARCHAR(15) NOT NULL,
                         USERNAME VARCHAR(20) NOT NULL,
                         START_DATE DATE NOT NULL,
