@@ -197,7 +197,7 @@ class Database():
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
+        sql = "SELECT CREATOR.POLL_UUID, CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
         val = (user_id,)
 
         return self._get_polls(sql, val)
@@ -208,7 +208,7 @@ class Database():
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s"
+        sql = "SELECT CREATOR.POLL_UUID, CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s"
         val = (user_id,)
 
         return self._get_polls(sql, val)

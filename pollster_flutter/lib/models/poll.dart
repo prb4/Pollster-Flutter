@@ -68,3 +68,36 @@ class Poll {
     'answers': answers,
   };
 }
+
+class ReceivedPoll {
+  final Poll poll;
+  final String uuid;
+
+  const ReceivedPoll({
+    required this.poll,
+    required this.uuid,
+  });
+
+  factory ReceivedPoll.fromJson(Map<String, dynamic> json) {
+    debugPrint("Converting ReceivedPoll");
+    debugPrint("Poll: ${json['poll']}");
+    debugPrint("UUID: ${json['uuid']}");
+    //final List<dynamic> answersList = json['answers'];
+    //final List<String> parsedAnswers = List<String>.from(answersList);
+
+    //debugPrint(parsedAnswers.toString());
+    return ReceivedPoll(
+    //  question: json['question'] as String,
+    //  answers: parsedAnswers,
+      poll: Poll.fromJson(json['poll']),
+      uuid: json['uuid'] as String
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    //'question': question,
+    //'answers': answers,
+    'poll': poll,
+    'uuid': uuid
+  };
+}

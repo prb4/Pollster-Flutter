@@ -12,14 +12,13 @@ class Responder extends StatefulWidget {
 
 class _ResponderState extends State<Responder> {
   //Class that actually fetches the data
-  late Future<List<Poll>> futurePolls;
+  late Future<List<ReceivedPoll>> futurePolls;
 
   @override
   void initState() {
     super.initState();
     
     futurePolls = fetchPolls();
-    Poll poll = Poll(question: "Test question", answers: ["Answer1"]);
     debugPrint("Have futureQuestion");
 
   }
@@ -29,23 +28,26 @@ class _ResponderState extends State<Responder> {
     return MaterialApp(
       home: Scaffold(
         body: Center (
-          child: FutureBuilder<List<Poll>> (
+          child: FutureBuilder<List<ReceivedPoll>> (
             future: futurePolls,
             builder: (context, snapshot) {
               
               if (snapshot.hasData) {
                 debugPrint("snapshot has data");
 
-                List<Poll> polls = [];
+                List<ReceivedPoll> receivedPolls = [];
+                debugPrint("Snapshot: ${snapshot.data.toString()}");
                 for (var item in snapshot.data!){
                   debugPrint(item.toString());
-                  Poll poll = Poll(question: item.question, answers: item.answers);
-                  polls.add(poll);
+                  ReceivedPoll receivedPoll = ReceivedPoll(poll: item.poll, uuid: item.uuid);
+                  receivedPolls.add(receivedPoll);
                 }
 
-                return QuestionAnswerLayout(
-                  question: polls[0].question!, 
-                  answers: polls[0].answers!);
+                return ChoosePoll(receivedPolls: receivedPolls);
+
+                //return PollLayout(
+                //  question: polls[0].question!, 
+                //  answers: polls[0].answers!);
 
               } else if (snapshot.hasError) {
                 return const Text("Snapshot error"); // TODO - improve
@@ -59,19 +61,39 @@ class _ResponderState extends State<Responder> {
   }
 }
 
-class QuestionAnswerLayout extends StatelessWidget {
+class ChoosePoll extends StatelessWidget {
+  final List<ReceivedPoll> receivedPolls;
+
+  const ChoosePoll({required this.receivedPolls});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: receivedPolls.length,
+        itemBuilder: (context, i) {
+          return Chip(
+            label: Text(receivedPolls[i].uuid)
+            );
+        }
+      )
+    );
+  }
+}
+
+class PollLayout extends StatelessWidget {
 
   final String question;
   final List<String> answers;
 
-  const QuestionAnswerLayout({
+  const PollLayout({
     required this.question,
     required this.answers,
   });
   
   @override
   Widget build(BuildContext context) {
-    debugPrint("QuestionAnswerLayout");  
+    debugPrint("PollLayout");  
     return Align(
       alignment: Alignment.bottomCenter,
       child: Align(

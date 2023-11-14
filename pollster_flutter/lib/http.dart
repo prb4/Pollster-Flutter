@@ -9,7 +9,7 @@ String ip = "http://192.168.1.220:5000/";
 
 
 
-Future<List<Poll>> fetchPolls() async {
+Future<List<ReceivedPoll>> fetchPolls() async {
   //TODO - fix this
   String address = ip + "fetch?user_id=1";
 
@@ -20,12 +20,15 @@ Future<List<Poll>> fetchPolls() async {
     debugPrint("Response code is 200");
     final data = jsonDecode(response.body);
 
-    final List<Poll> polls = [];
+    final List<ReceivedPoll> receivedPoll = [];
 
     for (var i = 0; i < data.length; i++) {
-      polls.add(Poll.fromJson(data[i]));
+      final _recievedPoll = ReceivedPoll.fromJson(data[i]);
+      debugPrint("_receivedPoll: ${_recievedPoll.toString()}");
+      receivedPoll.add(_recievedPoll);
+      //receivedPoll.add(ReceivedPoll.fromJson(data[i]));
     }
-    return polls;
+    return receivedPoll;
     //return Poll.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
   } else {
     debugPrint("Response code is NOT 200");

@@ -1,4 +1,5 @@
 import database
+import pprint
 import json
 import pdb
 
@@ -20,9 +21,16 @@ def get_open_polls(user_id: str):
 
     _polls = db.get_open_polls(str(user_id))
 
-    polls = []
+    polls = {}
     for poll in _polls:
-        polls.append(json.loads(poll[0]))
+        uuid = poll[0]
 
+        if uuid not in polls.keys():
+            polls[uuid] = []
+
+        poll = json.loads(poll[1])
+        polls[uuid].append(poll)
+
+    pprint.pprint(polls)
     return polls
 
