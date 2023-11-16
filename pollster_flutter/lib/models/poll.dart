@@ -69,35 +69,51 @@ class Poll {
   };
 }
 
-class ReceivedPoll {
-  final Poll poll;
+class ReceivedPolls {
+  final List<Poll> polls;
   final String uuid;
 
-  const ReceivedPoll({
-    required this.poll,
+  const ReceivedPolls({
+    required this.polls,
     required this.uuid,
   });
 
-  factory ReceivedPoll.fromJson(Map<String, dynamic> json) {
+  factory ReceivedPolls.fromJson(String uuid, Map<String, dynamic> json) {
     debugPrint("Converting ReceivedPoll");
-    debugPrint("Poll: ${json['poll']}");
-    debugPrint("UUID: ${json['uuid']}");
+    debugPrint("Poll: ${json}");
+    //debugPrint("Poll: ${json['polls']}");
+    //debugPrint("UUID: ${json['uuid']}");
+    final List<dynamic> dynamicPolls = json['polls'];
+    debugPrint("dynamicPolls: ${dynamicPolls.toString()}");
+    
+
+    List<Poll> pollsList = dynamicPolls
+      .map((dynamic item) => Poll(
+        question: item['question'],
+        answers: item['answers'],
+      )).toList();
+
+    debugPrint("pollsList: ${pollsList.toString()}");
+    debugPrint("Polls List type: ${pollsList.runtimeType}");
+    //final List<Poll> parsedPolls = List<Poll>.from(dynamicPolls);
+    //debugPrint("Parsed polls: ${parsedPolls.toString()}");
     //final List<dynamic> answersList = json['answers'];
     //final List<String> parsedAnswers = List<String>.from(answersList);
 
     //debugPrint(parsedAnswers.toString());
-    return ReceivedPoll(
+    return ReceivedPolls(
     //  question: json['question'] as String,
     //  answers: parsedAnswers,
-      poll: Poll.fromJson(json['poll']),
-      uuid: json['uuid'] as String
+      polls: pollsList,
+      //polls: Poll.fromJson(json['polls']),
+      uuid: uuid
     );
   }
 
   Map<String, dynamic> toJson() => {
     //'question': question,
     //'answers': answers,
-    'poll': poll,
+    'polls': polls,
     'uuid': uuid
   };
 }

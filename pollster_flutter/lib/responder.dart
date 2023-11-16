@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/contacts_widget.dart';
 import 'http.dart';
 import 'clickable_card.dart';
 import 'package:pollster_flutter/models/poll.dart';
@@ -12,7 +13,7 @@ class Responder extends StatefulWidget {
 
 class _ResponderState extends State<Responder> {
   //Class that actually fetches the data
-  late Future<List<ReceivedPoll>> futurePolls;
+  late Future<List<ReceivedPolls>> futurePolls;
 
   @override
   void initState() {
@@ -28,26 +29,14 @@ class _ResponderState extends State<Responder> {
     return MaterialApp(
       home: Scaffold(
         body: Center (
-          child: FutureBuilder<List<ReceivedPoll>> (
+          child: FutureBuilder<List<ReceivedPolls>> (
             future: futurePolls,
             builder: (context, snapshot) {
               
               if (snapshot.hasData) {
                 debugPrint("snapshot has data");
 
-                List<ReceivedPoll> receivedPolls = [];
-                debugPrint("Snapshot: ${snapshot.data.toString()}");
-                for (var item in snapshot.data!){
-                  debugPrint(item.toString());
-                  ReceivedPoll receivedPoll = ReceivedPoll(poll: item.poll, uuid: item.uuid);
-                  receivedPolls.add(receivedPoll);
-                }
-
-                return ChoosePoll(receivedPolls: receivedPolls);
-
-                //return PollLayout(
-                //  question: polls[0].question!, 
-                //  answers: polls[0].answers!);
+                return ChoosePoll(receivedPolls: snapshot.data!);
 
               } else if (snapshot.hasError) {
                 return const Text("Snapshot error"); // TODO - improve
@@ -62,22 +51,41 @@ class _ResponderState extends State<Responder> {
 }
 
 class ChoosePoll extends StatelessWidget {
-  final List<ReceivedPoll> receivedPolls;
+  final List<ReceivedPolls> receivedPolls;
 
   const ChoosePoll({required this.receivedPolls});
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
+    return ListView.builder(
         itemCount: receivedPolls.length,
         itemBuilder: (context, i) {
-          return Chip(
-            label: Text(receivedPolls[i].uuid)
-            );
+          return MyClickableChip(
+            label: receivedPolls[i].uuid,
+            onTap: () {
+                PollsLayout(polls: receivedPolls[i].polls,);
+            });
         }
-      )
+      
     );
+  }
+}
+
+class PollsLayout extends StatelessWidget {
+
+  final List<Poll> polls;
+
+  const PollsLayout({
+    required this.polls,
+  });
+  
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: polls.length,
+      itemBuilder: (context, i) {
+        return PollLayout(question: polls[i].question!, answers: polls[i].answers!);
+      });
   }
 }
 

@@ -31,6 +31,14 @@ def get_open_polls(user_id: str):
         poll = json.loads(poll[1])
         polls[uuid].append(poll)
 
-    pprint.pprint(polls)
-    return polls
+    final_polls = []
+    for key in polls.keys():
+        tmp = {}
+        tmp['uuid'] = key
+        tmp['polls'] = polls[key]
+
+        final_polls.append(tmp)
+
+    pprint.pprint(final_polls)
+    return final_polls
 

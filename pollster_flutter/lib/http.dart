@@ -9,7 +9,7 @@ String ip = "http://192.168.1.220:5000/";
 
 
 
-Future<List<ReceivedPoll>> fetchPolls() async {
+Future<List<ReceivedPolls>> fetchPolls() async {
   //TODO - fix this
   String address = ip + "fetch?user_id=1";
 
@@ -18,18 +18,30 @@ Future<List<ReceivedPoll>> fetchPolls() async {
 
   if (response.statusCode == 200) {
     debugPrint("Response code is 200");
+    //debugPrint("response body: ${response.body}");
     final data = jsonDecode(response.body);
+    debugPrint("json decoded: ${data.length}");
 
-    final List<ReceivedPoll> receivedPoll = [];
+    final List<ReceivedPolls> receivedPollList = [];
 
     for (var i = 0; i < data.length; i++) {
-      final _recievedPoll = ReceivedPoll.fromJson(data[i]);
-      debugPrint("_receivedPoll: ${_recievedPoll.toString()}");
-      receivedPoll.add(_recievedPoll);
-      //receivedPoll.add(ReceivedPoll.fromJson(data[i]));
+      int len = data[i]['polls'].length;
+      final String uuid = data[i]['uuid'];
+
+      List<Poll> polls = [];
+
+      for (var x = 0; x < len; x++){
+        final _polls = data[i]['polls'][x];
+        //debugPrint("Polls question: ${_polls['question']}");
+        //debugPrint("Polls answers: ${_polls['answers']}");
+        Poll poll = Poll.fromJson(_polls);
+        polls.add(poll);
+      }
+
+      ReceivedPolls receivedPolls = ReceivedPolls(polls: polls, uuid: uuid);
+      receivedPollList.add(receivedPolls);
     }
-    return receivedPoll;
-    //return Poll.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    return receivedPollList;
   } else {
     debugPrint("Response code is NOT 200");
     throw Exception("Failed to load question");
