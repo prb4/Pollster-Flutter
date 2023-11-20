@@ -26,16 +26,19 @@ def get_open_polls(user_id: str):
         uuid = poll[0]
 
         if uuid not in polls.keys():
-            polls[uuid] = []
+            polls[uuid] = {}
+            polls[uuid]['title'] = poll[1]
+            polls[uuid]['polls'] = []
 
-        poll = json.loads(poll[1])
-        polls[uuid].append(poll)
+        poll = json.loads(poll[2])
+        polls[uuid]['polls'].append(poll)
 
     final_polls = []
     for key in polls.keys():
         tmp = {}
         tmp['uuid'] = key
-        tmp['polls'] = polls[key]
+        tmp['polls'] = polls[key]['polls']
+        tmp['title'] = polls[key]['title']
 
         final_polls.append(tmp)
 

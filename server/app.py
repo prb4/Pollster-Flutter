@@ -43,7 +43,6 @@ def signup():
 def fetch():
     data = request.args
     polls = mid.get_open_polls(data['user_id'])
-
     #TODO - add a return code
     return jsonify(polls)
 

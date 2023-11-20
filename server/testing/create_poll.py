@@ -1,5 +1,14 @@
-import database
 import pdb
+
+import sys
+import os
+
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
+
+import database
+
 
 db = database.Database(database.host, database.user, database.password, "Pollster")
 #db.create_database("Pollster")
@@ -18,11 +27,12 @@ def create_polls(creator_id: int, contacts: list):
             'answers': ["answer3", "answer4", "answer5"]
             }
 
-    polls = {'contacts':contacts,
+    polls = {'title':"Poll title user {}".format(creator_id),
+            'contacts':contacts,
             'polls':[poll1, poll2, poll3]
             }
 
-    uuid = db.add_poll_creator(creator_id, polls)
+    uuid = db.add_poll_to_polls_table(creator_id, polls)
 
     for contact in contacts:
         recipient_id = db.convert_username_to_id(contact)

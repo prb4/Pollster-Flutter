@@ -72,13 +72,15 @@ class Poll {
 class ReceivedPolls {
   final List<Poll> polls;
   final String uuid;
+  final String title;
 
   const ReceivedPolls({
     required this.polls,
     required this.uuid,
+    required this.title,
   });
 
-  factory ReceivedPolls.fromJson(String uuid, Map<String, dynamic> json) {
+  factory ReceivedPolls.fromJson(String uuid, Map<String, dynamic> json, String title) {
     debugPrint("Converting ReceivedPoll");
     debugPrint("Poll: ${json}");
     //debugPrint("Poll: ${json['polls']}");
@@ -106,7 +108,8 @@ class ReceivedPolls {
     //  answers: parsedAnswers,
       polls: pollsList,
       //polls: Poll.fromJson(json['polls']),
-      uuid: uuid
+      uuid: uuid,
+      title: title,
     );
   }
 
@@ -114,6 +117,7 @@ class ReceivedPolls {
     //'question': question,
     //'answers': answers,
     'polls': polls,
-    'uuid': uuid
+    'uuid': uuid,
+    'title': title,
   };
 }

@@ -79,17 +79,21 @@ class Database():
         return contact_ids, polls
 
 
-    def add_poll_creator(self, creator: str, polls) -> str:
+    def add_poll_to_polls_table(self, creator: str, polls: dict) -> str:
         '''
-        For when a poll is created. Store the poll in the creator table. There will be a seperate table for recipeints. A poll with 3 questions will have 3 entries in this table, 1 for each poll
+        For when a poll is created. Store the poll in the POLLS table. There will be a seperate table for recipeints. A poll with 3 questions will have 3 entries in this table, 1 for each poll
         creator - id of the person that created the poll (not the username, but the int/uuid value)
         polls - the actual poll question(s)
-            poll = [
-                    {'contacts': [contacts],
-                     'question': question,
-                     'answers': [answers]
-                    }
-                   ]
+        polls:  {
+                    'title':title,
+                    'contacts':contats,
+                    'polls':[poll]
+                }
+        poll =  {
+                 'question': question,
+                 'answers': [answers]
+                }
+               
         recipients - id's of the people that the poll is being sent to
 
         returns the uuid of the poll
@@ -106,10 +110,10 @@ class Database():
         #Add creator's id in front of poll id number to prevent collisions
         poll_uuid = poll_uuid + "-" + str(creator)
 
-        sql = "INSERT INTO CREATOR (POLL_UUID, CREATOR, POLL, CREATED) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO POLLS (POLL_UUID, CREATOR, TITLE, POLL, CREATED) VALUES (%s, %s, %s, %s, %s)"
 
         for poll in polls['polls']:
-            val = (poll_uuid, creator, json.dumps(poll), created)
+            val = (poll_uuid, creator, polls['title'], json.dumps(poll), created)
 
             cursor = self.dataBase.cursor()
             cursor.execute(sql, val)
@@ -122,7 +126,7 @@ class Database():
         For when a new poll gets created, a way to track who the polls should be pushed to and if they are answered. When called, the poll will be marked as unanswered.
 
         recipient: the ID of someone to answer the poll. Not the username, but the int/uuid value
-        poll_uuid: The id to find the poll question(s) in the CREATOR table
+        poll_uuid: The id to find the poll question(s) in the POLLS table
         answered: Tracks if this poll has been answered by the <reciepient>
         '''
 
@@ -197,7 +201,7 @@ class Database():
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT CREATOR.POLL_UUID, CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
+        sql = "SELECT POLLS.POLL_UUID, POLLS.TITLE, POLLS.POLL FROM POLLS JOIN RECIPIENT ON POLLS.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
         val = (user_id,)
 
         return self._get_polls(sql, val)
@@ -208,7 +212,7 @@ class Database():
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT CREATOR.POLL_UUID, CREATOR.POLL FROM CREATOR JOIN RECIPIENT ON CREATOR.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s"
+        sql = "SELECT POLLS.POLL_UUID, POLLS.TITLE, POLLS.POLL FROM POLLS JOIN RECIPIENT ON POLLS.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s"
         val = (user_id,)
 
         return self._get_polls(sql, val)
@@ -250,14 +254,15 @@ if __name__ == "__main__":
                         )"""
     database.create_table(users_table_statement)
 
-    creator_table_statement = """CREATE TABLE IF NOT EXISTS CREATOR (
+    polls_table_statement = """CREATE TABLE IF NOT EXISTS POLLS (
                         POLL_ID INT AUTO_INCREMENT PRIMARY KEY,
                         POLL_UUID VARCHAR(50) NOT NULL,
                         CREATOR INT NOT NULL,
+                        TITLE VARCHAR(100) NOT NULL,
                         POLL VARCHAR(500) NOT NULL,
                         CREATED DATE NOT NULL
                         )"""
-    database.create_table(creator_table_statement)
+    database.create_table(polls_table_statement)
 
     recipient_table_statement = """CREATE TABLE IF NOT EXISTS RECIPIENT (
                         RECIPIENT_ID INT AUTO_INCREMENT PRIMARY KEY,

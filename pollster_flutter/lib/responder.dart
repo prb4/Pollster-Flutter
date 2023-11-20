@@ -61,7 +61,7 @@ class ChoosePoll extends StatelessWidget {
         itemCount: receivedPolls.length,
         itemBuilder: (context, i) {
           return MyClickableChip(
-            label: receivedPolls[i].uuid,
+            label: receivedPolls[i].title,
             onTap: () {
                 PollsLayout(polls: receivedPolls[i].polls,);
             });

@@ -27,6 +27,7 @@ Future<List<ReceivedPolls>> fetchPolls() async {
     for (var i = 0; i < data.length; i++) {
       int len = data[i]['polls'].length;
       final String uuid = data[i]['uuid'];
+      final String title = data[i]['title'];
 
       List<Poll> polls = [];
 
@@ -38,7 +39,7 @@ Future<List<ReceivedPolls>> fetchPolls() async {
         polls.add(poll);
       }
 
-      ReceivedPolls receivedPolls = ReceivedPolls(polls: polls, uuid: uuid);
+      ReceivedPolls receivedPolls = ReceivedPolls(polls: polls, uuid: uuid, title: title);
       receivedPollList.add(receivedPolls);
     }
     return receivedPollList;
