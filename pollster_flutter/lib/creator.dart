@@ -16,7 +16,7 @@ class Creator extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => BuildPoll()),
+                MaterialPageRoute(builder: (context) => TitlePoll()),
               );
             },
           )
@@ -26,9 +26,60 @@ class Creator extends StatelessWidget {
   }
 }
 
-class BuildPoll extends StatefulWidget {
+class TitlePoll extends StatelessWidget {
+  String title = "";
+
+  TitlePoll();
+
+  void saveTitle(String input){
+    title = input;
+  }
+
   @override
-  _BuildPollState createState() => _BuildPollState();
+  Widget build(BuildContext context) {
+  return Material(
+    child: SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Title",
+              ),
+              onChanged: (String input){
+                saveTitle(input);
+              },
+            )
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: OutlinedButton(
+              onPressed: () {
+                debugPrint("On to questions button");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => BuildPoll(title: title)),
+              );
+              },
+              child: const Text("On to questions..."),
+            )
+          )
+        ]
+      )
+    )
+  );
+  }
+}
+
+class BuildPoll extends StatefulWidget {
+  final String title;
+  const BuildPoll({required this.title});
+  @override
+  _BuildPollState createState() => _BuildPollState(title: title);
 }
 
 class _BuildPollState extends State<BuildPoll> {
@@ -37,7 +88,12 @@ class _BuildPollState extends State<BuildPoll> {
   List<String> additioanlAnswers = [];
   String question = "";
   List<Poll> polls = [];
+  String title = "";
   List<TextEditingController> textControllers = [];
+
+  _BuildPollState({required this.title}) {
+    debugPrint("Title is $title");
+  }
   
 
   void saveAnswer(String input) {
@@ -229,9 +285,7 @@ class _BuildPollState extends State<BuildPoll> {
                         Icons.add,
                         size: 32,
                       ),
-
                     ),
-                    
                 ],
               ),
                 ListView.separated(
@@ -301,11 +355,11 @@ class OutlinedButtonExample extends StatelessWidget {
       style: const TextStyle(
           fontFamily: 'Montserrat',
           fontSize: 20,
-          color: const Color(0xff000000),
+          color: Color(0xff000000),
           height: 1.5384615384615385,
           fontWeight: FontWeight.w600),
       textHeightBehavior:
-          TextHeightBehavior(applyHeightToFirstAscent: false),
+          const TextHeightBehavior(applyHeightToFirstAscent: false),
       textAlign: TextAlign.left,
     );
   }

@@ -17,7 +17,7 @@ class Home extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const Creator()),
+                  MaterialPageRoute(builder: (context) => TitlePoll()),
                 );
               },
               child: const CardWidget(message: "Create new poll"),
