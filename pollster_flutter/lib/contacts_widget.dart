@@ -20,24 +20,22 @@ import 'package:pollster_flutter/models/poll.dart';
 final myContactsProvider = ChangeNotifierProvider((ref) => MyContactsChangeNotifier());
 
 class ContactsWidget extends StatelessWidget{
-  final List<Poll> polls;
+  final TitledPoll titledPoll;
 //  final String question;
 //  final List<String>? answers;
 
-  const ContactsWidget({required this.polls});
+  const ContactsWidget({required this.titledPoll});
 
   @override
   Widget build(BuildContext context) {
-    return ProviderScope(child: _ContactsWidget(polls: polls));
+    return ProviderScope(child: _ContactsWidget(titledPoll: titledPoll));
   }
 }
 
 class _ContactsWidget extends ConsumerWidget {
-  //final List<PollItem> pollItems;
-  final List<Poll> polls;
-  //final String question;
-  //final List<String>? answers;
-  const _ContactsWidget({required this.polls});
+  final TitledPoll titledPoll;
+
+  const _ContactsWidget({required this.titledPoll});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -60,7 +58,7 @@ class _ContactsWidget extends ConsumerWidget {
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: ContinueButton(polls: polls),
+                    child: ContinueButton(titledPoll: titledPoll),
                   ),
                 ]
             )
@@ -182,10 +180,10 @@ class ContactsListing extends ConsumerWidget {
 
 
 class ContinueButton extends ConsumerWidget {
-  final List<Poll> polls;
+  final TitledPoll titledPoll;
   //final String question;
   //final List<String>? answers;
-  const ContinueButton({required this.polls});
+  const ContinueButton({required this.titledPoll});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -195,10 +193,10 @@ class ContinueButton extends ConsumerWidget {
       child: ElevatedButton(
         child: const Text('Continue'),
         onPressed: () {
-          debugPrint("Clicked on continue button: ${polls[0].question} - ${polls[0].answers}");
+          debugPrint("Clicked on continue button: ${titledPoll.polls[0].question} - ${titledPoll.polls[0].answers}");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Confirmation(selectedContacts: myContactsReader.selectedContacts, polls: polls,)),
+            MaterialPageRoute(builder: (context) => Confirmation(selectedContacts: myContactsReader.selectedContacts, titledPoll: titledPoll,)),
           );
         },
       )

@@ -6,18 +6,14 @@ import 'package:pollster_flutter/contacts_widget.dart';
 
 class Confirmation extends StatelessWidget {
   final List<Contact> selectedContacts;
-  final List<Poll> polls;
+  final TitledPoll titledPoll;
   List<CreatingQuestion> createdQuestions = [];
 
-  Confirmation({required this.selectedContacts, required this.polls});
+  Confirmation({required this.selectedContacts, required this.titledPoll});
 
   @override
   Widget build(BuildContext context) {
     debugPrint("In confirmation");
-
-    //FinalPoll finalPoll = FinalPoll(polls: polls, contacts: selectedContacts);
-    
-    //sendPostRequest(finalPoll.toJson(), "submit/poll");
 
     return Scaffold(
       body: SafeArea(
@@ -31,22 +27,27 @@ class Confirmation extends StatelessWidget {
                   onTap: () {
                     final index = selectedContacts.indexOf(selectedContact);
                     debugPrint("[-] Removing contact from list: ${index.toString()} : ${selectedContact.displayName}");
-                    //ref.read(myContactsProvider).removeContact(index);
                   },
                 );
               }
             ).toList(),
           ),
+          SizedBox(
+            child: Text(titledPoll.title),
+            height: 50,
+          ),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(8),
-              itemCount: polls.length,
+              itemCount: titledPoll.polls.length,
               itemBuilder: (context, index) =>
-                PollReview(poll: polls[index]),
+                PollReview(poll: titledPoll.polls[index]),
             ),
           ),
           ElevatedButton(
             onPressed: () {
+              debugPrint("Confirmation button pressed - sending poll");
+              
               //TODO - go to home screen
           //                  Navigator.push(
           //                    context,

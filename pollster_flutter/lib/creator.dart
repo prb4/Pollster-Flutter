@@ -32,6 +32,7 @@ class TitlePoll extends StatelessWidget {
   TitlePoll();
 
   void saveTitle(String input){
+    debugPrint("saving title: $input");
     title = input;
   }
 
@@ -327,9 +328,11 @@ class _BuildPollState extends State<BuildPoll> {
 
                         savePoll();
 
+                        final TitledPoll titledPoll = TitledPoll(title: title, polls: polls);
+
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ContactsWidget(polls: polls))
+                          MaterialPageRoute(builder: (context) => ContactsWidget(titledPoll: titledPoll))
                         );
                       },
                     )
