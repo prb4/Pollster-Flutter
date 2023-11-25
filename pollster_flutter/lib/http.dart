@@ -48,33 +48,7 @@ Future<List<ReceivedPolls>> fetchPolls() async {
     throw Exception("Failed to load question");
   }
 }
-/*
-class Question {
-  final String? question;
-  final List<String>? answers;
 
-  const Question({
-    required this.question,
-    required this.answers,
-  });
-
-  factory Question.fromJson(Map<String, dynamic> json) {
-    debugPrint("Converting question");
-    final List<dynamic> answersList = json['answers'];
-    final List<String> parsedAnswers = List<String>.from(answersList);
-    debugPrint(parsedAnswers.toString());
-    return Question(
-      question: json['question'] as String,
-      answers: parsedAnswers,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    'question': question,
-    'answers': answers
-  };
-}
-*/
 class CreatingQuestion {
   final Poll poll;
   final List<Contact>? contacts;
@@ -105,21 +79,6 @@ class CreatingQuestion {
   Map<String, dynamic> toJson() => {
     'question': poll.question,
     'answers': poll.answers,
-    'contacts': contacts,
-  };
-}
-
-class FinalPoll {
-  final List<Poll>? polls;
-  final List<Contact>? contacts;
-
-  const FinalPoll({
-    required this.polls,
-    required this.contacts,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'polls': polls,
     'contacts': contacts,
   };
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:pollster_flutter/home_page.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/poll.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
@@ -45,14 +46,16 @@ class Confirmation extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               debugPrint("Confirmation button pressed - sending poll");
-              
-              //TODO - go to home screen
-          //                  Navigator.push(
-          //                    context,
-          //                    MaterialPageRoute(builder: (context) => const Creator()),
-          //                  ); 
+              await sendPostRequest(titledPoll.toJson(), "/submit/poll");
+              debugPrint("Navigating...");
+             
+              Navigator.pushAndRemoveUntil(
+                context, 
+                MaterialPageRoute(builder: (context) => const Home()),
+                (route) => false,
+                );
 
             },
             child: const Text('Confirm'),

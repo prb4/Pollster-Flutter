@@ -42,7 +42,7 @@ class Home extends StatelessWidget {
                 //  MaterialPageRoute(builder: (context) => Responder()),
                 //);
               },
-              child: const CardWidget(message: "View existing poll"),
+              child: const CardWidget(message: "View history"),
             ),
           ),
         ]

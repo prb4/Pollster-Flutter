@@ -39,37 +39,50 @@ class TitlePoll extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
   return Material(
-    child: SafeArea(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const SizedBox(height: 30),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: TextField(
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Title",
-              ),
-              onChanged: (String input){
-                saveTitle(input);
-              },
-            )
+    child: Scaffold (
+      appBar: AppBar(
+          title: const Text(
+            "Create poll",
+            style: TextStyle(
+              fontSize: 15.0,
+              color: Colors.black,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.normal,
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-            child: OutlinedButton(
-              onPressed: () {
-                debugPrint("On to questions button");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BuildPoll(title: title)),
-              );
-              },
-              child: const Text("On to questions..."),
+      ),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: TextField(
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Title",
+                ),
+                onChanged: (String input){
+                  saveTitle(input);
+                },
+              )
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: OutlinedButton(
+                onPressed: () {
+                  debugPrint("On to questions button");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => BuildPoll(title: title)),
+                );
+                },
+                child: const Text("On to questions..."),
+              )
             )
-          )
-        ]
+          ]
+        )
       )
     )
   );

@@ -23,6 +23,9 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      routes: {
+        '/home':(BuildContext context) => new Home()
+      },
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Login Page'),
@@ -56,12 +59,14 @@ class LoginPage extends StatelessWidget {
                         User user = User(username: username, password: password);
                         final response = await sendPostRequest(user.toJson(), "login");
                         //TODO - improve authentication
-                        debugPrint("Response: " + response.toString());
+                        debugPrint("Response: ${response.toString()}");
                         if (response['message'] == "OK") {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Home()),
-                          ); 
+                          //Navigator.push(
+                          //  context,
+                          //  MaterialPageRoute(builder: (context) => const Home(), settings: const RouteSettings(name: "/home")),
+                            //MaterialPageRoute(builder: (context) => const Home()),
+                          //); 
+                          Navigator.of(context).pushNamed('/home');
                         } else {
                           debugPrint("[!] Failed to authenticate properly");
                           //TODO

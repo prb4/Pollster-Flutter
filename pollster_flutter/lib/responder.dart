@@ -28,6 +28,17 @@ class _ResponderState extends State<Responder> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Open polls",
+            style: TextStyle(
+              fontSize: 15.0,
+              color: Colors.black,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
         body: Center (
           child: FutureBuilder<List<ReceivedPolls>> (
             future: futurePolls,
@@ -61,9 +72,15 @@ class ChoosePoll extends StatelessWidget {
         itemCount: receivedPolls.length,
         itemBuilder: (context, i) {
           return MyClickableChip(
+            
             label: receivedPolls[i].title,
             onTap: () {
-                PollsLayout(polls: receivedPolls[i].polls,);
+              debugPrint("Clicked poll: ${receivedPolls[i].title}");
+              Navigator.push(
+                context, 
+                MaterialPageRoute(builder: (context) => PollLayout(receivedPoll: receivedPolls[i]))
+              );
+              
             });
         }
       
@@ -71,30 +88,53 @@ class ChoosePoll extends StatelessWidget {
   }
 }
 
-class PollsLayout extends StatelessWidget {
+class PollLayout extends StatelessWidget {
 
-  final List<Poll> polls;
+  final ReceivedPolls receivedPoll;
 
-  const PollsLayout({
-    required this.polls,
+  const PollLayout({
+    required this.receivedPoll,
   });
   
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: polls.length,
-      itemBuilder: (context, i) {
-        return PollLayout(question: polls[i].question!, answers: polls[i].answers!);
-      });
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            receivedPoll.title,
+            style: const TextStyle(
+              fontSize: 15.0,
+              color: Colors.black,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+        ),
+      body: Center(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+              itemCount: receivedPoll.polls.length,
+              itemBuilder: (context, i) {
+                return _PollLayout(question: receivedPoll.polls[i].question!, answers: receivedPoll.polls[i].answers!);
+              })
+            )
+          ]
+        )
+      )
+    );
+    
+
   }
 }
 
-class PollLayout extends StatelessWidget {
+class _PollLayout extends StatelessWidget {
 
   final String question;
   final List<String> answers;
 
-  const PollLayout({
+  const _PollLayout({
     required this.question,
     required this.answers,
   });
