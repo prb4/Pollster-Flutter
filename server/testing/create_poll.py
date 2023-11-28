@@ -27,9 +27,14 @@ def create_polls(creator_id: int, contacts: list):
             'answers': ["answer3", "answer4", "answer5"]
             }
 
+    poll4 = {'question': "Question 4 from user {}".format(creator_id),
+            'answers': ["answer4", "answer5", "answer6"]
+            }
+
+
     polls = {'title':"Poll title user {}".format(creator_id),
             'contacts':contacts,
-            'polls':[poll1, poll2, poll3]
+            'polls':[poll1, poll2, poll3, poll4]
             }
 
     uuid = db.add_poll_to_polls_table(creator_id, polls)

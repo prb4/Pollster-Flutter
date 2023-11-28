@@ -26,35 +26,33 @@ class _ResponderState extends State<Responder> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Open polls",
-            style: TextStyle(
-              fontSize: 15.0,
-              color: Colors.black,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.normal,
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Open polls",
+          style: TextStyle(
+            fontSize: 15.0,
+            color: Colors.black,
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.normal,
           ),
         ),
-        body: Center (
-          child: FutureBuilder<List<ReceivedPolls>> (
-            future: futurePolls,
-            builder: (context, snapshot) {
-              
-              if (snapshot.hasData) {
-                debugPrint("snapshot has data");
+      ),
+      body: Center (
+        child: FutureBuilder<List<ReceivedPolls>> (
+          future: futurePolls,
+          builder: (context, snapshot) {
+            
+            if (snapshot.hasData) {
+              debugPrint("snapshot has data");
 
-                return ChoosePoll(receivedPolls: snapshot.data!);
+              return ChoosePoll(receivedPolls: snapshot.data!);
 
-              } else if (snapshot.hasError) {
-                return const Text("Snapshot error"); // TODO - improve
-              }
-              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return const Text("Snapshot error"); // TODO - improve
             }
-          )
+            return const CircularProgressIndicator();
+          }
         )
       )
     );
@@ -114,12 +112,20 @@ class PollLayout extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
+              
               child: ListView.builder(
-              itemCount: receivedPoll.polls.length,
-              itemBuilder: (context, i) {
-                return _PollLayout(question: receivedPoll.polls[i].question!, answers: receivedPoll.polls[i].answers!);
+                itemCount: receivedPoll.polls.length,
+                itemBuilder: (context, i) {
+                  return _PollLayout(question: receivedPoll.polls[i].question!, answers: receivedPoll.polls[i].answers!);
               })
-            )
+            ),
+            SubmitButton(message: "Submit", onPressed: () {
+                //debugPrint("Submit click: ${getSelectedCard()}");
+                //Map<String, dynamic> data = {
+                //  "answer": answers[getSelectedCard()]
+                //};
+                //sendPostRequest(data, "submit/answer");
+              }),
           ]
         )
       )
@@ -142,18 +148,20 @@ class _PollLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     debugPrint("PollLayout");  
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-                  QuestionTextBox(question),
-                  AnswerList(answers),
-            ],
-        ),
-      )
+    return Container(
+      //color: Colors.blue,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey,
+        border: Border.all(width: 8),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+              QuestionTextBox(question),
+              AnswerList(answers),
+        ],
+      ),
     );
   }
 }
@@ -191,6 +199,7 @@ class _AnswerListState extends State<AnswerList> {
     return Column(
       children: [
         ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true, //TODO - this may not be the best solution, but it works
           itemCount: answers.length,
           itemBuilder: (BuildContext context, int index) {
@@ -202,20 +211,6 @@ class _AnswerListState extends State<AnswerList> {
             );
           }
         ),
-        SizedBox(
-          width: 300.0, 
-          height: 50,
-          child: OutlinedButton(
-            onPressed:() {
-              debugPrint("Submit click: ${getSelectedCard()}");
-              Map<String, dynamic> data = {
-                "answer": answers[getSelectedCard()]
-              };
-              sendPostRequest(data, "submit/answer");
-            },
-            child: const Text("Submit"),
-          )
-        )
       ]
     );
   }
@@ -228,30 +223,29 @@ class QuestionTextBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(msg,
-                style: const TextStyle(fontSize: 20)
-              );
+      style: const TextStyle(fontSize: 20)
+    );
   }
 }
 
-class OutlinedButtonExample extends StatelessWidget {
+class SubmitButton extends StatelessWidget {
   //const OutlinedButtonExample({super.key});
   final String message;
-  const OutlinedButtonExample(this.message);
+  final Function onPressed;
+  const SubmitButton({required this.message, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: SizedBox(
+    return SizedBox(
       width: 300.0, 
       height: 50,
       child: OutlinedButton(
       onPressed:() {
         debugPrint("Received click");
+        onPressed();
       },
       child: Text(message),
       )
-    )
     );
   }
 }
