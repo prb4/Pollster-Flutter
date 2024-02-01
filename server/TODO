@@ -1,1 +1,2 @@
 Current limitation is that wont be able to log polls that are sent to individuals without an account
+	- fix should be to log based on cell phone number, and then update that database entry if/when an account is made

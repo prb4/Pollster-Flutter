@@ -93,9 +93,32 @@ class PollLayout extends StatelessWidget {
   const PollLayout({
     required this.receivedPoll,
   });
+
+  List<SelectedAnswer> updateSelectedAnswers(selectedAnswers, index, question, answer){
+    debugPrint("Current selectedAnswer: ${selectedAnswers.toString()}");
+
+    selectedAnswers[index].question = question;
+    selectedAnswers[index].selectedAnswer = answer;
+    
+    debugPrint("Updated selectedAnswer: ${selectedAnswers.toString()}");
+    return selectedAnswers;
+}
+
+Map<String, dynamic> convertSelectedAnswersListToMap(List<SelectedAnswer> selectedAnswers){
+  Map<String, dynamic> result = {};
+  //TODO - this breaks if not all questions are answered
+
+  for (SelectedAnswer answer in selectedAnswers) {
+    result[answer.question!] = answer.selectedAnswer;
+  }
+
+  debugPrint("Returning from convertSelectedAnswersListToMap: ${result.toString()}");
+  return result;
+}
   
   @override
   Widget build(BuildContext context) {
+    List<SelectedAnswer> selectedAnswers = List.generate(receivedPoll.polls.length, (index) => SelectedAnswer());
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -116,15 +139,23 @@ class PollLayout extends StatelessWidget {
               child: ListView.builder(
                 itemCount: receivedPoll.polls.length,
                 itemBuilder: (context, i) {
-                  return _PollLayout(question: receivedPoll.polls[i].question!, answers: receivedPoll.polls[i].answers!);
+                  return _PollLayout(
+                    question: receivedPoll.polls[i].question!,
+                    answers: receivedPoll.polls[i].answers!,
+                    onAnswerSelected: (int index) {
+                      updateSelectedAnswers(selectedAnswers, i, receivedPoll.polls[i].question, receivedPoll.polls[i].answers![index]);
+                      //selectedAnswers[i] = index;
+                      //debugPrint("Current selected answers: ${selectedAnswers.toString()}");
+                    });
               })
             ),
             SubmitButton(message: "Submit", onPressed: () {
-                //debugPrint("Submit click: ${getSelectedCard()}");
+                debugPrint("Submit click, final answers: ${selectedAnswers.toString()}");
                 //Map<String, dynamic> data = {
                 //  "answer": answers[getSelectedCard()]
                 //};
-                //sendPostRequest(data, "submit/answer");
+                sendPostRequest(convertSelectedAnswersListToMap(selectedAnswers), "submit/answer");
+                Navigator.pop(context); //TODO - when this is called, need to re-call the previous screen so the updated list loads (ie: without the just answered poll)
               }),
           ]
         )
@@ -139,15 +170,17 @@ class _PollLayout extends StatelessWidget {
 
   final String question;
   final List<String> answers;
+  final Function(int) onAnswerSelected;
 
   const _PollLayout({
     required this.question,
     required this.answers,
+    required this.onAnswerSelected,
   });
-  
+
   @override
   Widget build(BuildContext context) {
-    debugPrint("PollLayout");  
+    debugPrint("PollLayout");
     return Container(
       //color: Colors.blue,
       decoration: BoxDecoration(
@@ -159,7 +192,9 @@ class _PollLayout extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
               QuestionTextBox(question),
-              AnswerList(answers),
+              AnswerList(
+                answers: answers, 
+                onAnswerSelected: (index) => onAnswerSelected(index)),
         ],
       ),
     );
@@ -168,22 +203,31 @@ class _PollLayout extends StatelessWidget {
 
 class AnswerList extends StatefulWidget {
   final List<String> answers;
+  final Function(int) onAnswerSelected;
 
-  const AnswerList(this.answers);
+  //const AnswerList(this.answers);
+  const AnswerList({
+    required this.answers,
+    required this.onAnswerSelected});
 
-  State <AnswerList> createState() => _AnswerListState(this.answers);
+  State <AnswerList> createState() => _AnswerListState(answers: answers, onAnswerSelected: onAnswerSelected);
 
 }
 
 class _AnswerListState extends State<AnswerList> {
   final List<String> answers;
+  final Function(int) onAnswerSelected;
   int selectedCardIndex = -1;
-  _AnswerListState(this.answers);
+  //_AnswerListState(this.answers);
+  _AnswerListState({
+    required this.answers,
+    required this.onAnswerSelected});
 
   void selectCard(int index) {
     setState(() {
       selectedCardIndex = index;
     });
+    onAnswerSelected(index);
   }
 
   int getSelectedCard() {

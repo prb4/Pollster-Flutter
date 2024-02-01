@@ -9,7 +9,9 @@ app = Flask(__name__)
 @app.route("/submit/answer", methods=['POST'])
 def submitAnswer():
     data = request.get_json()
-    print(data['answer'])
+    print(data)
+
+    #TODO - remove answer polled from list of unanswered polls
 
     return make_response(jsonify(message="OK"), 200)
 

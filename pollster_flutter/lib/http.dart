@@ -5,7 +5,8 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pollster_flutter/models/poll.dart';
 
-String ip = "http://192.168.1.220:5000/";
+//String ip = "http://192.168.1.220:5000/";
+String ip = "http://172.16.44.50:5000/";
 
 
 

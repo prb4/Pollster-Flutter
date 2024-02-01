@@ -135,3 +135,37 @@ class ReceivedPolls {
     'uuid': uuid,
   };
 }
+
+class SelectedAnswer {
+  String? question;
+  String? selectedAnswer;
+
+  SelectedAnswer({
+    this.question,
+    this.selectedAnswer,
+  });
+
+  // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'question': question,
+      'selectedAnswer': selectedAnswer,
+    };
+  }
+
+  // Factory method to create a Person object from a Map
+  factory SelectedAnswer.fromJson(Map<String, dynamic> json) {
+    return SelectedAnswer(
+      question: json['question'],
+      selectedAnswer: json['selectedAnswer'],
+    );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'SelectedAnswer(question: $question, selectedAnswer: $selectedAnswer)';
+  }
+
+  
+}
