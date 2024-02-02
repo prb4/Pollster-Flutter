@@ -57,7 +57,7 @@ class Database():
     def _validate_polls(self, polls: list):
         #Dont need contacts anymore, get ride of it
         polls.pop('contacts')
-        for poll in polls['polls']:
+        for poll in polls['poll']:
             if not isinstance(poll['question'], str):
                 print("Question failed validation: {}".format(poll['question']))
                 return None
@@ -68,20 +68,28 @@ class Database():
 
         return polls
 
-    def _normalize_polls(self, polls: list):
+    def _normalize_polls(self, poll):
         contact_ids = []
         #Convert the username / phonenumbers to the internal user_id value
-        for contact in polls['contacts']:
-            contact_id = self.convert_username_to_id(contact)
-            contact_ids.append(contact_id)
 
-        polls = self._validate_polls(polls)
-        return contact_ids, polls
+        poll = self._validate_polls(poll)
+        return poll
 
 
-    def add_poll_to_polls_table(self, creator: str, polls: dict) -> str:
+    def add_question(self, question, poll_id):
+        sql = "INSERT INTO QUESTIONS (POLL_UUID, QUESTION) VALUES (%s, %s)"
+
+        val = (poll_id, question)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+        self.dataBase.commit()
+
+        return poll_id
+
+    def _add_poll_to_polls_table(self, creator: str, poll: dict) -> str:
         '''
-        For when a poll is created. Store the poll in the POLLS table. There will be a seperate table for recipeints. A poll with 3 questions will have 3 entries in this table, 1 for each poll
+        For when a poll is created. Store the poll in the POLLS table. There will be a seperate table for recipeints. A poll with 3 questions will have 3 entries in this table, 1 for each question
         creator - id of the person that created the poll (not the username, but the int/uuid value)
         polls - the actual poll question(s)
         polls:  {
@@ -101,25 +109,20 @@ class Database():
 
         created = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
-        contacts, polls = self._normalize_polls(polls)
+        poll = self._normalize_polls(poll)
         
-        if not polls:
+        if not poll:
             return None
 
-        poll_uuid = str(uuid.uuid4())
-        #Add creator's id in front of poll id number to prevent collisions
-        #poll_uuid = poll_uuid + "-" + str(creator)
+        sql = "INSERT INTO POLLS (POLL_UUID, CREATOR, TITLE, CREATED) VALUES (%s, %s, %s, %s)"
 
-        sql = "INSERT INTO POLLS (POLL_UUID, CREATOR, TITLE, POLL, CREATED) VALUES (%s, %s, %s, %s, %s)"
+        val = (poll['poll_id'], creator, poll['title'], created)
 
-        for poll in polls['polls']:
-            val = (poll_uuid, creator, polls['title'], json.dumps(poll), created)
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+        self.dataBase.commit()
 
-            cursor = self.dataBase.cursor()
-            cursor.execute(sql, val)
-            self.dataBase.commit()
-
-        return poll_uuid
+        return poll['poll_id']
 
     def add_poll_recipient(self, recipient: str, originator: str, poll_uuid: str, answered: bool = False):
         '''
@@ -177,7 +180,21 @@ class Database():
         sql = "SELECT USER_ID FROM USERS WHERE USERNAME = %s"
         val = (username,)
 
-        return self._convert_to_id(sql, val)
+        print("[-] Converting username: {}".format(username))
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        matching_rows = cursor.fetchall()
+        if len(matching_rows) > 1:
+            print("[!] Found too many users: {}".format(username))
+            return None
+
+        elif len(matching_rows) == 0:
+            print("[!] Didn't find any users: {}".format(username))
+            return None
+
+        return matching_rows[0][0]
 
     def convert_phonenumber_to_id(self, phonenumber: str) -> int: 
         '''
@@ -202,7 +219,7 @@ class Database():
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT POLLS.POLL_UUID, POLLS.TITLE, POLLS.POLL FROM POLLS JOIN RECIPIENT ON POLLS.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
+        sql = "SELECT POLLS.POLL_UUID, POLLS.TITLE FROM POLLS JOIN RECIPIENT ON POLLS.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
         val = (user_id,)
 
         return self._get_polls(sql, val)
@@ -217,6 +234,23 @@ class Database():
         val = (user_id,)
 
         return self._get_polls(sql, val)
+
+    def get_questions(self, poll_id: str):
+        '''
+        Returns questions associated with a poll id
+
+        poll_id = ID of a poll
+        '''
+
+        sql = "SELECT QUESTIONS.QUESTION_ID, QUESTIONS.POLL_UUID, QUESTIONS.QUESTION FROM QUESTIONS WHERE QUESTIONS.POLL_UUID = %s"
+        val = (poll_id,)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        matching_rows = cursor.fetchall()
+        return matching_rows
+
 
     def get_password(self, user_id: int):
         '''
@@ -260,13 +294,19 @@ if __name__ == "__main__":
                         POLL_UUID VARCHAR(50) NOT NULL,
                         CREATOR INT NOT NULL,
                         TITLE VARCHAR(100) NOT NULL,
-                        POLL VARCHAR(500) NOT NULL,
                         CREATED DATE NOT NULL
                         )"""
     database.create_table(polls_table_statement)
 
+    questions_table_statement = """CREATE TABLE IF NOT EXISTS QUESTIONS (
+                        QUESTION_ID INT AUTO_INCREMENT PRIMARY KEY,
+                        POLL_UUID VARCHAR(50) NOT NULL,
+                        QUESTION VARCHAR(500) NOT NULL
+                        )"""
+    database.create_table(questions_table_statement)
+
     recipient_table_statement = """CREATE TABLE IF NOT EXISTS RECIPIENT (
-                        RECIPIENT_ID INT AUTO_INCREMENT PRIMARY KEY,
+                        ID INT AUTO_INCREMENT PRIMARY KEY,
                         RECIPIENT INT NOT NULL,
                         ORIGINATOR INT NOT NULL,
                         POLL_UUID VARCHAR(50) NOT NULL,

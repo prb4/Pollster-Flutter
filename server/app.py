@@ -9,9 +9,8 @@ app = Flask(__name__)
 @app.route("/submit/answer", methods=['POST'])
 def submitAnswer():
     data = request.get_json()
-    print(data)
+    pprint(data)
 
-    #data['pollUUID'] = "9262ba70-ae04-4d91-afdf-7a7168657d5a"
     ret = mid.mark_poll_as_answered(data['pollUUID'], data['username'])
 
     return make_response(jsonify(message="OK"), 200)
@@ -20,6 +19,9 @@ def submitAnswer():
 def submitQuestion():
     data = request.get_json()
     pprint(data)
+
+    #TODO - add new poll to database
+
 
     return make_response(jsonify(message="OK"), 200)
 
@@ -46,6 +48,7 @@ def signup():
 def fetch():
     data = request.args
     polls = mid.get_open_polls(data['user_id'])
+    pdb.set_trace()
     #TODO - add a return code
     return jsonify(polls)
 
