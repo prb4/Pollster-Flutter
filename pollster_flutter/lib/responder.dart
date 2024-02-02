@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
+import 'package:pollster_flutter/user_session.dart';
 import 'http.dart';
 import 'clickable_card.dart';
 import 'package:pollster_flutter/models/poll.dart';
-
+import 'models/user.dart';
 class Responder extends StatefulWidget {
   const Responder({super.key});
 
@@ -119,9 +120,9 @@ Map<String, dynamic> convertSelectedAnswersListToMap(List<SelectedAnswer> select
 Map<String, dynamic> prepAnswerSubmit(List<SelectedAnswer> selectedAnswer) {
   Map<String, dynamic> data = {};
 
-  data['answers'] = convertSelectedAnswersListToMap(selectedAnswer);
-  data['username'] = 'user1';
-  data['pollUUID'] = 'uuid';
+  data['answers'] = convertSelectedAnswersListToMap(selectedAnswer);  
+  data['username'] = UserSession().username;
+  data['pollUUID'] = receivedPoll.uuid;
 
   return data;
 }
