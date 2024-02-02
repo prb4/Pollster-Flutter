@@ -108,7 +108,7 @@ class Database():
 
         poll_uuid = str(uuid.uuid4())
         #Add creator's id in front of poll id number to prevent collisions
-        poll_uuid = poll_uuid + "-" + str(creator)
+        #poll_uuid = poll_uuid + "-" + str(creator)
 
         sql = "INSERT INTO POLLS (POLL_UUID, CREATOR, TITLE, POLL, CREATED) VALUES (%s, %s, %s, %s, %s)"
 
@@ -121,18 +121,19 @@ class Database():
 
         return poll_uuid
 
-    def add_poll_recipient(self, recipient: str, poll_uuid: str, answered: bool = False):
+    def add_poll_recipient(self, recipient: str, originator: str, poll_uuid: str, answered: bool = False):
         '''
         For when a new poll gets created, a way to track who the polls should be pushed to and if they are answered. When called, the poll will be marked as unanswered.
 
         recipient: the ID of someone to answer the poll. Not the username, but the int/uuid value
+        originator: The ID of the poll creator
         poll_uuid: The id to find the poll question(s) in the POLLS table
         answered: Tracks if this poll has been answered by the <reciepient>
         '''
 
-        sql = "INSERT INTO RECIPIENT (RECIPIENT, POLL_UUID, ANSWERED) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO RECIPIENT (RECIPIENT, ORIGINATOR, POLL_UUID, ANSWERED) VALUES (%s, %s, %s, %s)"
 
-        val = (recipient, poll_uuid, False)
+        val = (recipient, originator, poll_uuid, False)
 
         cursor = self.dataBase.cursor()
         cursor.execute(sql, val)
@@ -141,7 +142,7 @@ class Database():
         #TODO - send push notification notifying about poll
 
 
-    def answered_poll(self, recipient_id: int, poll_uuid: str):
+    def update_answered_poll(self, recipient_id: int, poll_uuid: str):
         '''
         For when a poll gets answered, update it in the recipient poll
         '''
@@ -267,6 +268,7 @@ if __name__ == "__main__":
     recipient_table_statement = """CREATE TABLE IF NOT EXISTS RECIPIENT (
                         RECIPIENT_ID INT AUTO_INCREMENT PRIMARY KEY,
                         RECIPIENT INT NOT NULL,
+                        ORIGINATOR INT NOT NULL,
                         POLL_UUID VARCHAR(50) NOT NULL,
                         ANSWERED BOOLEAN NOT NULL
                         )"""

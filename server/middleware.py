@@ -45,3 +45,10 @@ def get_open_polls(user_id: str):
     pprint.pprint(final_polls)
     return final_polls
 
+def mark_poll_as_answered(pollUUID: str, username: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    user_id = db.convert_username_to_id(username)
+
+    return db.update_answered_poll(user_id, pollUUID)
+

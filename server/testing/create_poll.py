@@ -41,7 +41,7 @@ def create_polls(creator_id: int, contacts: list):
 
     for contact in contacts:
         recipient_id = db.convert_username_to_id(contact)
-        db.add_poll_recipient(recipient_id, uuid)
+        db.add_poll_recipient(recipient_id, creator_id, uuid)
 
 create_polls(1, ["user2", "user3", "user4"])
 create_polls(2, ["user1", "user3", "user4"])

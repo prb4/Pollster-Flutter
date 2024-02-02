@@ -11,7 +11,8 @@ def submitAnswer():
     data = request.get_json()
     print(data)
 
-    #TODO - remove answer polled from list of unanswered polls
+    #data['pollUUID'] = "9262ba70-ae04-4d91-afdf-7a7168657d5a"
+    ret = mid.mark_poll_as_answered(data['pollUUID'], data['username'])
 
     return make_response(jsonify(message="OK"), 200)
 

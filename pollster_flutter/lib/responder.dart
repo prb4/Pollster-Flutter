@@ -115,6 +115,16 @@ Map<String, dynamic> convertSelectedAnswersListToMap(List<SelectedAnswer> select
   debugPrint("Returning from convertSelectedAnswersListToMap: ${result.toString()}");
   return result;
 }
+
+Map<String, dynamic> prepAnswerSubmit(List<SelectedAnswer> selectedAnswer) {
+  Map<String, dynamic> data = {};
+
+  data['answers'] = convertSelectedAnswersListToMap(selectedAnswer);
+  data['username'] = 'user1';
+  data['pollUUID'] = 'uuid';
+
+  return data;
+}
   
   @override
   Widget build(BuildContext context) {
@@ -154,15 +164,15 @@ Map<String, dynamic> convertSelectedAnswersListToMap(List<SelectedAnswer> select
                 //Map<String, dynamic> data = {
                 //  "answer": answers[getSelectedCard()]
                 //};
-                sendPostRequest(convertSelectedAnswersListToMap(selectedAnswers), "submit/answer");
-                Navigator.pop(context); //TODO - when this is called, need to re-call the previous screen so the updated list loads (ie: without the just answered poll)
+
+                sendPostRequest(prepAnswerSubmit(selectedAnswers), "submit/answer");
+                //Navigator.pop(context); //TODO - when this is called, need to re-call the previous screen so the updated list loads (ie: without the just answered poll)
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
               }),
           ]
         )
       )
     );
-    
-
   }
 }
 

@@ -18,4 +18,4 @@ username = "user2"
 user_id = db.convert_username_to_id(username)
 print("Username: {}\n User ID: {}".format(username, user_id))
 
-db.answered_poll(user_id, "a6aaf0a9-15f4-4277-abc3-f2e6f72880fd-1")
+db.update_answered_poll(user_id, "a6aaf0a9-15f4-4277-abc3-f2e6f72880fd-1")
