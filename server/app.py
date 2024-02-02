@@ -8,12 +8,20 @@ app = Flask(__name__)
 
 @app.route("/submit/answer", methods=['POST'])
 def submitAnswer():
-    data = request.get_json()
-    pprint(data)
+    try:
+        data = request.get_json()
+        pprint(data)
 
-    ret = mid.mark_poll_as_answered(data['pollUUID'], data['username'])
+        #data['poll_id']
+        #data['username']
+        #data['user_id']
+        #data['answers']
+        #ret = mid.mark_poll_as_answered(data['poll_id'], data['username'])
+        ret = mid.answer_poll(data['poll_id'], data['user_id'], data['votes'])
 
-    return make_response(jsonify(message="OK"), 200)
+        return make_response(jsonify(message="OK"), 200)
+    except Exception:
+        return make_response(jsonify(message="Error"), 200)
 
 @app.route("/submit/poll", methods=['POST'])
 def submitQuestion():
@@ -30,9 +38,12 @@ def login():
     data = request.get_json()
     pprint(data)
 
-    logged_in = mid.validate_login(data['username'], data['password'])
-    if logged_in:
-        return make_response(jsonify(message="OK"), 200)
+    user_id = mid.validate_login(data['username'], data['password'])
+    if user_id:
+        data = {}
+        data['message'] = "OK"
+        data['user_id'] = user_id
+        return make_response(jsonify(data), 200)
     else:
         return make_response(jsonify(message="Login failure"), 200)
 
@@ -48,7 +59,6 @@ def signup():
 def fetch():
     data = request.args
     polls = mid.get_open_polls(data['user_id'])
-    pdb.set_trace()
     #TODO - add a return code
     return jsonify(polls)
 

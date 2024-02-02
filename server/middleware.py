@@ -3,7 +3,7 @@ import pprint
 import json
 import pdb
 
-def validate_login(username:str, hashed_password:str) -> bool:
+def validate_login(username:str, hashed_password:str):
 
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
@@ -12,9 +12,9 @@ def validate_login(username:str, hashed_password:str) -> bool:
     password = db.get_password(user_id)
 
     if password == hashed_password:
-        return True
+        return user_id
     else:
-        return False
+        return None
 
 def get_open_polls(user_id: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")
@@ -31,7 +31,7 @@ def get_open_polls(user_id: str):
         poll = {}
         poll['title'] = title
         poll['poll_id'] = poll_id
-        poll['questions'] = []
+        poll['votes'] = []
  
         for _question in _questions:
             question_id = _question[0]
@@ -43,7 +43,7 @@ def get_open_polls(user_id: str):
             question['question'] = question_answer['question']
             question['answers'] = question_answer['answers']
 
-            poll['questions'].append(question)
+            poll['votes'].append(question)
 
         polls.append(poll)
 
@@ -75,12 +75,13 @@ def get_open_polls(user_id: str):
 #    pprint.pprint(final_polls)
 #    return final_polls
 
-def mark_poll_as_answered(pollUUID: str, username: str):
+def answer_poll(poll_id: str, user_id: int, votes):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    user_id = db.convert_username_to_id(username)
+    for vote in votes:
+        db.insert_answer(user_id, vote['question_id'], poll_id, vote['answer'])
 
-    return db.update_answered_poll(user_id, pollUUID)
+    return db.update_poll_as_answered(user_id, poll_id)
 
 def add_new_poll(creator_username: str, recipients, poll):
     db = database.Database(database.host, database.user, database.password, "Pollster")

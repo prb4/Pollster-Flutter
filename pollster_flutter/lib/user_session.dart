@@ -10,4 +10,5 @@ class UserSession {
   UserSession._internal();
 
   String? username;
+  int? userId;
 }

@@ -77,7 +77,7 @@ class Database():
 
 
     def add_question(self, question, poll_id):
-        sql = "INSERT INTO QUESTIONS (POLL_UUID, QUESTION) VALUES (%s, %s)"
+        sql = "INSERT INTO QUESTIONS (POLL_ID, QUESTION) VALUES (%s, %s)"
 
         val = (poll_id, question)
 
@@ -114,7 +114,7 @@ class Database():
         if not poll:
             return None
 
-        sql = "INSERT INTO POLLS (POLL_UUID, CREATOR, TITLE, CREATED) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO POLLS (POLL_ID, CREATOR, TITLE, CREATED) VALUES (%s, %s, %s, %s)"
 
         val = (poll['poll_id'], creator, poll['title'], created)
 
@@ -134,7 +134,7 @@ class Database():
         answered: Tracks if this poll has been answered by the <reciepient>
         '''
 
-        sql = "INSERT INTO RECIPIENT (RECIPIENT, ORIGINATOR, POLL_UUID, ANSWERED) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO RECIPIENT (RECIPIENT, ORIGINATOR, POLL_ID, ANSWERED) VALUES (%s, %s, %s, %s)"
 
         val = (recipient, originator, poll_uuid, False)
 
@@ -144,14 +144,26 @@ class Database():
 
         #TODO - send push notification notifying about poll
 
+    def insert_answer(self, recipient_id: int, question_id: int, poll_id: str, answer: str):
+        '''
+        When a poll gets submitted with an answer, update the ANSWERS table with the correct anser
+        '''
+        sql = "INSERT INTO ANSWERS (QUESTION_ID, RECIPIENT_ID, POLL_ID, ANSWER) VALUES (%s, %s, %s, %s)"
+        val = (question_id, recipient_id, poll_id, answer)
 
-    def update_answered_poll(self, recipient_id: int, poll_uuid: str):
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+        self.dataBase.commit()
+
+
+    def update_poll_as_answered(self, recipient_id: int, poll_id: str):
         '''
         For when a poll gets answered, update it in the recipient poll
         '''
 
-        sql = "UPDATE RECIPIENT SET ANSWERED = 1 WHERE RECIPIENT = %s AND POLL_UUID = %s"
-        val = (recipient_id, poll_uuid)
+        print("[-] Updating {}: {} as answered".format(recipient_id, poll_id))
+        sql = "UPDATE RECIPIENT SET ANSWERED = 1 WHERE RECIPIENT = %s AND POLL_ID = %s"
+        val = (recipient_id, poll_id)
 
         cursor = self.dataBase.cursor()
         cursor.execute(sql, val)
@@ -219,7 +231,7 @@ class Database():
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT POLLS.POLL_UUID, POLLS.TITLE FROM POLLS JOIN RECIPIENT ON POLLS.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
+        sql = "SELECT POLLS.POLL_ID, POLLS.TITLE FROM POLLS JOIN RECIPIENT ON POLLS.POLL_ID = RECIPIENT.POLL_ID WHERE RECIPIENT.RECIPIENT = %s AND ANSWERED = False"
         val = (user_id,)
 
         return self._get_polls(sql, val)
@@ -230,7 +242,7 @@ class Database():
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT POLLS.POLL_UUID, POLLS.TITLE, POLLS.POLL FROM POLLS JOIN RECIPIENT ON POLLS.POLL_UUID = RECIPIENT.POLL_UUID WHERE RECIPIENT.RECIPIENT = %s"
+        sql = "SELECT POLLS.POLL_ID, POLLS.TITLE, POLLS.POLL FROM POLLS JOIN RECIPIENT ON POLLS.POLL_ID = RECIPIENT.POLL_ID WHERE RECIPIENT.RECIPIENT = %s"
         val = (user_id,)
 
         return self._get_polls(sql, val)
@@ -242,7 +254,7 @@ class Database():
         poll_id = ID of a poll
         '''
 
-        sql = "SELECT QUESTIONS.QUESTION_ID, QUESTIONS.POLL_UUID, QUESTIONS.QUESTION FROM QUESTIONS WHERE QUESTIONS.POLL_UUID = %s"
+        sql = "SELECT QUESTIONS.QUESTION_ID, QUESTIONS.POLL_ID, QUESTIONS.QUESTION FROM QUESTIONS WHERE QUESTIONS.POLL_ID = %s"
         val = (poll_id,)
 
         cursor = self.dataBase.cursor()
@@ -290,8 +302,8 @@ if __name__ == "__main__":
     database.create_table(users_table_statement)
 
     polls_table_statement = """CREATE TABLE IF NOT EXISTS POLLS (
-                        POLL_ID INT AUTO_INCREMENT PRIMARY KEY,
-                        POLL_UUID VARCHAR(50) NOT NULL,
+                        POLL_AUTO_ID INT AUTO_INCREMENT PRIMARY KEY,
+                        POLL_ID VARCHAR(50) NOT NULL,
                         CREATOR INT NOT NULL,
                         TITLE VARCHAR(100) NOT NULL,
                         CREATED DATE NOT NULL
@@ -300,16 +312,27 @@ if __name__ == "__main__":
 
     questions_table_statement = """CREATE TABLE IF NOT EXISTS QUESTIONS (
                         QUESTION_ID INT AUTO_INCREMENT PRIMARY KEY,
-                        POLL_UUID VARCHAR(50) NOT NULL,
+                        POLL_ID VARCHAR(50) NOT NULL,
                         QUESTION VARCHAR(500) NOT NULL
                         )"""
     database.create_table(questions_table_statement)
+
+    answers_table_statement = """CREATE TABLE IF NOT EXISTS ANSWERS (
+                        ANSWER_ID INT AUTO_INCREMENT PRIMARY KEY,
+                        QUESTION_ID VARCHAR(50) NOT NULL,
+                        RECIPIENT_ID VARCHAR(50) NOT NULL,
+                        POLL_ID VARCHAR(50) NOT NULL,
+                        ANSWER VARCHAR(500)
+                        )"""
+    database.create_table(answers_table_statement)
+
+
 
     recipient_table_statement = """CREATE TABLE IF NOT EXISTS RECIPIENT (
                         ID INT AUTO_INCREMENT PRIMARY KEY,
                         RECIPIENT INT NOT NULL,
                         ORIGINATOR INT NOT NULL,
-                        POLL_UUID VARCHAR(50) NOT NULL,
+                        POLL_ID VARCHAR(50) NOT NULL,
                         ANSWERED BOOLEAN NOT NULL
                         )"""
     database.create_table(recipient_table_statement)

@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pollster_flutter/models/poll.dart';
+import 'package:pollster_flutter/user_session.dart';
 
-//String ip = "http://192.168.1.220:5000/";
-String ip = "http://172.16.44.50:5000/";
+String ip = "http://192.168.1.151:5000/";
+//String ip = "http://172.16.44.50:5000/";
 
 
 
-Future<List<ReceivedPolls>> fetchPolls() async {
-  //TODO - fix this
-  String address = ip + "fetch?user_id=1";
+Future<List<ReceivedVotes>> fetchPolls() async {
+  String address = ip + "fetch?user_id=${UserSession().userId.toString()}";
 
   final response = await http
     .get(Uri.parse(address));
@@ -22,28 +22,32 @@ Future<List<ReceivedPolls>> fetchPolls() async {
     //debugPrint("response body: ${response.body}");
     final data = jsonDecode(response.body);
     debugPrint("json decoded: ${data.length}");
+    debugPrint("json: ${data.toString()}");
+    debugPrint("json type: ${data.runtimeType}");
 
-    final List<ReceivedPolls> receivedPollList = [];
+    final List<ReceivedVotes> receivedVotesList = [];
 
     for (var i = 0; i < data.length; i++) {
-      int len = data[i]['polls'].length;
-      final String uuid = data[i]['uuid'];
+      debugPrint("Data item: ${data[i].toString()}");
+      
+      final String uuid = data[i]['poll_id'];
       final String title = data[i]['title'];
+      int len = data[i]['votes'].length;
 
-      List<Poll> polls = [];
+      List<Vote> polls = [];
 
       for (var x = 0; x < len; x++){
-        final _polls = data[i]['polls'][x];
+        final _polls = data[i]['votes'][x];
         //debugPrint("Polls question: ${_polls['question']}");
         //debugPrint("Polls answers: ${_polls['answers']}");
-        Poll poll = Poll.fromJson(_polls);
+        Vote poll = Vote.fromJson(_polls);
         polls.add(poll);
       }
 
-      ReceivedPolls receivedPolls = ReceivedPolls(polls: polls, uuid: uuid, title: title);
-      receivedPollList.add(receivedPolls);
+      ReceivedVotes receivedPolls = ReceivedVotes(votes: polls, uuid: uuid, title: title);
+      receivedVotesList.add(receivedPolls);
     }
-    return receivedPollList;
+    return receivedVotesList;
   } else {
     debugPrint("Response code is NOT 200");
     throw Exception("Failed to load question");
@@ -51,7 +55,7 @@ Future<List<ReceivedPolls>> fetchPolls() async {
 }
 
 class CreatingQuestion {
-  final Poll poll;
+  final Vote poll;
   final List<Contact>? contacts;
 
   const CreatingQuestion({
@@ -67,7 +71,7 @@ class CreatingQuestion {
     final List<dynamic> contactsList = json['contacts'];
     final List<Contact> parsedContacts = List<Contact>.from(contactsList);
 
-    Poll newPoll = Poll(question: json['question'], answers: parsedAnswers);
+    Vote newPoll = Vote(question: json['question'], question_id: json['question_id'], answers: parsedAnswers);
 
     debugPrint(parsedAnswers.toString());
     return CreatingQuestion(

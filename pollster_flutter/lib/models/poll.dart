@@ -42,36 +42,40 @@ class PollItem extends StatelessWidget{
   }
 }
 
-class Poll {
-  final String? question;
-  final List<String>? answers;
+class Vote {
+  final String question;
+  final int question_id;
+  final List<String> answers;
 
-  const Poll({
+  const Vote({
     required this.question,
+    required this.question_id,
     required this.answers,
   });
 
-  factory Poll.fromJson(Map<String, dynamic> json) {
+  factory Vote.fromJson(Map<String, dynamic> json) {
     debugPrint("Converting poll");
     final List<dynamic> answersList = json['answers'];
     final List<String> parsedAnswers = List<String>.from(answersList);
 
     debugPrint(parsedAnswers.toString());
-    return Poll(
+    return Vote(
       question: json['question'] as String,
+      question_id: json['question_id'] as int,
       answers: parsedAnswers,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'question': question,
+    'question_id': question_id,
     'answers': answers,
   };
 }
 
 class TitledPoll {
   final String title;
-  final List<Poll> polls;
+  final List<Vote> polls;
 
   const TitledPoll({
     required this.title,
@@ -81,7 +85,7 @@ class TitledPoll {
   factory TitledPoll.fromJson(Map<String, dynamic> json) {
     debugPrint("Converting poll");
     final List<dynamic> pollsList = json['polls'];
-    final List<Poll> parsedPolls = List<Poll>.from(pollsList);
+    final List<Vote> parsedPolls = List<Vote>.from(pollsList);
 
     debugPrint(parsedPolls.toString());
     return TitledPoll(
@@ -96,59 +100,60 @@ class TitledPoll {
   };
 }
 
-class ReceivedPolls {
-  final List<Poll> polls;
+class ReceivedVotes {
+  final List<Vote> votes;
   final String uuid;
   final String title;
 
-  const ReceivedPolls({
-    required this.polls,
+  const ReceivedVotes({
+    required this.votes,
     required this.uuid,
     required this.title,
   });
 
-  factory ReceivedPolls.fromJson(String uuid, Map<String, dynamic> json, String title) {
-    debugPrint("Converting ReceivedPoll");
+  factory ReceivedVotes.fromJson(String uuid, Map<String, dynamic> json, String title) {
+    debugPrint("Converting ReceivedVotes");
     debugPrint("Poll: ${json}");
-    final List<dynamic> dynamicPolls = json['polls'];
+    final List<dynamic> dynamicPolls = json['votes'];
     debugPrint("dynamicPolls: ${dynamicPolls.toString()}");
     
 
-    List<Poll> pollsList = dynamicPolls
-      .map((dynamic item) => Poll(
+    List<Vote> votesList = dynamicPolls
+      .map((dynamic item) => Vote(
         question: item['question'],
+        question_id: item['question_id'],
         answers: item['answers'],
       )).toList();
 
-    debugPrint("pollsList: ${pollsList.toString()}");
-    debugPrint("Polls List type: ${pollsList.runtimeType}");
+    debugPrint("pollsList: ${votesList.toString()}");
+    debugPrint("Polls List type: ${votesList.runtimeType}");
 
-    return ReceivedPolls(
-      polls: pollsList,
+    return ReceivedVotes(
+      votes: votesList,
       uuid: uuid,
       title: title,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'polls': polls,
+    'polls': votes,
     'uuid': uuid,
   };
 }
 
 class SelectedAnswer {
-  String? question;
+  int? question_id;
   String? selectedAnswer;
 
   SelectedAnswer({
-    this.question,
+    this.question_id,
     this.selectedAnswer,
   });
 
   // Convert the Dart object to a Map
   Map<String, dynamic> toJson() {
     return {
-      'question': question,
+      'question_id': question_id,
       'selectedAnswer': selectedAnswer,
     };
   }
@@ -156,7 +161,7 @@ class SelectedAnswer {
   // Factory method to create a Person object from a Map
   factory SelectedAnswer.fromJson(Map<String, dynamic> json) {
     return SelectedAnswer(
-      question: json['question'],
+      question_id: json['question_id'],
       selectedAnswer: json['selectedAnswer'],
     );
   }
@@ -164,7 +169,7 @@ class SelectedAnswer {
   // Override the toString method for better display in print statements
   @override
   String toString() {
-    return 'SelectedAnswer(question: $question, selectedAnswer: $selectedAnswer)';
+    return 'SelectedAnswer(question_id: $question_id, selectedAnswer: $selectedAnswer)';
   }
 
   

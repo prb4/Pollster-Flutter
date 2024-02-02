@@ -101,7 +101,8 @@ class _BuildPollState extends State<BuildPoll> {
   String answer = "";
   List<String> additioanlAnswers = [];
   String question = "";
-  List<Poll> polls = [];
+  int question_id = -1;
+  List<Vote> polls = [];
   String title = "";
   List<TextEditingController> textControllers = [];
 
@@ -138,7 +139,7 @@ class _BuildPollState extends State<BuildPoll> {
 
     //Save and join the answers that are currently on the screen and convert them into a poll
     List<String> currentAnswers = joinAnswers();
-    Poll poll = createPoll(question, currentAnswers);
+    Vote poll = createPoll(question, question_id, currentAnswers);
 
 
     //Check if the poll has been added to the on-going list yet. 
@@ -189,9 +190,9 @@ class _BuildPollState extends State<BuildPoll> {
     return allAnswers;
   }
 
-  Poll createPoll(String pollQuestion, List<String> pollAnswers) {
+  Vote createPoll(String pollQuestion, int question_id, List<String> pollAnswers) {
     debugPrint("Creating poll with $pollQuestion, ${pollAnswers.toString()}");
-    Poll tmpPoll = Poll(question: pollQuestion, answers: pollAnswers);
+    Vote tmpPoll = Vote(question: pollQuestion, question_id: question_id, answers: pollAnswers);
     return tmpPoll;
   }
 

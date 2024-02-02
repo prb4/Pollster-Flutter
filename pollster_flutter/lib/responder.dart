@@ -4,7 +4,6 @@ import 'package:pollster_flutter/user_session.dart';
 import 'http.dart';
 import 'clickable_card.dart';
 import 'package:pollster_flutter/models/poll.dart';
-import 'models/user.dart';
 class Responder extends StatefulWidget {
   const Responder({super.key});
 
@@ -14,7 +13,7 @@ class Responder extends StatefulWidget {
 
 class _ResponderState extends State<Responder> {
   //Class that actually fetches the data
-  late Future<List<ReceivedPolls>> futurePolls;
+  late Future<List<ReceivedVotes>> futurePolls;
 
   @override
   void initState() {
@@ -40,7 +39,7 @@ class _ResponderState extends State<Responder> {
         ),
       ),
       body: Center (
-        child: FutureBuilder<List<ReceivedPolls>> (
+        child: FutureBuilder<List<ReceivedVotes>> (
           future: futurePolls,
           builder: (context, snapshot) {
             
@@ -61,7 +60,7 @@ class _ResponderState extends State<Responder> {
 }
 
 class ChoosePoll extends StatelessWidget {
-  final List<ReceivedPolls> receivedPolls;
+  final List<ReceivedVotes> receivedPolls;
 
   const ChoosePoll({required this.receivedPolls});
 
@@ -89,47 +88,57 @@ class ChoosePoll extends StatelessWidget {
 
 class PollLayout extends StatelessWidget {
 
-  final ReceivedPolls receivedPoll;
+  final ReceivedVotes receivedPoll;
 
   const PollLayout({
     required this.receivedPoll,
   });
 
-  List<SelectedAnswer> updateSelectedAnswers(selectedAnswers, index, question, answer){
+  List<SelectedAnswer> updateSelectedAnswers(selectedAnswers, index, question_id, answer){
     debugPrint("Current selectedAnswer: ${selectedAnswers.toString()}");
+    debugPrint("index: ${index.toString()}, question_id: ${question_id.toString()}, answer: ${answer.toString()}");
 
-    selectedAnswers[index].question = question;
+    selectedAnswers[index].question_id = question_id;
     selectedAnswers[index].selectedAnswer = answer;
     
     debugPrint("Updated selectedAnswer: ${selectedAnswers.toString()}");
     return selectedAnswers;
 }
 
-Map<String, dynamic> convertSelectedAnswersListToMap(List<SelectedAnswer> selectedAnswers){
-  Map<String, dynamic> result = {};
+List<Map<String, dynamic>> convertSelectedAnswersListToMap(List<SelectedAnswer> selectedAnswers){
+  
+  List<Map<String, dynamic>> data = [];
+  
   //TODO - this breaks if not all questions are answered
 
   for (SelectedAnswer answer in selectedAnswers) {
-    result[answer.question!] = answer.selectedAnswer;
+    Map<String, dynamic> result = {};
+    result['question_id'] = answer.question_id;
+    result['answer'] = answer.selectedAnswer;
+
+    data.add(result);
   }
 
-  debugPrint("Returning from convertSelectedAnswersListToMap: ${result.toString()}");
-  return result;
+  debugPrint("Returning from convertSelectedAnswersListToMap: ${data.toString()}");
+  return data;
 }
 
 Map<String, dynamic> prepAnswerSubmit(List<SelectedAnswer> selectedAnswer) {
   Map<String, dynamic> data = {};
 
-  data['answers'] = convertSelectedAnswersListToMap(selectedAnswer);  
+  data['votes'] = convertSelectedAnswersListToMap(selectedAnswer);  
   data['username'] = UserSession().username;
-  data['pollUUID'] = receivedPoll.uuid;
+  data['user_id'] = UserSession().userId;
+  data['poll_id'] = receivedPoll.uuid;
+
+  debugPrint("[-] Sending ${data.toString()}");
 
   return data;
 }
   
   @override
   Widget build(BuildContext context) {
-    List<SelectedAnswer> selectedAnswers = List.generate(receivedPoll.polls.length, (index) => SelectedAnswer());
+    List<SelectedAnswer> selectedAnswers = List.generate(receivedPoll.votes.length, (index) => SelectedAnswer());
     return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -148,13 +157,13 @@ Map<String, dynamic> prepAnswerSubmit(List<SelectedAnswer> selectedAnswer) {
             Expanded(
               
               child: ListView.builder(
-                itemCount: receivedPoll.polls.length,
+                itemCount: receivedPoll.votes.length,
                 itemBuilder: (context, i) {
                   return _PollLayout(
-                    question: receivedPoll.polls[i].question!,
-                    answers: receivedPoll.polls[i].answers!,
+                    question: receivedPoll.votes[i].question,
+                    answers: receivedPoll.votes[i].answers,
                     onAnswerSelected: (int index) {
-                      updateSelectedAnswers(selectedAnswers, i, receivedPoll.polls[i].question, receivedPoll.polls[i].answers![index]);
+                      updateSelectedAnswers(selectedAnswers, i, receivedPoll.votes[i].question_id, receivedPoll.votes[i].answers![index]);
                       //selectedAnswers[i] = index;
                       //debugPrint("Current selected answers: ${selectedAnswers.toString()}");
                     });

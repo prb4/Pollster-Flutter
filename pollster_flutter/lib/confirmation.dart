@@ -68,7 +68,7 @@ class Confirmation extends StatelessWidget {
 }
 
 class PollReview extends StatelessWidget {
-  final Poll poll;
+  final Vote poll;
 
   const PollReview({required this.poll});
 

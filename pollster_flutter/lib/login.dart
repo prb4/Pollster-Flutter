@@ -61,14 +61,16 @@ class LoginPage extends StatelessWidget {
                         final response = await sendPostRequest(user.toJson(), "login");
                         //TODO - improve authentication
                         debugPrint("Response: ${response.toString()}");
+                        debugPrint("Response message: ${response['message']}");
                         if (response['message'] == "OK") {
                           //Navigator.push(
                           //  context,
                           //  MaterialPageRoute(builder: (context) => const Home(), settings: const RouteSettings(name: "/home")),
                           //  MaterialPageRoute(builder: (context) => const Home()),
                           //); 
-                          
+                          debugPrint("Log in response: ${response.toString()}");
                           UserSession().username = username;
+                          UserSession().userId = response['user_id'];
 
                           Navigator.of(context).push(
                             MaterialPageRoute(
