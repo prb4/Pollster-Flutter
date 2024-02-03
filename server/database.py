@@ -244,16 +244,20 @@ class Database():
 
         return self._get_polls(sql, val)
 
-    def get_all_receieved_polls(self, user_id: int):
+    def get_all_received_polls_metadata(self, user_id: int):
         '''
         Returns open polls that a user needs to answer
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT POLLS.POLL_ID, POLLS.TITLE FROM POLLS JOIN RECIPIENT ON POLLS.POLL_ID = RECIPIENT.POLL_ID WHERE RECIPIENT.RECIPIENT = %s"
+        sql = "SELECT JSON_OBJECT('poll_id', POLLS.POLL_ID, 'title', POLLS.TITLE) as JSON_OUTPUT from POLLS JOIN RECIPIENT ON POLLS.POLL_ID = RECIPIENT.POLL_ID WHERE RECIPIENT.RECIPIENT = %s"
+
         val = (user_id,)
 
-        return self._get_polls(sql, val)
+        received_polls = self._get_polls(sql, val)
+        received_polls = [json.loads(poll[0]) for poll in received_polls]
+
+        return received_polls
 
     def get_questions(self, poll_id: str):
         '''

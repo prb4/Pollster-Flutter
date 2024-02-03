@@ -116,16 +116,21 @@ def add_new_poll(creator_username: str, poll, recipient_input, is_username:bool)
     for recipient in recipients:
         db.add_poll_recipient(recipient, user_id, poll['poll_id'])
 
-def get_all_created_polls(user_id: int) -> list:
+def get_all_created_polls_metadata(user_id: int) -> list:
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
     created_polls = db.get_created_polls(user_id)
     for i in range(len(created_polls)):
-        questions = db.get_questions(created_polls[i]['poll_id'])
-        created_polls[i]['questions'] = questions
+        #questions = db.get_questions(created_polls[i]['poll_id'])
+        #created_polls[i]['questions'] = questions
 
         recipients = db.get_recipient_table(created_polls[i]['poll_id'], user_id)
         created_polls[i]['recipients'] = recipients
     
     return created_polls
 
+def get_all_received_polls_metadata(user_id: int) -> list:
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    receieved_polls = db.get_all_received_polls_metadata(user_id)
+    return receieved_polls

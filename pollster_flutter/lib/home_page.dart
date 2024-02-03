@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/creator.dart';
+import 'package:pollster_flutter/history.dart';
 import 'package:pollster_flutter/responder.dart';
 
 
@@ -37,10 +38,10 @@ class Home extends StatelessWidget {
           Expanded(
             child: GestureDetector(
               onTap: () {
-                //Navigator.push(
-                //  context,
-                //  MaterialPageRoute(builder: (context) => Responder()),
-                //);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => History()),
+                );
               },
               child: const CardWidget(message: "View history"),
             ),

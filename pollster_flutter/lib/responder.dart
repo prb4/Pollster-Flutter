@@ -126,7 +126,7 @@ List<Map<String, dynamic>> convertSelectedAnswersListToMap(List<SelectedAnswer> 
 Map<String, dynamic> prepAnswerSubmit(List<SelectedAnswer> selectedAnswer) {
   Map<String, dynamic> data = {};
 
-  data['votes'] = convertSelectedAnswersListToMap(selectedAnswer);  
+  data['answers'] = convertSelectedAnswersListToMap(selectedAnswer);  
   data['username'] = UserSession().username;
   data['user_id'] = UserSession().userId;
   data['poll_id'] = receivedPoll.uuid;

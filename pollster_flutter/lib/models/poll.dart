@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 
 class PollItem extends StatelessWidget{
@@ -73,35 +72,6 @@ class Vote {
     'answers': answers,
   };
 }
-
-/*
-class TitledPoll {
-  final String title;
-  final List<Vote> polls;
-
-  const TitledPoll({
-    required this.title,
-    required this.polls,
-  });
-
-  factory TitledPoll.fromJson(Map<String, dynamic> json) {
-    debugPrint("Converting poll");
-    final List<dynamic> pollsList = json['polls'];
-    final List<Vote> parsedPolls = List<Vote>.from(pollsList);
-
-    debugPrint(parsedPolls.toString());
-    return TitledPoll(
-      title: json['title'] as String,
-      polls: parsedPolls,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    'title': title,
-    'polls': polls,
-  };
-}
-*/
 
 class ReceivedVotes {
   final List<Vote> votes;
@@ -222,4 +192,158 @@ class CreatedPoll {
   String toString() {
     return 'CreatedPoll(title: $title, contacts: $contacts, poll_id: $poll_id, user_id: $user_id, username: $username, votes: ${votes.toString})';
   }
+}
+
+class Recipient {
+  int answered; //TODO - this should be a bool
+  int recipient;
+
+  Recipient({
+    required this.answered,
+    required this.recipient
+  });
+
+    // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'answered': answered,
+      'recipient': recipient
+    };
+  }
+
+  // Factory method to create a Person object from a Map
+  factory Recipient.fromJson(Map<String, dynamic> json) {
+    return Recipient(
+      answered: json['answered'],
+      recipient: json['recipient']
+    );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'Recipient(answered: $answered, recipient: ${recipient.toString()})';
+  }
+}
+
+class CreatedPollMetadata {
+  String created;
+  String poll_id;
+  String title;
+  List<Recipient> recipients;
+
+  CreatedPollMetadata({
+    required this.created,
+    required this.title,
+    required this.poll_id,
+    required this.recipients
+  });
+
+    // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'created': created,
+      'title': title,
+      'poll_id': poll_id,
+      'recipients': recipients
+    };
+  }
+
+  // Factory method to create a Person object from a Map
+  factory CreatedPollMetadata.fromJson(Map<String, dynamic> json) {
+    return CreatedPollMetadata(
+      created: json['created'],
+      title: json['title'],
+      poll_id: json['poll_id'],
+      recipients: json['recipients'] as List<Recipient>
+    );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'CreatedPollMetadata(created: $created, title: $title, poll_id: $poll_id, recipients: ${recipients.toString()})';
+  }
+}
+
+class ReceivedPollMetadata {
+  String title;
+  String poll_id;
+
+  ReceivedPollMetadata({
+    required this.title,
+    required this.poll_id,
+  
+  });
+
+    // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'poll_id': poll_id,
+    };
+  }
+
+  // Factory method to create a Person object from a Map
+  factory ReceivedPollMetadata.fromJson(Map<String, dynamic> json) {
+    return ReceivedPollMetadata(
+      title: json['title'],
+      poll_id: json['poll_id'],
+    );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'ReceivedPollMetadata(title: $title, poll_id: $poll_id)';
+  }
+}
+
+class HistoricMetadata {
+  List<CreatedPollMetadata> createdPollMetadata;
+  List<ReceivedPollMetadata> receivedPollMetadata;
+
+  HistoricMetadata({
+    required this.createdPollMetadata,
+    required this.receivedPollMetadata,
+  });
+
+  @override
+  String toString() {
+    return 'HistoricMetadata(createdPollMetadata: ${createdPollMetadata.toString()}, recivedPollMetadata: ${receivedPollMetadata.toString()})';
+  }
+
+}
+class CreatingQuestion {
+  final Vote poll;
+  final List<Contact>? contacts;
+
+  const CreatingQuestion({
+    required this.poll,
+    required this.contacts,
+  });
+
+  factory CreatingQuestion.fromJson(Map<String, dynamic> json) {
+    debugPrint("Converting question");
+    final List<dynamic> answersList = json['answers'];
+    final List<String> parsedAnswers = List<String>.from(answersList);
+
+    final List<dynamic> contactsList = json['contacts'];
+    final List<Contact> parsedContacts = List<Contact>.from(contactsList);
+
+    Vote newPoll = Vote(question: json['question'], question_id: json['question_id'], answers: parsedAnswers);
+
+    debugPrint(parsedAnswers.toString());
+    return CreatingQuestion(
+      //TODO - this rework may break
+      poll: newPoll,
+      contacts: parsedContacts,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'question': poll.question,
+    'answers': poll.answers,
+    'contacts': contacts,
+  };
 }

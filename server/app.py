@@ -68,11 +68,14 @@ def fetch():
 def history():
     data = request.args
 
-    polls = mid.get_all_created_polls(data['user_id'])
+    created_polls = mid.get_all_created_polls_metadata(data['user_id'])
+    received_polls = mid.get_all_received_polls_metadata(data['user_id'])
 
-    #resp = {}
+    resp = {}
+    resp['created_polls_metadata'] = created_polls
+    resp['received_polls_metadata'] = received_polls
 
-    return make_response(jsonify(polls), 200)
+    return make_response(jsonify(resp), 200)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
