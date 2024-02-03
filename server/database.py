@@ -54,19 +54,19 @@ class Database():
         cursor.execute(sql, val)
         self.dataBase.commit()
 
-    def _validate_polls(self, polls: list):
+    def _validate_polls(self, poll):
         #Dont need contacts anymore, get ride of it
-        polls.pop('contacts')
-        for poll in polls['poll']:
-            if not isinstance(poll['question'], str):
-                print("Question failed validation: {}".format(poll['question']))
+        poll.pop('contacts')
+        for vote in poll['votes']:
+            if not isinstance(vote['question'], str):
+                print("Question failed validation: {}".vote(poll['question']))
                 return None
 
-            if not isinstance(poll['answers'], list):
-                print("Answers failed validation: {}".format(poll['answers']))
+            if not isinstance(vote['answers'], list):
+                print("Answers failed validation: {}".format(vote['answers']))
                 return None
 
-        return polls
+        return poll
 
     def _normalize_polls(self, poll):
         contact_ids = []

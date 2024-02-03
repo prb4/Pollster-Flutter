@@ -28,7 +28,9 @@ def submitQuestion():
     data = request.get_json()
     pprint(data)
 
-    #TODO - add new poll to database
+    #TODO - fix to get around the contacts data structure from flutter
+    contacts = [contact['id'] for contact in data['contacts']]
+    mid.add_new_poll(data['username'], data, contacts, False)
 
 
     return make_response(jsonify(message="OK"), 200)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 
 class PollItem extends StatelessWidget{
   final String input;
@@ -73,6 +74,7 @@ class Vote {
   };
 }
 
+/*
 class TitledPoll {
   final String title;
   final List<Vote> polls;
@@ -99,6 +101,7 @@ class TitledPoll {
     'polls': polls,
   };
 }
+*/
 
 class ReceivedVotes {
   final List<Vote> votes;
@@ -171,6 +174,52 @@ class SelectedAnswer {
   String toString() {
     return 'SelectedAnswer(question_id: $question_id, selectedAnswer: $selectedAnswer)';
   }
+}
 
-  
+class CreatedPoll {
+  String title;
+  String poll_id;
+  List<Vote> votes;
+  int user_id;
+  String username;
+  List<Contact>? contacts;
+
+  CreatedPoll({
+    required this.title,
+    required this.poll_id,
+    required this.votes,
+    required this.user_id,
+    required this.username,
+    required this.contacts,
+  });
+
+  // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'contacts': contacts,
+      'poll_id': poll_id,
+      'user_id': user_id,
+      'username': username,
+      'votes': votes
+    };
+  }
+
+  // Factory method to create a Person object from a Map
+  factory CreatedPoll.fromJson(Map<String, dynamic> json) {
+    return CreatedPoll(
+      title: json['title'],
+      contacts: json['contacts'],
+      poll_id: json['poll_id'],
+      user_id: json['user_id'],
+      username: json['username'],
+      votes: json['votes']
+    );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'CreatedPoll(title: $title, contacts: $contacts, poll_id: $poll_id, user_id: $user_id, username: $username, votes: ${votes.toString})';
+  }
 }

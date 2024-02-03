@@ -40,11 +40,11 @@ def create_polls(username: str, contacts: list):
     poll = {'title':"Poll title user {}".format(creator_id),
             'contacts':contacts,
             'poll_id': str(uuid.uuid4()),
-            'poll':[poll1, poll2, poll3, poll4]
+            'votes':[poll1, poll2, poll3, poll4]
             }
 
 
-    mid.add_new_poll(username, contacts, poll)
+    mid.add_new_poll(username, poll, contacts, True)
     #uuid = db.add_poll_to_polls_table(creator_id, polls)
 
     #for contact in contacts:

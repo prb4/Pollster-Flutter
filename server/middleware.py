@@ -83,17 +83,21 @@ def answer_poll(poll_id: str, user_id: int, votes):
 
     return db.update_poll_as_answered(user_id, poll_id)
 
-def add_new_poll(creator_username: str, recipients, poll):
+def add_new_poll(creator_username: str, poll, recipient_input, is_username:bool):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
     user_id = db.convert_username_to_id(creator_username)
 
-    recipient_ids = [db.convert_username_to_id(recipient) for recipient in recipients]
+    recipients = None
+    if is_username:
+        recipients = [db.convert_username_to_id(recipient) for recipient in recipient_input]
+    else:
+        recipients = recipient_input
 
-    for question in poll['poll']:
+    for question in poll['votes']:
         questions = db.add_question(json.dumps(question), poll['poll_id'])
 
     db._add_poll_to_polls_table(user_id, poll)
 
-    for recipient_id in recipient_ids:
-        db.add_poll_recipient(recipient_id, user_id, poll['poll_id'])
+    for recipient in recipients:
+        db.add_poll_recipient(recipient, user_id, poll['poll_id'])

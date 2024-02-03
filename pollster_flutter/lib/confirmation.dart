@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:pollster_flutter/crypto.dart';
 import 'package:pollster_flutter/home_page.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/poll.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
+import 'package:pollster_flutter/user_session.dart';
 
 class Confirmation extends StatelessWidget {
+  final String title;
+  final List<Vote> votes;
   final List<Contact> selectedContacts;
-  final TitledPoll titledPoll;
-  List<CreatingQuestion> createdQuestions = [];
+  //final CreatedPoll createdPoll;
+  final List<CreatingQuestion> createdQuestions = [];
 
-  Confirmation({required this.selectedContacts, required this.titledPoll});
+  Confirmation({
+    required this.selectedContacts,
+    required this.title,
+    required this.votes
+    });
+
+  CreatedPoll finalizeCreatedPoll(List<Contact> contacts, String title, List<Vote> votes){
+    return CreatedPoll(title: title, poll_id: getUUID(), votes: votes, user_id: UserSession().userId, username: UserSession().username, contacts: contacts);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,21 +46,23 @@ class Confirmation extends StatelessWidget {
             ).toList(),
           ),
           SizedBox(
-            child: Text(titledPoll.title),
+            child: Text(title),
             height: 50,
           ),
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(8),
-              itemCount: titledPoll.polls.length,
+              itemCount: votes.length,
               itemBuilder: (context, index) =>
-                PollReview(poll: titledPoll.polls[index]),
+                PollReview(poll: votes[index]),
             ),
           ),
           ElevatedButton(
             onPressed: () async {
               debugPrint("Confirmation button pressed - sending poll");
-              await sendPostRequest(titledPoll.toJson(), "/submit/poll");
+              CreatedPoll createdPoll = finalizeCreatedPoll(selectedContacts, title, votes);
+              
+              await sendPostRequest(createdPoll.toJson(), "/submit/poll");
               debugPrint("Navigating...");
              
               Navigator.pushAndRemoveUntil(
@@ -87,17 +101,17 @@ class PollReview extends StatelessWidget {
           children: [
             Column(
               children: [ 
-                  Text(poll.question!),
+                  Text(poll.question),
                   ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     primary: false,
                     padding: const EdgeInsets.all(8),
-                    itemCount: poll.answers!.length,
+                    itemCount: poll.answers.length,
                     itemBuilder: (BuildContext context, int index) {
                       return SizedBox(
                         height: 50,
-                        child: Center(child: Text(poll.answers![index])),
+                        child: Center(child: Text(poll.answers[index])),
                       );
                     }
                   ),

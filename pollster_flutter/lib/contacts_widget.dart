@@ -20,22 +20,35 @@ import 'package:pollster_flutter/models/poll.dart';
 final myContactsProvider = ChangeNotifierProvider((ref) => MyContactsChangeNotifier());
 
 class ContactsWidget extends StatelessWidget{
-  final TitledPoll titledPoll;
+  //final TitledPoll titledPoll;
+  //final CreatedPoll createdPoll;
+  final String title;
+  final List<Vote> votes;
 //  final String question;
 //  final List<String>? answers;
 
-  const ContactsWidget({required this.titledPoll});
+  const ContactsWidget({
+    required this.title,
+    required this.votes
+    });
 
   @override
   Widget build(BuildContext context) {
-    return ProviderScope(child: _ContactsWidget(titledPoll: titledPoll));
+    return ProviderScope(child: _ContactsWidget(
+      title: title,
+      votes: votes));
   }
 }
 
 class _ContactsWidget extends ConsumerWidget {
-  final TitledPoll titledPoll;
+  //final CreatedPoll createdPoll;
+  final String title;
+  final List<Vote> votes;
 
-  const _ContactsWidget({required this.titledPoll});
+  const _ContactsWidget({
+    required this.title,
+    required this.votes,
+    });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,7 +71,7 @@ class _ContactsWidget extends ConsumerWidget {
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: ContinueButton(titledPoll: titledPoll),
+                    child: ContinueButton(title: title, votes: votes),
                   ),
                 ]
             )
@@ -180,10 +193,15 @@ class ContactsListing extends ConsumerWidget {
 
 
 class ContinueButton extends ConsumerWidget {
-  final TitledPoll titledPoll;
+  //final CreatedPoll createdPoll;
+  final String title;
+  final List<Vote> votes;
   //final String question;
   //final List<String>? answers;
-  const ContinueButton({required this.titledPoll});
+  const ContinueButton({
+    required this.title,
+    required this.votes
+    });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -193,10 +211,10 @@ class ContinueButton extends ConsumerWidget {
       child: ElevatedButton(
         child: const Text('Continue'),
         onPressed: () {
-          debugPrint("Clicked on continue button: ${titledPoll.polls[0].question} - ${titledPoll.polls[0].answers}");
+          //debugPrint("Clicked on continue button: ${createdPoll.polls[0].question} - ${createdPoll.polls[0].answers}");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Confirmation(selectedContacts: myContactsReader.selectedContacts, titledPoll: titledPoll,)),
+            MaterialPageRoute(builder: (context) => Confirmation(selectedContacts: myContactsReader.selectedContacts, title: title, votes: votes)),
           );
         },
       )

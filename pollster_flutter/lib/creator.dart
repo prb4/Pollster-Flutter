@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
+import 'package:pollster_flutter/crypto.dart';
 import 'package:pollster_flutter/models/poll.dart';
 
 
@@ -342,11 +343,11 @@ class _BuildPollState extends State<BuildPoll> {
 
                         savePoll();
 
-                        final TitledPoll titledPoll = TitledPoll(title: title, polls: polls);
+                        //final CreatedPoll createdPoll = CreatedPoll(title: title, poll_id: getUUID(), votes: polls);
 
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ContactsWidget(titledPoll: titledPoll))
+                          MaterialPageRoute(builder: (context) => ContactsWidget(title: title, votes: polls))
                         );
                       },
                     )
