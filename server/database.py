@@ -225,6 +225,14 @@ class Database():
         return matching_rows
 
 
+    def get_created_polls(self, user_id: int):
+        sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'title', TITLE, 'created', created) as JSON_OUTPUT from POLLS where CREATOR = %s"
+        val = (user_id, )
+
+        created_polls = self._get_polls(sql, val)
+        created_polls = [json.loads(poll[0]) for poll in created_polls]
+        return created_polls
+
     def get_open_polls(self, user_id: int):
         '''
         Returns open polls that a user needs to answer
@@ -236,13 +244,13 @@ class Database():
 
         return self._get_polls(sql, val)
 
-    def get_all_polls(self, user_id: int):
+    def get_all_receieved_polls(self, user_id: int):
         '''
         Returns open polls that a user needs to answer
 
         user_id: the unique user_id value
         '''
-        sql = "SELECT POLLS.POLL_ID, POLLS.TITLE, POLLS.POLL FROM POLLS JOIN RECIPIENT ON POLLS.POLL_ID = RECIPIENT.POLL_ID WHERE RECIPIENT.RECIPIENT = %s"
+        sql = "SELECT POLLS.POLL_ID, POLLS.TITLE FROM POLLS JOIN RECIPIENT ON POLLS.POLL_ID = RECIPIENT.POLL_ID WHERE RECIPIENT.RECIPIENT = %s"
         val = (user_id,)
 
         return self._get_polls(sql, val)
@@ -254,14 +262,16 @@ class Database():
         poll_id = ID of a poll
         '''
 
-        sql = "SELECT QUESTIONS.QUESTION_ID, QUESTIONS.POLL_ID, QUESTIONS.QUESTION FROM QUESTIONS WHERE QUESTIONS.POLL_ID = %s"
+        sql = "SELECT JSON_OBJECT('question_id', QUESTION_ID, 'question', QUESTION) as JSON_OUTPUT from QUESTIONS where POLL_ID = %s"
+        #sql = "SELECT QUESTIONS.QUESTION_ID, QUESTIONS.POLL_ID, QUESTIONS.QUESTION FROM QUESTIONS WHERE QUESTIONS.POLL_ID = %s"
         val = (poll_id,)
 
         cursor = self.dataBase.cursor()
         cursor.execute(sql, val)
 
         matching_rows = cursor.fetchall()
-        return matching_rows
+        result = [json.loads(row[0]) for row in matching_rows]
+        return result
 
 
     def get_password(self, user_id: int):
@@ -278,6 +288,20 @@ class Database():
 
         matching_rows = cursor.fetchall()
         return matching_rows[0][0]
+
+    def get_recipient_table(self, poll_id: str, creator: int):
+        '''
+        Get data from recipient data based on poll_id
+        '''
+        sql = "SELECT JSON_OBJECT('recipient', RECIPIENT, 'answered', ANSWERED) as JSON_OUTPUT from RECIPIENT where POLL_ID = %s and ORIGINATOR = %s"
+        val = (poll_id, creator,)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        matching_rows = cursor.fetchall()
+        rows = [json.loads(row[0]) for row in matching_rows]
+        return rows
 
 def setup_database():
     db = Database(host, user, password)
