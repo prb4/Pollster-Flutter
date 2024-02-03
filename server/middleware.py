@@ -95,6 +95,8 @@ def add_new_poll(creator_username: str, poll, recipient_input, is_username:bool)
         recipients = recipient_input
 
     for question in poll['votes']:
+        if not is_username:
+            question.pop("question_id")
         questions = db.add_question(json.dumps(question), poll['poll_id'])
 
     db._add_poll_to_polls_table(user_id, poll)

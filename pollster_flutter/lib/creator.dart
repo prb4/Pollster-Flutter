@@ -110,7 +110,6 @@ class _BuildPollState extends State<BuildPoll> {
   _BuildPollState({required this.title}) {
     debugPrint("Title is $title");
   }
-  
 
   void saveAnswer(String input) {
     debugPrint("Saving answer: $input");
@@ -118,14 +117,12 @@ class _BuildPollState extends State<BuildPoll> {
   }
 
   void saveAdditionalAnswer(String input, int index){
-    debugPrint("Saving additional answer: $input[$index]");
+    debugPrint("Saving additional answer: $input");
     if (index == additioanlAnswers.length){
       //Need to add an answer onto the list
-      debugPrint("New additional answer: $input");
       additioanlAnswers.add(input);
     }else {
       //Interacting with an answer that's already accounted for
-      debugPrint("Existing additional answer: $input");
       additioanlAnswers[index] = input;
     }
   }
@@ -140,7 +137,7 @@ class _BuildPollState extends State<BuildPoll> {
 
     //Save and join the answers that are currently on the screen and convert them into a poll
     List<String> currentAnswers = joinAnswers();
-    Vote poll = createPoll(question, question_id, currentAnswers);
+    Vote poll = createVote(question, question_id, currentAnswers);
 
 
     //Check if the poll has been added to the on-going list yet. 
@@ -174,7 +171,9 @@ class _BuildPollState extends State<BuildPoll> {
     allAnswers.add(answer);
 
     debugPrint("Length of additional answers: ${additioanlAnswers.length}");
+    debugPrint("Additional answers: ${additioanlAnswers.toString()}");
     debugPrint("Length of allAnswersanswers: ${allAnswers.length}");
+    debugPrint("AllAnswers: ${allAnswers.toString()}");
 
     int i = 0;
     if (additioanlAnswers.isNotEmpty){
@@ -191,10 +190,10 @@ class _BuildPollState extends State<BuildPoll> {
     return allAnswers;
   }
 
-  Vote createPoll(String pollQuestion, int question_id, List<String> pollAnswers) {
-    debugPrint("Creating poll with $pollQuestion, ${pollAnswers.toString()}");
-    Vote tmpPoll = Vote(question: pollQuestion, question_id: question_id, answers: pollAnswers);
-    return tmpPoll;
+  Vote createVote(String question, int question_id, List<String> answers) {
+    debugPrint("Creating vote with $question, ${answers.toString()}");
+    Vote vote = Vote(question: question, question_id: question_id, answers: answers);
+    return vote;
   }
 
   void initiateList() {
@@ -203,7 +202,6 @@ class _BuildPollState extends State<BuildPoll> {
       TextEditingController questionTextController = TextEditingController();
       pollItemList.add(PollItem(input: "Add question", isQuestion: true, isOptional: false, 
         onChanged: (String value) {
-          debugPrint("Saving question");
           saveQuestion(value);
         },
         textController: questionTextController,
@@ -214,7 +212,6 @@ class _BuildPollState extends State<BuildPoll> {
       TextEditingController answerTextController = TextEditingController();
       pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: false, 
         onChanged: (String value) {
-          debugPrint("Saving answer: $value");
           saveAnswer(value);
         },
         textController: answerTextController,
@@ -238,7 +235,6 @@ class _BuildPollState extends State<BuildPoll> {
       int index = additioanlAnswers.length;
       pollItemList.add(PollItem(input: "Add answer", isQuestion: false, isOptional: true, 
         onChanged: (String value) {
-          debugPrint("Saving answer: $value");
           saveAdditionalAnswer(value, index);
         },
         textController: textController,
@@ -256,6 +252,7 @@ class _BuildPollState extends State<BuildPoll> {
   @override
   Widget build(BuildContext context) {
     if (pollItemList.isEmpty){
+      debugPrint("pollItemList is empty");
       //TODO - had to add this if statement as this function seemed to be called after the 'add answer' button was clicked
       initiateList();
     }
@@ -312,6 +309,7 @@ class _BuildPollState extends State<BuildPoll> {
                   itemBuilder: (BuildContext context, int index) {
                     PollItem _pollItem = pollItemList[index];
                     debugPrint("pollItem - ${index} - ${pollItemList.length}");
+                    debugPrint("pollItemList: ${pollItemList.toString()}");
                     return _pollItem;
                   },
                   separatorBuilder: (_, __) => const Divider(),
@@ -331,6 +329,8 @@ class _BuildPollState extends State<BuildPoll> {
                         resetList();
 
                         //Initiate list like a new screen
+                        answer = "";
+                        additioanlAnswers = [];
                         initiateList();
 
                       },
