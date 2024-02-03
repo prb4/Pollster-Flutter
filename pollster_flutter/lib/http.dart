@@ -54,8 +54,8 @@ Future<List<ReceivedVotes>> fetchPolls() async {
   }
 }
 
-Future<HistoricMetadata> fetchHistory() async {
-  String address = ip + "/history?user_id=${UserSession().userId.toString()}";
+Future<List<CreatedPollMetadata>> fetchHistoricCreated() async {
+  String address = ip + "/history/created?user_id=${UserSession().userId.toString()}";
 
   final response = await http
     .get(Uri.parse(address));
@@ -66,13 +66,9 @@ Future<HistoricMetadata> fetchHistory() async {
     final jsonData = jsonDecode(response.body);
     //debugPrint("json: ${data.toString()}");
 
-    HistoricMetadata historicMetadata;
-
     List<dynamic> createdPollsJsonDynamicList = jsonData['created_polls_metadata'];
-    List<dynamic> receievedPollsJsonDynamicList = jsonData['received_polls_metadata'];
 
     debugPrint("Created Polls Metadata: ${createdPollsJsonDynamicList.runtimeType}");
-    debugPrint("Receieved Polls Metadata: ${receievedPollsJsonDynamicList.runtimeType}");
 
     List<CreatedPollMetadata> createdPollMetadataList = [];
     for (var createdPollMetadata in createdPollsJsonDynamicList){
@@ -89,6 +85,29 @@ Future<HistoricMetadata> fetchHistory() async {
       debugPrint("[-] Added item to createdPollMetadataList: ${tmp.toString()}");
     }
 
+    return createdPollMetadataList;
+  } else {
+    debugPrint("Response code is NOT 200");
+    throw Exception("Failed fetchHistory");
+  }
+}
+
+Future<List<ReceivedPollMetadata>> fetchHistoricReceieved() async {
+  String address = ip + "/history/receieved?user_id=${UserSession().userId.toString()}";
+
+  final response = await http
+    .get(Uri.parse(address));
+
+  if (response.statusCode == 200) {
+    debugPrint("Response code is 200");
+    //debugPrint("response body: ${response.body}");
+    final jsonData = jsonDecode(response.body);
+    //debugPrint("json: ${data.toString()}");
+
+    List<dynamic> receievedPollsJsonDynamicList = jsonData['received_polls_metadata'];
+
+    debugPrint("Receieved Polls Metadata: ${receievedPollsJsonDynamicList.runtimeType}");
+
     List<ReceivedPollMetadata> receivedPollMetadataList = [];
     for (var jsonMap in jsonData['received_polls_metadata']){
       ReceivedPollMetadata tmp = ReceivedPollMetadata.fromJson(jsonMap);
@@ -96,15 +115,13 @@ Future<HistoricMetadata> fetchHistory() async {
       debugPrint("[-] Added item to receievedPollMetadataList: ${tmp.toString()}");
     }
 
-    historicMetadata = HistoricMetadata(createdPollMetadata: createdPollMetadataList, receivedPollMetadata: receivedPollMetadataList);
-    debugPrint("Historic metadata: ${historicMetadata.toString()}");
-
-    return historicMetadata;
+    return receivedPollMetadataList;
   } else {
     debugPrint("Response code is NOT 200");
     throw Exception("Failed fetchHistory");
   }
 }
+
 
 Future<Map<String, dynamic>> sendPostRequest(Map<String, dynamic> data, String endpoint) async {
   String address = ip + endpoint;

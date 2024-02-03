@@ -64,18 +64,28 @@ def fetch():
     #TODO - add a return code
     return jsonify(polls)
 
-@app.route("/history", methods=['GET'])
-def history():
+@app.route("/history/created", methods=['GET'])
+def history_created():
     data = request.args
 
     created_polls = mid.get_all_created_polls_metadata(data['user_id'])
-    received_polls = mid.get_all_received_polls_metadata(data['user_id'])
 
     resp = {}
     resp['created_polls_metadata'] = created_polls
+
+    return make_response(jsonify(resp), 200)
+
+@app.route("/history/received", methods=['GET'])
+def history_received():
+    data = request.args
+
+    received_polls = mid.get_all_received_polls_metadata(data['user_id'])
+
+    resp = {}
     resp['received_polls_metadata'] = received_polls
 
     return make_response(jsonify(resp), 200)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

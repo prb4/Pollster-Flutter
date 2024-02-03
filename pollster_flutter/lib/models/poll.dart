@@ -312,7 +312,6 @@ class HistoricMetadata {
   String toString() {
     return 'HistoricMetadata(createdPollMetadata: ${createdPollMetadata.toString()}, recivedPollMetadata: ${receivedPollMetadata.toString()})';
   }
-
 }
 class CreatingQuestion {
   final Vote poll;
