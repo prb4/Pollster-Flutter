@@ -38,8 +38,8 @@ class HistoricTab extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              FutureReceivedPollMetadataBuilder(),
               FutureCreatedPollMetadataBuilder(),
+              FutureReceivedPollMetadataBuilder(),
             ],
           ),
         ),
@@ -91,75 +91,76 @@ class FutureReceivedPollMetadataBuilder extends StatelessWidget {
   }
 }
 
+
 class CreatedPollMetadataExpansionTiles extends StatelessWidget {
   final List<CreatedPollMetadata> createdPollMetadata;
 
   const CreatedPollMetadataExpansionTiles({required this.createdPollMetadata});
-
-  void CreatedPollMetadataItemClicked(int index) {
-    debugPrint("[-] CreatedPollMetadataItemClicked item: ${createdPollMetadata[index].toString()}");
-  }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
         itemCount: createdPollMetadata.length,
         itemBuilder: (context, i) {
-          //return ExpansionTileHeader(
-          //  message: createdPollMetadata[i].title,
-          //  );
-          return ClickableCard(
-              index: i,
-              onPressed: CreatedPollMetadataItemClicked,
-              message: createdPollMetadata[i].title,
-            );
+          return ClickableCreatedPollCard(
+            createdPollMetadata: createdPollMetadata[i]
+          );
         }
-      
     );
   }
 }
+
+
 
 class ReceivedPollMetadataExpansionTiles extends StatelessWidget {
   final List<ReceivedPollMetadata> receivedPollMetadata;
 
   const ReceivedPollMetadataExpansionTiles({required this.receivedPollMetadata});
 
-  void ReceivedPollMetadataItemClicked(int index) {
-    debugPrint("[-] ReceivedPollMetadataItemClicked item: ${receivedPollMetadata[index].toString()}");
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
         itemCount: receivedPollMetadata.length,
         itemBuilder: (context, i) {
-          //return ExpansionTileHeader(
-          //  message: receivedPollMetadata[i].title,
-          //  );
-            return ClickableCard(
-              index: i,
-              onPressed: ReceivedPollMetadataItemClicked,
-              message: receivedPollMetadata[i].title,
-            );
+          return ClickableReceivedPollCard(
+            receivedPollMetadata: receivedPollMetadata[i]
+          );
         }
     );
   }
 }
-class ExpansionTileHeader extends StatelessWidget {
-  final String message;
-  const ExpansionTileHeader({super.key,required, required this.message});
+
+class ReceivedPollItemDetailedView extends StatelessWidget {
+  final ReceivedPollMetadata receivedPollItem;
+  const ReceivedPollItemDetailedView({super.key,required, required this.receivedPollItem});
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      title: Text('$message', style: const TextStyle(fontWeight: FontWeight.bold),),
-      //subtitle: Text('Ch: ${accessPoint.channel}  |  ${accessPoint.last_update}'),
-      //textColor: Colors.red,
-      //leading: accessPoint.has_handshake ? const Icon(Icons.handshake, color: Colors.green,) : null,
-      //children: <Widget>[
-      //  ExpandedView(accessPoint: accessPoint),
-      //],
+    return Center(
+      child: Column(
+        children: [
+          Text(receivedPollItem.poll_id),
+          Text(receivedPollItem.title),
+        ],
+      ),
     );
   }
 }
 
+class CreatedPollItemDetailedView extends StatelessWidget {
+  final CreatedPollMetadata createdPollItem;
+  const CreatedPollItemDetailedView({super.key,required, required this.createdPollItem});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Text(createdPollItem.poll_id),
+          Text(createdPollItem.title),
+          Text(createdPollItem.created),
+        ],
+      ),
+    );
+  }
+}

@@ -1,26 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/history.dart';
+import 'package:pollster_flutter/models/poll.dart';
 
-class ClickableCard extends StatelessWidget {
-  final int index;
-  final Function(int) onPressed;
-  final String message;
+class ClickableCreatedPollCard extends StatelessWidget {
+  final CreatedPollMetadata createdPollMetadata;
 
-  const ClickableCard({
-    required this.index,
-    required this.onPressed,
-    required this.message,
+  const ClickableCreatedPollCard({
+    required this.createdPollMetadata,
 
   });
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        onPressed(index);
-        debugPrint("${index.toString()} clicked");
+        //onPressed(index);
+      
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreatedPollItemDetailedView(createdPollItem: createdPollMetadata)
+          ),
+        );
       },
       child: Card(
         child: ListTile(
-          title: Text(message),
+          title: Text(createdPollMetadata.title),
+        ),
+      ),
+    );
+  }
+}
+
+class ClickableReceivedPollCard extends StatelessWidget {
+  final ReceivedPollMetadata receivedPollMetadata;
+
+  const ClickableReceivedPollCard({
+    required this.receivedPollMetadata,
+
+  });
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        //onPressed(index);
+      
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ReceivedPollItemDetailedView(
+              receivedPollItem: receivedPollMetadata
+            )
+          ),
+        );
+      },
+      child: Card(
+        child: ListTile(
+          title: Text(receivedPollMetadata.title),
         ),
       ),
     );
