@@ -7,3 +7,11 @@ askly
 #TODO
 - click on poll in "answer open poll"
 - "View History" card
+
+- in historic polls, when a poll is selected, pop open a new page
+	- created polls will show:
+		- completion
+		- totals
+		- in the future - break down by use
+	- recieved polls
+		- previous answers

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
-class ClickableCard extends StatelessWidget {
+class SelectableCard extends StatelessWidget {
   final int index;
+  final bool isSelected;
   final Function(int) onPressed;
   final String message;
 
-  const ClickableCard({
+  const SelectableCard({
     required this.index,
+    required this.isSelected,
     required this.onPressed,
     required this.message,
 
@@ -19,6 +21,7 @@ class ClickableCard extends StatelessWidget {
         debugPrint("${index.toString()} clicked");
       },
       child: Card(
+        color: isSelected ? Colors.blue : Colors.white,
         child: ListTile(
           title: Text(message),
         ),

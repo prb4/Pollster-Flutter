@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
 import 'package:pollster_flutter/user_session.dart';
 import 'http.dart';
-import 'clickable_card.dart';
+import 'selectable_card.dart';
 import 'package:pollster_flutter/models/poll.dart';
 class Responder extends StatefulWidget {
   const Responder({super.key});
@@ -267,7 +267,7 @@ class _AnswerListState extends State<AnswerList> {
           shrinkWrap: true, //TODO - this may not be the best solution, but it works
           itemCount: answers.length,
           itemBuilder: (BuildContext context, int index) {
-            return ClickableCard(
+            return SelectableCard(
               index: index,
               isSelected: selectedCardIndex == index,
               onPressed: selectCard,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/clickable_card.dart';
 import 'models/poll.dart';
 import 'http.dart';
+import 'selectable_card.dart';
 
 class History extends StatelessWidget {
 
@@ -94,13 +96,22 @@ class CreatedPollMetadataExpansionTiles extends StatelessWidget {
 
   const CreatedPollMetadataExpansionTiles({required this.createdPollMetadata});
 
+  void CreatedPollMetadataItemClicked(int index) {
+    debugPrint("[-] CreatedPollMetadataItemClicked item: ${createdPollMetadata[index].toString()}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
         itemCount: createdPollMetadata.length,
         itemBuilder: (context, i) {
-          return ExpansionTileHeader(
-            message: createdPollMetadata[i].title,
+          //return ExpansionTileHeader(
+          //  message: createdPollMetadata[i].title,
+          //  );
+          return ClickableCard(
+              index: i,
+              onPressed: CreatedPollMetadataItemClicked,
+              message: createdPollMetadata[i].title,
             );
         }
       
@@ -113,16 +124,24 @@ class ReceivedPollMetadataExpansionTiles extends StatelessWidget {
 
   const ReceivedPollMetadataExpansionTiles({required this.receivedPollMetadata});
 
+  void ReceivedPollMetadataItemClicked(int index) {
+    debugPrint("[-] ReceivedPollMetadataItemClicked item: ${receivedPollMetadata[index].toString()}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
         itemCount: receivedPollMetadata.length,
         itemBuilder: (context, i) {
-          return ExpansionTileHeader(
-            message: receivedPollMetadata[i].title,
+          //return ExpansionTileHeader(
+          //  message: receivedPollMetadata[i].title,
+          //  );
+            return ClickableCard(
+              index: i,
+              onPressed: ReceivedPollMetadataItemClicked,
+              message: receivedPollMetadata[i].title,
             );
         }
-      
     );
   }
 }
@@ -143,3 +162,4 @@ class ExpansionTileHeader extends StatelessWidget {
     );
   }
 }
+
