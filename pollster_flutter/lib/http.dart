@@ -93,7 +93,7 @@ Future<List<CreatedPollMetadata>> fetchHistoricCreated() async {
 }
 
 Future<List<ReceivedPollMetadata>> fetchHistoricReceieved() async {
-  String address = ip + "/history/receieved?user_id=${UserSession().userId.toString()}";
+  String address = ip + "/history/received?user_id=${UserSession().userId.toString()}";
 
   final response = await http
     .get(Uri.parse(address));
