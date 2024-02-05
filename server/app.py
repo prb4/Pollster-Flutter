@@ -86,6 +86,33 @@ def history_received():
 
     return make_response(jsonify(resp), 200)
 
+@app.route("/poll/created", methods=['GET'])
+def created_poll():
+    data = request.args
+
+    #data['user_id']
+    #data['poll_id']
+
+    poll = mid.get_user_created_poll(data['user_id'], data['poll_id'])
+    pprint(poll)
+
+    return make_response(jsonify(poll), 200)
+
+@app.route("/poll/received", methods=['GET'])
+def received_poll():
+    data = request.args
+
+    #data['user_id']
+    #data['poll_id']
+
+    poll = mid.get_user_received_poll(data['user_id'], data['poll_id'])
+
+    pprint(poll)
+
+    return make_response(jsonify(poll), 200)
+
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

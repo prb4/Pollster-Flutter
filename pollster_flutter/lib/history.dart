@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/clickable_card.dart';
+import 'package:pollster_flutter/user_session.dart';
 import 'models/poll.dart';
 import 'http.dart';
 import 'selectable_card.dart';
@@ -136,12 +137,14 @@ class ReceivedPollItemDetailedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          Text(receivedPollItem.poll_id),
-          Text(receivedPollItem.title),
-        ],
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            Text(receivedPollItem.poll_id),
+            Text(receivedPollItem.title),
+          ],
+        ),
       ),
     );
   }
@@ -151,15 +154,30 @@ class CreatedPollItemDetailedView extends StatelessWidget {
   final CreatedPollMetadata createdPollItem;
   const CreatedPollItemDetailedView({super.key,required, required this.createdPollItem});
 
+    void getData(String poll_id) async{
+    try {
+      
+      final Map<String, dynamic> data = await fetchData("/poll/created?user_id=${UserSession().userId}&poll_id=$poll_id");
+      final CreatedPollFull createdPollFull = CreatedPollFull.fromJson(data);
+
+    } catch (e) {
+      // Handle network errors or exceptions here
+      print('Error: $e');
+      throw e;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        children: [
-          Text(createdPollItem.poll_id),
-          Text(createdPollItem.title),
-          Text(createdPollItem.created),
-        ],
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            Text(createdPollItem.poll_id),
+            Text(createdPollItem.title),
+            Text(createdPollItem.created),
+          ],
+        ),
       ),
     );
   }

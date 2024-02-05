@@ -134,3 +134,32 @@ def get_all_received_polls_metadata(user_id: int) -> list:
 
     receieved_polls = db.get_all_received_polls_metadata(user_id)
     return receieved_polls
+
+def get_user_created_poll(user_id: int, poll_id: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    create_poll = db.get_created_poll(user_id, poll_id) 
+    questions = db.get_questions(poll_id)
+    recipients = db.get_recipients(poll_id)
+
+    data = {}
+    data['recipeints'] = recipeints
+    data['answers'] = answers
+    data['created_poll'] = created_poll
+
+    return data
+
+def get_user_received_poll(user_id: int, poll_id: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    poll = db.get_poll(poll_id) 
+    questions = db.get_questions(poll_id)
+    answers = db.get_answers(poll_id)
+
+    data = {}
+    data['questions'] = questions
+    data['answers'] = answers
+    data['poll'] = poll
+
+    return data
+

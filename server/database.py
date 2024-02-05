@@ -225,6 +225,52 @@ class Database():
         return matching_rows
 
 
+    def get_answers(self, poll_id: str):
+
+        sql = "SELECT JSON_OBJECT('answer_id', ANSWER_ID, 'question_id', QUESTION_ID, 'poll_id', POLL_ID, 'recipient_id', RECIPIENT_ID, 'answer', ANSWER) as JSON_OUTPUT from ANSWERS where POLL_ID = %s"
+        val = (poll_id, )
+
+        answers = self._get_polls(sql, val)
+        answers = [json.loads[0] for answer in answers]
+
+        return answers
+
+    def get_questions(self, poll_id: str):
+        sql = "SELECT JSON_OBJECT('question_id', QUESTION_ID, 'poll_id', POLL_ID, 'question', QUESTION) as JSON_OUTPUT from QUESTIONS where POLL_ID = %s"
+        val = (poll_id,)
+
+        questions = self._get_polls(sql, val)
+        questions = [json.loads(question[0]) for question in questions]
+
+        return questions
+
+    def get_recipients(self, user_id: int, poll_id: str):
+        sql = "SELECT JSON_OBJECT('recipient', RECIPIENT, 'originator', ORIGINATOR, 'poll_id', POLL_ID, 'answered', ANSWERED) as JSON_OUTPUT from RECIPIENT where ORIGINATOR = %s and POLL_ID = %s"
+        val = (user_id, poll_id,)
+
+        recipients = self._get_polls(sql, val)
+        recipients = [json.loads(recipient[0]) for recipient in recipients]
+
+        return recipients
+
+    def get_poll(self, poll_id: str):
+        sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'title', TITLE, 'created', CREATED) as JSON_OUTPUT from POLLS where POLL_ID = %s"
+        val = (poll_id, )
+
+        created_poll = self._get_polls(sql, val)
+        created_poll = [json.loads(poll[0]) for poll in created_poll]
+
+        return created_poll
+
+    def get_created_poll(self, user_id: int, poll_id: str):
+        sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'title', TITLE, 'created', CREATED) as JSON_OUTPUT from POLLS where CREATOR = %s and POLL_ID = %s"
+        val = (user_id, poll_id, )
+
+        created_poll = self._get_polls(sql, val)
+        created_poll = [json.loads(poll[0]) for poll in created_poll]
+
+        return created_poll
+
     def get_created_polls(self, user_id: int):
         sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'title', TITLE, 'created', created) as JSON_OUTPUT from POLLS where CREATOR = %s"
         val = (user_id, )
