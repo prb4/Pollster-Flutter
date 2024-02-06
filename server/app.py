@@ -60,9 +60,38 @@ def signup():
 @app.route("/fetch", methods=['GET'])
 def fetch():
     data = request.args
-    polls = mid.get_open_polls(data['user_id'])
+    polls = mid.get_polls_open(data['user_id'])
     #TODO - add a return code
     return jsonify(polls)
+
+@app.route("/polls", methods=['GET'])
+#This end point only returns metadata on a poll
+def polls():
+    data = request.args
+    #data['user_id']
+
+    resp = {}
+
+    if "True" == data['created']:
+        created_polls = mid.get_polls_created(data['user_id'])
+        resp['createdPollsMetadata'] = created_polls
+
+    elif "True" == data['received']:
+        try:
+            if "True" == data['open']:
+                open_polls = mid.get_polls_open(data['user_id'])
+                resp['openPollsMetadata'] = open_polls
+        except KeyError:
+            received_polls = mid.get_polls_received(data['user_id'])
+            resp['receivedPollsMetadata'] = received_polls
+
+    pprint(resp)
+
+    return make_response(jsonify(resp), 200)
+
+@app.route("/poll", methods=['GET'])
+def poll():
+    data = request.args
 
 @app.route("/history/created", methods=['GET'])
 def history_created():
@@ -71,7 +100,8 @@ def history_created():
     created_polls = mid.get_all_created_polls_metadata(data['user_id'])
 
     resp = {}
-    resp['created_polls_metadata'] = created_polls
+    resp['pollMetadata'] = created_polls
+    pprint(resp)
 
     return make_response(jsonify(resp), 200)
 
@@ -82,37 +112,10 @@ def history_received():
     received_polls = mid.get_all_received_polls_metadata(data['user_id'])
 
     resp = {}
-    resp['received_polls_metadata'] = received_polls
+    resp['pollMetadata'] = received_polls
+    pprint(resp)
 
     return make_response(jsonify(resp), 200)
-
-@app.route("/poll/created", methods=['GET'])
-def created_poll():
-    data = request.args
-
-    #data['user_id']
-    #data['poll_id']
-
-    poll = mid.get_user_created_poll(data['user_id'], data['poll_id'])
-    pprint(poll)
-
-    return make_response(jsonify(poll), 200)
-
-@app.route("/poll/received", methods=['GET'])
-def received_poll():
-    data = request.args
-
-    #data['user_id']
-    #data['poll_id']
-
-    poll = mid.get_user_received_poll(data['user_id'], data['poll_id'])
-
-    pprint(poll)
-
-    return make_response(jsonify(poll), 200)
-
-
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

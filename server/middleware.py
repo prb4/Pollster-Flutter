@@ -16,13 +16,6 @@ def validate_login(username:str, hashed_password:str):
     else:
         return None
 
-def get_open_polls(user_id: str):
-    db = database.Database(database.host, database.user, database.password, "Pollster")
-
-    _polls = db.get_open_polls(str(user_id))
-
-    return get_polls(_polls)
-
 def get_all_polls(user_id: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
@@ -43,7 +36,7 @@ def get_polls(_polls):
         poll = {}
         poll['title'] = title
         poll['poll_id'] = poll_id
-        poll['votes'] = []
+        poll['questions'] = []
  
         for _question in _questions:
             question_id = _question[0]
@@ -55,7 +48,7 @@ def get_polls(_polls):
             question['question'] = question_answer['question']
             question['answers'] = question_answer['answers']
 
-            poll['votes'].append(question)
+            poll['questions'].append(question)
 
         polls.append(poll)
 
@@ -106,60 +99,49 @@ def add_new_poll(creator_username: str, poll, recipient_input, is_username:bool)
     else:
         recipients = recipient_input
 
-    for question in poll['votes']:
+    for question in poll['questions']:
         if not is_username:
             question.pop("question_id")
-        questions = db.add_question(json.dumps(question), poll['poll_id'])
+        questions = db.insert_new_question(json.dumps(question['prompt']), json.dumps(question['choices']), poll['poll_id'])
 
-    db._add_poll_to_polls_table(user_id, poll)
+    db.insert_new_poll(user_id, poll['poll_id'], poll['title'])
 
     for recipient in recipients:
-        db.add_poll_recipient(recipient, user_id, poll['poll_id'])
+        db.insert_recipient(recipient, user_id, poll['poll_id'])
 
-def get_all_created_polls_metadata(user_id: int) -> list:
+def get_created_polls_metadata(user_id: int) -> list:
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    created_polls = db.get_created_polls(user_id)
-    for i in range(len(created_polls)):
+    created_polls = db.get_polls_created(user_id)
+    #for i in range(len(created_polls)):
         #questions = db.get_questions(created_polls[i]['poll_id'])
         #created_polls[i]['questions'] = questions
 
-        recipients = db.get_recipient_table(created_polls[i]['poll_id'], user_id)
-        created_polls[i]['recipients'] = recipients
+    #    recipients = db.get_recipient_table(created_polls[i]['poll_id'], user_id)
     
     return created_polls
+
+def get_createdPollMetadata(user_id: int, poll_id: str):
+    created_poll = db.get_poll_created(user_id, poll_id) 
+    return created_poll[0]
 
 def get_all_received_polls_metadata(user_id: int) -> list:
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    receieved_polls = db.get_all_received_polls_metadata(user_id)
+    receieved_polls = db.get_polls_received(user_id)
     return receieved_polls
 
-def get_user_created_poll(user_id: int, poll_id: str):
+def get_polls_created(user_id: int):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    create_poll = db.get_created_poll(user_id, poll_id) 
-    questions = db.get_questions(poll_id)
-    recipients = db.get_recipients(poll_id)
+    return db.get_polls_created(user_id)
 
-    data = {}
-    data['recipeints'] = recipeints
-    data['answers'] = answers
-    data['created_poll'] = created_poll
-
-    return data
-
-def get_user_received_poll(user_id: int, poll_id: str):
+def get_polls_received(user_id: int):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    poll = db.get_poll(poll_id) 
-    questions = db.get_questions(poll_id)
-    answers = db.get_answers(poll_id)
+    return db.get_polls_received(user_id) 
 
-    data = {}
-    data['questions'] = questions
-    data['answers'] = answers
-    data['poll'] = poll
+def get_polls_open(user_id: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    return data
-
+    return db.get_polls_open(str(user_id))

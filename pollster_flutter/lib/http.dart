@@ -6,10 +6,85 @@ import 'package:http/http.dart' as http;
 import 'package:pollster_flutter/models/poll.dart';
 import 'package:pollster_flutter/user_session.dart';
 
-String ip = "http://192.168.1.151:5000/";
+//String ip = "http://192.168.1.151:5000/";
+String ip = "http://192.168.11.48:5000/";
 //String ip = "http://172.16.44.50:5000/";
 
+Future<CreatedPollFull> fetchCreatedPollFull(String poll_id) async {
+  debugPrint("in fetchCreatedPollFull: $poll_id");
+  String endpoint = "/poll/created?user_id=${UserSession().userId}&poll_id=$poll_id";
+  Map<String, dynamic> jsonData = await fetch(endpoint);
+  debugPrint("[-] Received poll data: ${jsonData.runtimeType},  ${jsonData.toString()}");
+  debugPrint("[---] ${jsonData['createdPollMetadata']}");
 
+  return CreatedPollFull.fromJson(jsonData);
+
+}
+
+Future<Map<String, dynamic>> fetch(String endpoint) async {
+  String address = ip + endpoint;
+  try {
+    final response = await http.get(Uri.parse(address));
+
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data;
+    } else {
+      // If the server did not return a 200 OK response, throw an exception.
+      throw Exception('Failed to load data');
+    }
+  } catch (e) {
+    // Handle network errors or exceptions here
+    print('Error: $e');
+    throw e;
+  }
+}
+
+Future<List<Map<String, dynamic>>> fetchList(String endpoint) async {
+  String address = ip + endpoint;
+  try {
+    final response = await http.get(Uri.parse(address));
+
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON
+      final Map<String, dynamic> data = json.decode(response.body);
+      debugPrint("[-] $data");
+
+      if (data.containsKey('createdPollsMetadata'))
+      {
+        debugPrint("[-] Key contains createdPollsMetadata");
+        debugPrint("[-] Type: ${data['createdPollsMetadata'].runtimeType}");
+        final List<Map<String, dynamic>> finalData = data['createdPollsMetadata'].cast<Map<String, dynamic>>();
+        return finalData;
+      }
+      else if (data.containsKey('receivedPollsMetadata'))
+      {
+        debugPrint("[-] Key contains receivedPollsMetadata");
+        final List<Map<String, dynamic>> finalData = data['receivedPollsMetadata'].cast<Map<String, dynamic>>();
+        return finalData;
+      }
+      else if (data.containsKey('openPollsMetadata'))
+      {
+        debugPrint("[-] Key contains openPollsMetadata");
+        final List<Map<String, dynamic>> finalData = data['openPollsMetadata'].cast<Map<String, dynamic>>();
+        return finalData;      }
+      else
+      {
+        debugPrint("[-] Key contained nothing");
+        return []; // TODO - bad
+      }
+      
+    } else {
+      // If the server did not return a 200 OK response, throw an exception.
+      throw Exception('Failed to load data');
+    }
+  } catch (e) {
+    // Handle network errors or exceptions here
+    print('Error: $e');
+    throw e;
+  }
+}
 
 Future<List<ReceivedVotes>> fetchPolls() async {
   String address = ip + "fetch?user_id=${UserSession().userId.toString()}";
@@ -22,8 +97,6 @@ Future<List<ReceivedVotes>> fetchPolls() async {
     //debugPrint("response body: ${response.body}");
     final data = jsonDecode(response.body);
     debugPrint("json decoded: ${data.length}");
-    debugPrint("json: ${data.toString()}");
-    debugPrint("json type: ${data.runtimeType}");
 
     final List<ReceivedVotes> receivedVotesList = [];
 
@@ -34,13 +107,13 @@ Future<List<ReceivedVotes>> fetchPolls() async {
       final String title = data[i]['title'];
       int len = data[i]['votes'].length;
 
-      List<Vote> polls = [];
+      List<Questions> polls = [];
 
       for (var x = 0; x < len; x++){
         final _polls = data[i]['votes'][x];
         //debugPrint("Polls question: ${_polls['question']}");
         //debugPrint("Polls answers: ${_polls['answers']}");
-        Vote poll = Vote.fromJson(_polls);
+        Questions poll = Questions.fromJson(_polls);
         polls.add(poll);
       }
 
@@ -54,7 +127,29 @@ Future<List<ReceivedVotes>> fetchPolls() async {
   }
 }
 
-Future<List<CreatedPollMetadata>> fetchHistoricCreated() async {
+Future<List<PollMetadata>> fetchCreated() async {
+  debugPrint("in fetchCreated");
+  String endpoint = "/polls?user_id=${UserSession().userId}&created=True&received=False";
+  List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
+
+
+  List<PollMetadata> pollMetadataList = jsonData.map((Map<String, dynamic> item) {
+    return PollMetadata(
+      creator: item['creator'].toString(),
+      title: item['title'], 
+      poll_id: item['poll_id'], 
+      created: item['created'],
+    );
+  }).toList();
+
+  debugPrint("[-] pollMetadataList: ${pollMetadataList.toString()}");
+
+  return pollMetadataList;
+
+}
+
+
+/*
   String address = ip + "/history/created?user_id=${UserSession().userId.toString()}";
 
   final response = await http
@@ -66,21 +161,22 @@ Future<List<CreatedPollMetadata>> fetchHistoricCreated() async {
     final jsonData = jsonDecode(response.body);
     //debugPrint("json: ${data.toString()}");
 
-    List<dynamic> createdPollsJsonDynamicList = jsonData['created_polls_metadata'];
+    List<dynamic> createdPollsJsonDynamicList = jsonData['createdPollMetadata'];
 
     debugPrint("Created Polls Metadata: ${createdPollsJsonDynamicList.runtimeType}");
 
-    List<CreatedPollMetadata> createdPollMetadataList = [];
+    List<PollMetadata> createdPollMetadataList = [];
     for (var createdPollMetadata in createdPollsJsonDynamicList){
 
       // Convert List<dynamic> to List<Recipient>
       List<Recipient> recipientList = [];
       for (Map<String, dynamic> item in createdPollMetadata['recipients']){
+        debugPrint("[-] Recipient: ${item.toString()}");
         recipientList.add(Recipient.fromJson(item));
       }
 
       createdPollMetadata['recipients'] = recipientList;
-      CreatedPollMetadata tmp = CreatedPollMetadata.fromJson(createdPollMetadata);
+      PollMetadata tmp = PollMetadata.fromJson(createdPollMetadata);
       createdPollMetadataList.add(tmp);
       debugPrint("[-] Added item to createdPollMetadataList: ${tmp.toString()}");
     }
@@ -91,35 +187,41 @@ Future<List<CreatedPollMetadata>> fetchHistoricCreated() async {
     throw Exception("Failed fetchHistory");
   }
 }
+*/
+Future<List<PollMetadata>> fetchReceieved() async {
+  debugPrint("in fetchReceived");
+  String endpoint = "/polls?user_id=${UserSession().userId}&created=False&received=True";
+  List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
-Future<List<ReceivedPollMetadata>> fetchHistoricReceieved() async {
-  String address = ip + "/history/received?user_id=${UserSession().userId.toString()}";
 
-  final response = await http
-    .get(Uri.parse(address));
+  List<PollMetadata> pollMetadataList = jsonData.map((Map<String, dynamic> item) {
+    return PollMetadata(
+      creator: item['creator'].toString(),
+      title: item['title'], 
+      poll_id: item['poll_id'], 
+      created: item['created'],
+    );
+  }).toList();
 
-  if (response.statusCode == 200) {
-    debugPrint("Response code is 200");
-    //debugPrint("response body: ${response.body}");
-    final jsonData = jsonDecode(response.body);
-    //debugPrint("json: ${data.toString()}");
+  return pollMetadataList;
+}
 
-    List<dynamic> receievedPollsJsonDynamicList = jsonData['received_polls_metadata'];
+Future<List<PollMetadata>> fetchOpen() async {
+  debugPrint("in fetchOpen");
+  String endpoint = "/polls?user_id=${UserSession().userId}&open=True&created=False&received=True";
+  List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
-    debugPrint("Receieved Polls Metadata: ${receievedPollsJsonDynamicList.runtimeType}");
 
-    List<ReceivedPollMetadata> receivedPollMetadataList = [];
-    for (var jsonMap in jsonData['received_polls_metadata']){
-      ReceivedPollMetadata tmp = ReceivedPollMetadata.fromJson(jsonMap);
-      receivedPollMetadataList.add(tmp);
-      debugPrint("[-] Added item to receievedPollMetadataList: ${tmp.toString()}");
-    }
+  List<PollMetadata> pollMetadataList = jsonData.map((Map<String, dynamic> item) {
+    return PollMetadata(
+      creator: item['creator'].toString(),
+      title: item['title'], 
+      poll_id: item['poll_id'], 
+      created: item['created'],
+    );
+  }).toList();
 
-    return receivedPollMetadataList;
-  } else {
-    debugPrint("Response code is NOT 200");
-    throw Exception("Failed fetchHistory");
-  }
+  return pollMetadataList;
 }
 
 

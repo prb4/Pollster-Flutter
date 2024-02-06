@@ -9,7 +9,7 @@ import 'package:pollster_flutter/user_session.dart';
 
 class Confirmation extends StatelessWidget {
   final String title;
-  final List<Vote> votes;
+  final List<Questions> votes;
   final List<Contact> selectedContacts;
   //final CreatedPoll createdPoll;
   final List<CreatingQuestion> createdQuestions = [];
@@ -20,8 +20,8 @@ class Confirmation extends StatelessWidget {
     required this.votes
     });
 
-  CreatedPoll finalizeCreatedPoll(List<Contact> contacts, String title, List<Vote> votes){
-    return CreatedPoll(title: title, poll_id: getUUID(), votes: votes, user_id: UserSession().userId, username: UserSession().username, contacts: contacts);
+  CreatedPoll finalizeCreatedPoll(List<Contact> contacts, String title, List<Questions> votes){
+    return CreatedPoll(title: title, poll_id: getUUID(), questions: votes, user_id: UserSession().userId, username: UserSession().username, contacts: contacts);
   }
 
   @override
@@ -82,7 +82,7 @@ class Confirmation extends StatelessWidget {
 }
 
 class PollReview extends StatelessWidget {
-  final Vote poll;
+  final Questions poll;
 
   const PollReview({required this.poll});
 
@@ -101,17 +101,17 @@ class PollReview extends StatelessWidget {
           children: [
             Column(
               children: [ 
-                  Text(poll.question),
+                  Text(poll.prompt),
                   ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     primary: false,
                     padding: const EdgeInsets.all(8),
-                    itemCount: poll.answers.length,
+                    itemCount: poll.choices.length,
                     itemBuilder: (BuildContext context, int index) {
                       return SizedBox(
                         height: 50,
-                        child: Center(child: Text(poll.answers[index])),
+                        child: Center(child: Text(poll.choices[index])),
                       );
                     }
                   ),

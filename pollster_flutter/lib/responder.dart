@@ -4,6 +4,8 @@ import 'package:pollster_flutter/user_session.dart';
 import 'http.dart';
 import 'selectable_card.dart';
 import 'package:pollster_flutter/models/poll.dart';
+import 'crypto.dart';
+import 'package:pollster_flutter/clickable_card.dart';
 class Responder extends StatefulWidget {
   const Responder({super.key});
 
@@ -11,9 +13,50 @@ class Responder extends StatefulWidget {
   State<Responder> createState() => _ResponderState();
 }
 
+class OpenPolls extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<PollMetadata>> (
+      future: fetchOpen(),
+      builder: (context, snapshot) {
+        
+        if (snapshot.hasData) {
+          debugPrint("snapshot has data!");
+
+          return OpenPollMetadataCardLayout(openPollMetadata: snapshot.data!);
+
+        } else if (snapshot.hasError) {
+          return const Text("Snapshot error"); // TODO - improve
+        }
+        return const CircularProgressIndicator();
+      }
+    );
+  }
+}
+
+class OpenPollMetadataCardLayout extends StatelessWidget {
+  final List<PollMetadata> openPollMetadata;
+
+  const OpenPollMetadataCardLayout({required this.openPollMetadata});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: openPollMetadata.length,
+        itemBuilder: (context, i) {
+          return ClickableOpenPollCard(
+            openPollMetadata: openPollMetadata[i]
+          );
+        }
+    );
+  }
+}
+
 class _ResponderState extends State<Responder> {
   //Class that actually fetches the data
   late Future<List<ReceivedVotes>> futurePolls;
+
 
   @override
   void initState() {
@@ -23,7 +66,7 @@ class _ResponderState extends State<Responder> {
     debugPrint("Have futureQuestion");
 
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +119,7 @@ class ChoosePoll extends StatelessWidget {
               debugPrint("Clicked poll: ${receivedPolls[i].title}");
               Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => PollLayout(receivedPoll: receivedPolls[i]))
+                MaterialPageRoute(builder: (context) => PollLayout(receivedVotes: receivedPolls[i]))
               );
               
             });
@@ -88,13 +131,13 @@ class ChoosePoll extends StatelessWidget {
 
 class PollLayout extends StatelessWidget {
 
-  final ReceivedVotes receivedPoll;
+  final ReceivedVotes receivedVotes;
 
   const PollLayout({
-    required this.receivedPoll,
+    required this.receivedVotes,
   });
 
-  List<SelectedAnswer> updateSelectedAnswers(selectedAnswers, index, question_id, answer){
+  List<Answer> updateSelectedAnswers(selectedAnswers, index, question_id, answer){
     debugPrint("Current selectedAnswer: ${selectedAnswers.toString()}");
     debugPrint("index: ${index.toString()}, question_id: ${question_id.toString()}, answer: ${answer.toString()}");
 
@@ -105,16 +148,16 @@ class PollLayout extends StatelessWidget {
     return selectedAnswers;
 }
 
-List<Map<String, dynamic>> convertSelectedAnswersListToMap(List<SelectedAnswer> selectedAnswers){
+List<Map<String, dynamic>> convertSelectedAnswersListToMap(List<Answer> selectedAnswers){
   
   List<Map<String, dynamic>> data = [];
   
   //TODO - this breaks if not all questions are answered
 
-  for (SelectedAnswer answer in selectedAnswers) {
+  for (Answer answer in selectedAnswers) {
     Map<String, dynamic> result = {};
     result['question_id'] = answer.question_id;
-    result['answer'] = answer.selectedAnswer;
+    result['answer'] = answer.answer;
 
     data.add(result);
   }
@@ -123,13 +166,13 @@ List<Map<String, dynamic>> convertSelectedAnswersListToMap(List<SelectedAnswer> 
   return data;
 }
 
-Map<String, dynamic> prepAnswerSubmit(List<SelectedAnswer> selectedAnswer) {
+Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
   Map<String, dynamic> data = {};
 
   data['answers'] = convertSelectedAnswersListToMap(selectedAnswer);  
   data['username'] = UserSession().username;
   data['user_id'] = UserSession().userId;
-  data['poll_id'] = receivedPoll.uuid;
+  data['poll_id'] = getUUID();
 
   debugPrint("[-] Sending ${data.toString()}");
 
@@ -138,11 +181,11 @@ Map<String, dynamic> prepAnswerSubmit(List<SelectedAnswer> selectedAnswer) {
   
   @override
   Widget build(BuildContext context) {
-    List<SelectedAnswer> selectedAnswers = List.generate(receivedPoll.votes.length, (index) => SelectedAnswer());
+    List<Answer> selectedAnswers = List.generate(receivedVotes.votes.length, (index) => Answer());
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            receivedPoll.title,
+            receivedVotes.title,
             style: const TextStyle(
               fontSize: 15.0,
               color: Colors.black,
@@ -157,13 +200,13 @@ Map<String, dynamic> prepAnswerSubmit(List<SelectedAnswer> selectedAnswer) {
             Expanded(
               
               child: ListView.builder(
-                itemCount: receivedPoll.votes.length,
+                itemCount: receivedVotes.votes.length,
                 itemBuilder: (context, i) {
                   return _PollLayout(
-                    question: receivedPoll.votes[i].question,
-                    answers: receivedPoll.votes[i].answers,
+                    question: receivedVotes.votes[i].prompt,
+                    answers: receivedVotes.votes[i].choices,
                     onAnswerSelected: (int index) {
-                      updateSelectedAnswers(selectedAnswers, i, receivedPoll.votes[i].question_id, receivedPoll.votes[i].answers![index]);
+                      updateSelectedAnswers(selectedAnswers, i, receivedVotes.votes[i].question_id, receivedVotes.votes[i].choices![index]);
                       //selectedAnswers[i] = index;
                       //debugPrint("Current selected answers: ${selectedAnswers.toString()}");
                     });

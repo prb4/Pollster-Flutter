@@ -19,28 +19,28 @@ def create_polls(username: str, contacts: list):
     creator_id = username[-1]
     print("[-] Creator ID: {}".format(creator_id))
 
-    poll1 = {'question': "Question 1 from user {}".format(creator_id),
-            'answers': ["answer1", "answer2", "answer3"]
+    question1 = {'prompt': "Question 1 from user {}".format(creator_id),
+            'choices': ["answer1", "answer2", "answer3"]
             }
 
-    poll2 = {'question': "Question 2 from user {}".format(creator_id),
-            'answers': ["answer2", "answer3", "answer4"]
+    question2 = {'prompt': "Question 2 from user {}".format(creator_id),
+            'choices': ["answer2", "answer3", "answer4"]
             }
 
 
-    poll3 = {'question': "Question 3 from user {}".format(creator_id),
-            'answers': ["answer3", "answer4", "answer5"]
+    question3 = {'prompt': "Question 3 from user {}".format(creator_id),
+            'choices': ["answer3", "answer4", "answer5"]
             }
 
-    poll4 = {'question': "Question 4 from user {}".format(creator_id),
-            'answers': ["answer4", "answer5", "answer6"]
+    question4 = {'prompt': "Question 4 from user {}".format(creator_id),
+            'choices': ["answer4", "answer5", "answer6"]
             }
 
 
     poll = {'title':"Poll title user {}".format(creator_id),
             'contacts':contacts,
             'poll_id': str(uuid.uuid4()),
-            'votes':[poll1, poll2, poll3, poll4]
+            'questions':[question1, question2, question3, question4]
             }
 
 

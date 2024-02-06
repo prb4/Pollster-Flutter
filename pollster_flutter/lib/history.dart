@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/clickable_card.dart';
-import 'package:pollster_flutter/user_session.dart';
 import 'models/poll.dart';
 import 'http.dart';
 import 'selectable_card.dart';
@@ -12,8 +11,6 @@ class History extends StatelessWidget {
     return const Scaffold(
       body: Center (
         child: HistoricTab()
-        //child: FutureReceivedPollMetadataBuilder()
-        //child: FutureCreatedPollMetadataBuilder()
       )
     );
   }
@@ -53,14 +50,14 @@ class FutureCreatedPollMetadataBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<CreatedPollMetadata>> (
-      future: fetchHistoricCreated(),
+    return FutureBuilder<List<PollMetadata>> (
+      future: fetchCreated(),
       builder: (context, snapshot) {
         
         if (snapshot.hasData) {
-          debugPrint("snapshot has data");
+          debugPrint("snapshot has data!");
 
-          return CreatedPollMetadataExpansionTiles(createdPollMetadata: snapshot.data!);
+          return CreatedPollMetadataCardLayout(createdPollMetadata: snapshot.data!);
 
         } else if (snapshot.hasError) {
           return const Text("Snapshot error"); // TODO - improve
@@ -75,13 +72,13 @@ class FutureReceivedPollMetadataBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<ReceivedPollMetadata>> (
-      future: fetchHistoricReceieved(),
+    return FutureBuilder<List<PollMetadata>> (
+      future: fetchReceieved(),
       builder: (context, snapshot) {
         
         if (snapshot.hasData) {
           debugPrint("snapshot has data");
-          return ReceivedPollMetadataExpansionTiles(receivedPollMetadata: snapshot.data!);
+          return ReceivedPollMetadataCardLayout(receivedPollMetadata: snapshot.data!);
 
         } else if (snapshot.hasError) {
           return const Text("Snapshot error"); // TODO - improve
@@ -92,11 +89,10 @@ class FutureReceivedPollMetadataBuilder extends StatelessWidget {
   }
 }
 
+class CreatedPollMetadataCardLayout extends StatelessWidget {
+  final List<PollMetadata> createdPollMetadata;
 
-class CreatedPollMetadataExpansionTiles extends StatelessWidget {
-  final List<CreatedPollMetadata> createdPollMetadata;
-
-  const CreatedPollMetadataExpansionTiles({required this.createdPollMetadata});
+  const CreatedPollMetadataCardLayout({required this.createdPollMetadata});
 
   @override
   Widget build(BuildContext context) {
@@ -111,12 +107,10 @@ class CreatedPollMetadataExpansionTiles extends StatelessWidget {
   }
 }
 
+class ReceivedPollMetadataCardLayout extends StatelessWidget {
+  final List<PollMetadata> receivedPollMetadata;
 
-
-class ReceivedPollMetadataExpansionTiles extends StatelessWidget {
-  final List<ReceivedPollMetadata> receivedPollMetadata;
-
-  const ReceivedPollMetadataExpansionTiles({required this.receivedPollMetadata});
+  const ReceivedPollMetadataCardLayout({required this.receivedPollMetadata});
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +126,7 @@ class ReceivedPollMetadataExpansionTiles extends StatelessWidget {
 }
 
 class ReceivedPollItemDetailedView extends StatelessWidget {
-  final ReceivedPollMetadata receivedPollItem;
+  final PollMetadata receivedPollItem;
   const ReceivedPollItemDetailedView({super.key,required, required this.receivedPollItem});
 
   @override
@@ -141,7 +135,7 @@ class ReceivedPollItemDetailedView extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-            Text(receivedPollItem.poll_id),
+            Text(receivedPollItem.poll_id.toString()),
             Text(receivedPollItem.title),
           ],
         ),
@@ -151,34 +145,71 @@ class ReceivedPollItemDetailedView extends StatelessWidget {
 }
 
 class CreatedPollItemDetailedView extends StatelessWidget {
-  final CreatedPollMetadata createdPollItem;
-  const CreatedPollItemDetailedView({super.key,required, required this.createdPollItem});
+  final PollMetadata createdPollItem;
+  late Future<CreatedPollFull> createdPollFull;
 
-    void getData(String poll_id) async{
-    try {
-      
-      final Map<String, dynamic> data = await fetchData("/poll/created?user_id=${UserSession().userId}&poll_id=$poll_id");
-      final CreatedPollFull createdPollFull = CreatedPollFull.fromJson(data);
-
-    } catch (e) {
-      // Handle network errors or exceptions here
-      print('Error: $e');
-      throw e;
-    }
+  CreatedPollItemDetailedView({super.key,required, required this.createdPollItem}){
+    debugPrint("[-] in CreatedPollItemDetailedView");
+    createdPollFull = fetchCreatedPollFull(createdPollItem.poll_id.toString());
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder<CreatedPollFull>(
+      future: createdPollFull,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return CreatedPollItemDisplay(createdPollDisplay: snapshot.data!);
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+}
+
+class OpenPollItemDetailedView extends StatelessWidget {
+  final PollMetadata openPollItem;
+  late Future<CreatedPollFull> createdPollFull;
+
+  OpenPollItemDetailedView({super.key,required, required this.openPollItem}){
+    debugPrint("[-] in CreatedPollItemDetailedView");
+    createdPollFull = fetchCreatedPollFull(openPollItem.poll_id.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<CreatedPollFull>(
+      future: createdPollFull,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return CreatedPollItemDisplay(createdPollDisplay: snapshot.data!);
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+}
+
+class CreatedPollItemDisplay extends StatelessWidget {
+  final CreatedPollFull createdPollDisplay;
+
+  const CreatedPollItemDisplay({super.key,required, required this.createdPollDisplay});
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Text(createdPollItem.poll_id),
-            Text(createdPollItem.title),
-            Text(createdPollItem.created),
-          ],
-        ),
-      ),
+        body: Center(
+          child: Column (
+            children: [
+              Text(createdPollDisplay.questions[0].toString())
+            ],
+          )),
     );
   }
 }

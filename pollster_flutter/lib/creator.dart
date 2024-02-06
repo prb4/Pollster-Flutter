@@ -103,7 +103,7 @@ class _BuildPollState extends State<BuildPoll> {
   List<String> additioanlAnswers = [];
   String question = "";
   int question_id = -1;
-  List<Vote> polls = [];
+  List<Questions> polls = [];
   String title = "";
   List<TextEditingController> textControllers = [];
 
@@ -137,7 +137,7 @@ class _BuildPollState extends State<BuildPoll> {
 
     //Save and join the answers that are currently on the screen and convert them into a poll
     List<String> currentAnswers = joinAnswers();
-    Vote poll = createVote(question, question_id, currentAnswers);
+    Questions poll = createVote(question, question_id, currentAnswers);
 
 
     //Check if the poll has been added to the on-going list yet. 
@@ -145,7 +145,7 @@ class _BuildPollState extends State<BuildPoll> {
     int i = 0;
     bool flag = false;
     for (i = 0; i < polls.length; i++){
-      if (polls[i].question == question){ //TODO - probably need to do this by some created ID value
+      if (polls[i].prompt == question){ //TODO - probably need to do this by some created ID value
         flag = true;
       }
     }
@@ -190,9 +190,9 @@ class _BuildPollState extends State<BuildPoll> {
     return allAnswers;
   }
 
-  Vote createVote(String question, int question_id, List<String> answers) {
+  Questions createVote(String question, int question_id, List<String> answers) {
     debugPrint("Creating vote with $question, ${answers.toString()}");
-    Vote vote = Vote(question: question, question_id: question_id, answers: answers);
+    Questions vote = Questions(prompt: question, question_id: question_id, choices: answers);
     return vote;
   }
 
