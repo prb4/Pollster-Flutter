@@ -71,7 +71,7 @@ class _ContactsWidget extends ConsumerWidget {
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: ContinueButton(title: title, votes: votes),
+                    child: ContinueButton(title: title, questions: votes),
                   ),
                 ]
             )
@@ -195,12 +195,12 @@ class ContactsListing extends ConsumerWidget {
 class ContinueButton extends ConsumerWidget {
   //final CreatedPoll createdPoll;
   final String title;
-  final List<Questions> votes;
+  final List<Questions> questions;
   //final String question;
   //final List<String>? answers;
   const ContinueButton({
     required this.title,
-    required this.votes
+    required this.questions
     });
 
   @override
@@ -214,7 +214,7 @@ class ContinueButton extends ConsumerWidget {
           //debugPrint("Clicked on continue button: ${createdPoll.polls[0].question} - ${createdPoll.polls[0].answers}");
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Confirmation(selectedContacts: myContactsReader.selectedContacts, title: title, votes: votes)),
+            MaterialPageRoute(builder: (context) => Confirmation(selectedContacts: myContactsReader.selectedContacts, title: title, questions: questions)),
           );
         },
       )

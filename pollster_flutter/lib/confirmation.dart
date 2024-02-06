@@ -9,7 +9,7 @@ import 'package:pollster_flutter/user_session.dart';
 
 class Confirmation extends StatelessWidget {
   final String title;
-  final List<Questions> votes;
+  final List<Questions> questions;
   final List<Contact> selectedContacts;
   //final CreatedPoll createdPoll;
   final List<CreatingQuestion> createdQuestions = [];
@@ -17,7 +17,7 @@ class Confirmation extends StatelessWidget {
   Confirmation({
     required this.selectedContacts,
     required this.title,
-    required this.votes
+    required this.questions
     });
 
   CreatedPoll finalizeCreatedPoll(List<Contact> contacts, String title, List<Questions> votes){
@@ -52,17 +52,18 @@ class Confirmation extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(8),
-              itemCount: votes.length,
+              itemCount: questions.length,
               itemBuilder: (context, index) =>
-                PollReview(poll: votes[index]),
+                PollReview(poll: questions[index]),
             ),
           ),
           ElevatedButton(
             onPressed: () async {
               debugPrint("Confirmation button pressed - sending poll");
-              CreatedPoll createdPoll = finalizeCreatedPoll(selectedContacts, title, votes);
+              CreatedPoll createdPoll = finalizeCreatedPoll(selectedContacts, title, questions);
+              debugPrint("[-] Sending poll: ${createdPoll.toString()}");
               
-              await sendPostRequest(createdPoll.toJson(), "/submit/poll");
+              await sendPostRequest(createdPoll.toJson(), "/poll");
               debugPrint("Navigating...");
              
               Navigator.pushAndRemoveUntil(

@@ -29,7 +29,7 @@ def submitQuestion():
     pprint(data)
 
     #TODO - fix to get around the contacts data structure from flutter
-    contacts = [contact['id'] for contact in data['contacts']]
+    contacts = [contact['id'] for contact in data['recipients']]
     mid.add_new_poll(data['username'], data, contacts, False)
 
 
@@ -64,6 +64,24 @@ def fetch():
     #TODO - add a return code
     return jsonify(polls)
 
+@app.route("/poll", methods=['GET', 'POST'])
+def poll():
+
+    if request.method == 'POST':
+        #Create a poll
+        data = request.json
+        pprint(data)
+
+        #TODO - fix to get around the contacts data structure from flutter
+        contacts = [contact['id'] for contact in data['recipients']]
+        mid.add_new_poll(data['user_id'], data, contacts)
+
+
+        return make_response(jsonify(message="OK"), 200)
+
+
+
+
 @app.route("/polls", methods=['GET'])
 #This end point only returns metadata on a poll
 def polls():
@@ -88,10 +106,6 @@ def polls():
     pprint(resp)
 
     return make_response(jsonify(resp), 200)
-
-@app.route("/poll", methods=['GET'])
-def poll():
-    data = request.args
 
 @app.route("/history/created", methods=['GET'])
 def history_created():

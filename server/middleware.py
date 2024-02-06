@@ -88,26 +88,18 @@ def answer_poll(poll_id: str, user_id: int, votes):
 
     return db.update_poll_as_answered(user_id, poll_id)
 
-def add_new_poll(creator_username: str, poll, recipient_input, is_username:bool):
+def add_new_poll(creator_id: str, poll, recipient_ids: list):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    user_id = db.convert_username_to_id(creator_username)
-
     recipients = None
-    if is_username:
-        recipients = [db.convert_username_to_id(recipient) for recipient in recipient_input]
-    else:
-        recipients = recipient_input
 
     for question in poll['questions']:
-        if not is_username:
-            question.pop("question_id")
         questions = db.insert_new_question(json.dumps(question['prompt']), json.dumps(question['choices']), poll['poll_id'])
 
-    db.insert_new_poll(user_id, poll['poll_id'], poll['title'])
+    db.insert_new_poll(creator_id, poll['poll_id'], poll['title'])
 
-    for recipient in recipients:
-        db.insert_recipient(recipient, user_id, poll['poll_id'])
+    for recipient in recipient_ids:
+        db.insert_recipient(recipient, creator_id, poll['poll_id'])
 
 def get_created_polls_metadata(user_id: int) -> list:
     db = database.Database(database.host, database.user, database.password, "Pollster")

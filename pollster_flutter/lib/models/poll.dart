@@ -172,7 +172,7 @@ class CreatedPoll {
       'poll_id': poll_id,
       'user_id': user_id,
       'username': username,
-      'votes': questions
+      'questions': questions
     };
   }
 
@@ -184,7 +184,7 @@ class CreatedPoll {
       poll_id: json['poll_id'],
       user_id: json['user_id'],
       username: json['username'],
-      questions: json['votes']
+      questions: json['questions']
     );
   }
 
