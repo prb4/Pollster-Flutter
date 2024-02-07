@@ -116,11 +116,15 @@ class ReceivedVotes {
 }
 
 class Answer {
+  String? answer_id;
   int? question_id;
+  String poll_id;
   String? answer;
 
   Answer({
+    this.answer_id,
     this.question_id,
+    required this.poll_id,
     this.answer,
   });
 
@@ -129,6 +133,8 @@ class Answer {
     return {
       'question_id': question_id,
       'answer': answer,
+      'poll_id': poll_id,
+      'answer_id': answer_id,
     };
   }
 
@@ -137,13 +143,52 @@ class Answer {
     return Answer(
       question_id: json['question_id'],
       answer: json['answer'],
+      poll_id: json['poll_id'],
+      answer_id: json['answer_id'],
     );
   }
 
   // Override the toString method for better display in print statements
   @override
   String toString() {
-    return 'SelectedAnswer(question_id: $question_id, answer: $answer)';
+    return 'SelectedAnswer(question_id: $question_id, answer: $answer, answer_id:${answer_id.toString()}, poll_id: ${poll_id.toString()})';
+  }
+}
+
+class Poll {
+  List<Question> questions;
+  PollMetadata pollMetadata;
+  List<Recipient> recipeints;
+  
+
+  Poll({
+    required this.questions,
+    required this.pollMetadata,
+    required this.recipeints,
+  });
+
+  // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'recipients': recipeints,
+      'pollMetadata': pollMetadata,
+      'questions': questions,
+    };
+  }
+
+  // Factory method to create a Person object from a Map
+  factory Poll.fromJson(Map<String, dynamic> json) {
+    return Poll(
+      recipeints: json['recipients'],
+      pollMetadata: json['pollMetadata'],
+      questions: json['questions'],
+    );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'Poll(recipients: ${recipeints.toString()}, pollMetadata: ${pollMetadata.toString()}, questions: ${questions.toString()})';
   }
 }
 
@@ -272,51 +317,6 @@ class PollMetadata {
   @override
   String toString() {
     return 'PollMetadata(creator: ${creator.toString()}, title: $title, poll_id: $poll_id, created: $created)';
-  }
-}
-
-class CreatedPollFull {
-  PollMetadata pollMetadata;
-  List<Question> questions;
-  List<Contact> contacts;
-
-  CreatedPollFull({
-    required this.pollMetadata,
-    required this.questions,
-    required this.contacts,
-  });
-
-    // Convert the Dart object to a Map
-  Map<String, dynamic> toJson() {
-    return {
-      'createdPollMetadata': pollMetadata,
-      'votes': questions,
-      'recipients': contacts,  
-    };
-  }
-
-  // Factory method to create a Person object from a Map
-  factory CreatedPollFull.fromJson(Map<String, dynamic> json) {
-    return CreatedPollFull(
-      pollMetadata: PollMetadata.fromJson(json['createdPollMetadata']),
-
-      // Convert List<dynamic> to List<Vote>
-      questions: json['votes'].map((dynamic item) {
-        return Question(
-          prompt: item['question'], 
-          question_id: item['question_id'], 
-          choices: item['answers']
-        );
-      }).toList(),
-
-      contacts: json['recipeints'],
-    );
-  }
-
-  // Override the toString method for better display in print statements
-  @override
-  String toString() {
-    return 'CreatedPollFull(createdPollMetadata: ${pollMetadata.toString()}, votes: {$questions.toString()}, recipients: ${contacts.toString()}';
   }
 }
 

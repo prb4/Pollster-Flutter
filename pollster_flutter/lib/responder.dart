@@ -182,7 +182,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
   
   @override
   Widget build(BuildContext context) {
-    List<Answer> selectedAnswers = List.generate(receivedVotes.votes.length, (index) => Answer());
+    List<Answer> selectedAnswers = List.generate(receivedVotes.votes.length, (index) => Answer(poll_id: receivedVotes.uuid));
     return Scaffold(
         appBar: AppBar(
           title: Text(

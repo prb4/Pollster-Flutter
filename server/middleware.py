@@ -124,6 +124,25 @@ def get_all_received_polls_metadata(user_id: int) -> list:
     receieved_polls = db.get_polls_received(user_id)
     return receieved_polls
 
+def get_answer_poll(user_id: int, poll_id: str):
+    #Based on user id and poll id, return the entire poll (with answers) for answering
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    poll_metadata = get_poll(user_id, poll_id)
+
+    if str(poll_metadata['creator']) == str(poll_id):
+        #This should not happen, as <user id> is trying to answer this poll
+        return -1
+
+    questions = db.get_questions(poll_id)
+
+    data = {}
+    data['pollMetadata'] = poll_metadata
+    data['questions'] = questions
+    data['recipients'] = [user_id]
+
+    return data
+
 def get_poll(user_id: int, poll_id: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 

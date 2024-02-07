@@ -21,7 +21,7 @@ class ClickablePollCard extends StatelessWidget {
           );
     } else if (pollMetadataType == 'openPollMetadata') {
       materialPageRoute = MaterialPageRoute(
-            builder: (context) => OpenPollItemDetailedView(openPollItem: pollMetadata)
+            builder: (context) => OpenPollItemDetailedView(pollItem: pollMetadata)
           );
     }
   }

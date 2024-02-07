@@ -8,14 +8,14 @@ import 'package:pollster_flutter/user_session.dart';
 String ip = "http://192.168.1.151:5000/";
 //String ip = "http://172.16.44.50:5000/";
 
-Future<CreatedPollFull> fetchPoll(String poll_id) async {
-  debugPrint("in fetchCreatedPollFull: $poll_id");
+Future<Poll> fetchPoll(String poll_id) async {
+  debugPrint("in fetchCreatedPoll: $poll_id");
   String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=$poll_id";
   Map<String, dynamic> jsonData = await fetch(endpoint);
   debugPrint("[-] Received poll data: ${jsonData.runtimeType},  ${jsonData.toString()}");
   debugPrint("[---] ${jsonData['createdPollMetadata']}");
 
-  return CreatedPollFull.fromJson(jsonData);
+  return Poll.fromJson(jsonData);
 
 }
 

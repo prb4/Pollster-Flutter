@@ -145,20 +145,20 @@ class ReceivedPollItemDetailedView extends StatelessWidget {
 
 class CreatedPollItemDetailedView extends StatelessWidget {
   final PollMetadata createdPollItem;
-  late Future<CreatedPollFull> createdPollFull;
+  late Future<Poll> poll;
 
   CreatedPollItemDetailedView({super.key,required, required this.createdPollItem}){
     debugPrint("[-] in CreatedPollItemDetailedView");
-    createdPollFull = fetchPoll(createdPollItem.poll_id.toString());
+    poll = fetchPoll(createdPollItem.poll_id.toString());
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<CreatedPollFull>(
-      future: createdPollFull,
+    return FutureBuilder<Poll>(
+      future: poll,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return CreatedPollItemDisplay(createdPollDisplay: snapshot.data!);
+          return CreatedPollItemDisplay(pollDisplay: snapshot.data!);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
@@ -170,21 +170,21 @@ class CreatedPollItemDetailedView extends StatelessWidget {
 }
 
 class OpenPollItemDetailedView extends StatelessWidget {
-  final PollMetadata openPollItem;
-  late Future<CreatedPollFull> createdPollFull;
+  final PollMetadata pollItem;
+  late Future<Poll> poll;
 
-  OpenPollItemDetailedView({super.key,required, required this.openPollItem}){
+  OpenPollItemDetailedView({super.key,required, required this.pollItem}){
     debugPrint("[-] in CreatedPollItemDetailedView");
-    createdPollFull = fetchPoll(openPollItem.poll_id.toString());
+    poll = fetchPoll(pollItem.poll_id.toString());
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<CreatedPollFull>(
-      future: createdPollFull,
+    return FutureBuilder<Poll>(
+      future: poll,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return CreatedPollItemDisplay(createdPollDisplay: snapshot.data!);
+          return CreatedPollItemDisplay(pollDisplay: snapshot.data!);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
@@ -196,9 +196,9 @@ class OpenPollItemDetailedView extends StatelessWidget {
 }
 
 class CreatedPollItemDisplay extends StatelessWidget {
-  final CreatedPollFull createdPollDisplay;
+  final Poll pollDisplay;
 
-  const CreatedPollItemDisplay({super.key,required, required this.createdPollDisplay});
+  const CreatedPollItemDisplay({super.key,required, required this.pollDisplay});
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +206,7 @@ class CreatedPollItemDisplay extends StatelessWidget {
         body: Center(
           child: Column (
             children: [
-              Text(createdPollDisplay.questions[0].toString())
+              Text(pollDisplay.questions[0].toString())
             ],
           )),
     );

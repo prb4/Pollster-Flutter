@@ -206,7 +206,7 @@ class Database():
 
 
     def get_questions(self, poll_id: str):
-        sql = "SELECT JSON_OBJECT('question_id', QUESTION_ID, 'poll_id', POLL_ID, 'question', QUESTION, 'choices', CHOICES) as JSON_OUTPUT from QUESTIONS where POLL_ID = %s"
+        sql = "SELECT JSON_OBJECT('question_id', QUESTION_ID, 'poll_id', POLL_ID, 'prompt', PROMPT, 'choices', CHOICES) as JSON_OUTPUT from QUESTIONS where POLL_ID = %s"
         val = (poll_id,)
 
         questions = self._get_polls(sql, val)

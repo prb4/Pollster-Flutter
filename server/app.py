@@ -70,8 +70,9 @@ def poll():
     if request.method == 'GET':
         data = request.args
 
-        poll = mid.get_poll(data['user_id'], data['poll_id'])
+        poll = mid.get_answer_poll(data['user_id'], data['poll_id'])
 
+        pprint(poll)
         return make_response(jsonify(poll), 200)
 
     elif request.method == 'POST':
