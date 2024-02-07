@@ -43,24 +43,24 @@ class PollItem extends StatelessWidget{
   }
 }
 
-class Questions {
+class Question {
   final String prompt;
   final int question_id;
   final List<String> choices;
 
-  const Questions({
+  const Question({
     required this.prompt,
     required this.question_id,
     required this.choices,
   });
 
-  factory Questions.fromJson(Map<String, dynamic> json) {
+  factory Question.fromJson(Map<String, dynamic> json) {
     debugPrint("Converting poll");
     final List<dynamic> answersList = json['choices'];
     final List<String> parsedAnswers = List<String>.from(answersList);
 
     debugPrint(parsedAnswers.toString());
-    return Questions(
+    return Question(
       prompt: json['prompt'] as String,
       question_id: json['question_id'] as int,
       choices: parsedAnswers,
@@ -75,7 +75,7 @@ class Questions {
 }
 
 class ReceivedVotes {
-  final List<Questions> votes;
+  final List<Question> votes;
   final String uuid;
   final String title;
 
@@ -92,8 +92,8 @@ class ReceivedVotes {
     debugPrint("dynamicPolls: ${dynamicPolls.toString()}");
     
 
-    List<Questions> votesList = dynamicPolls
-      .map((dynamic item) => Questions(
+    List<Question> votesList = dynamicPolls
+      .map((dynamic item) => Question(
         prompt: item['question'],
         question_id: item['question_id'],
         choices: item['answers'],
@@ -150,7 +150,7 @@ class Answer {
 class CreatedPoll {
   String title;
   String poll_id;
-  List<Questions> questions;
+  List<Question> questions;
   int user_id;
   String username;
   List<Contact>? contacts;
@@ -277,7 +277,7 @@ class PollMetadata {
 
 class CreatedPollFull {
   PollMetadata pollMetadata;
-  List<Questions> questions;
+  List<Question> questions;
   List<Contact> contacts;
 
   CreatedPollFull({
@@ -302,7 +302,7 @@ class CreatedPollFull {
 
       // Convert List<dynamic> to List<Vote>
       questions: json['votes'].map((dynamic item) {
-        return Questions(
+        return Question(
           prompt: item['question'], 
           question_id: item['question_id'], 
           choices: item['answers']
@@ -320,57 +320,8 @@ class CreatedPollFull {
   }
 }
 
-/*
-class ReceivedPollFull {
-  CreatedPollMetadata createdPollMetadata;
-  List<Vote> votes;
-
-  ReceivedPollFull({
-    required this.createdPollMetadata,
-    required this.votes,
-  });
-
-    // Convert the Dart object to a Map
-  Map<String, dynamic> toJson() {
-    return {
-      'createdPollMetadata': createdPollMetadata,
-      'votes': votes,
-    };
-  }
-
-  // Factory method to create a Person object from a Map
-  factory CreatedPollFull.fromJson(Map<String, dynamic> json) {
-    return CreatedPollFull(
-      createdPollMetadata: json['createdPollMetadata'],
-      votes: json['votes'],
-    );
-  }
-
-  // Override the toString method for better display in print statements
-  @override
-  String toString() {
-    return 'CreatedPollFull(createdPollMetadata: ${createdPollMetadata.toString()}, votes: {$votes.toString()}';
-  }
-}
-*/
-
-class HistoricMetadata {
-  List<PollMetadata> createdPollMetadata;
-  List<PollMetadata> receivedPollMetadata;
-
-  HistoricMetadata({
-    required this.createdPollMetadata,
-    required this.receivedPollMetadata,
-  });
-
-  @override
-  String toString() {
-    return 'HistoricMetadata(createdPollMetadata: ${createdPollMetadata.toString()}, recivedPollMetadata: ${receivedPollMetadata.toString()})';
-  }
-}
-
 class CreatingQuestion {
-  final Questions poll;
+  final Question poll;
   final List<Contact>? contacts;
 
   const CreatingQuestion({
@@ -386,7 +337,7 @@ class CreatingQuestion {
     final List<dynamic> contactsList = json['contacts'];
     final List<Contact> parsedContacts = List<Contact>.from(contactsList);
 
-    Questions newPoll = Questions(prompt: json['question'], question_id: json['question_id'], choices: parsedAnswers);
+    Question newPoll = Question(prompt: json['question'], question_id: json['question_id'], choices: parsedAnswers);
 
     debugPrint(parsedAnswers.toString());
     return CreatingQuestion(

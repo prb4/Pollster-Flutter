@@ -23,7 +23,7 @@ class ContactsWidget extends StatelessWidget{
   //final TitledPoll titledPoll;
   //final CreatedPoll createdPoll;
   final String title;
-  final List<Questions> votes;
+  final List<Question> votes;
 //  final String question;
 //  final List<String>? answers;
 
@@ -43,7 +43,7 @@ class ContactsWidget extends StatelessWidget{
 class _ContactsWidget extends ConsumerWidget {
   //final CreatedPoll createdPoll;
   final String title;
-  final List<Questions> votes;
+  final List<Question> votes;
 
   const _ContactsWidget({
     required this.title,
@@ -195,7 +195,7 @@ class ContactsListing extends ConsumerWidget {
 class ContinueButton extends ConsumerWidget {
   //final CreatedPoll createdPoll;
   final String title;
-  final List<Questions> questions;
+  final List<Question> questions;
   //final String question;
   //final List<String>? answers;
   const ContinueButton({

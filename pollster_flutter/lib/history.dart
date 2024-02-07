@@ -149,7 +149,7 @@ class CreatedPollItemDetailedView extends StatelessWidget {
 
   CreatedPollItemDetailedView({super.key,required, required this.createdPollItem}){
     debugPrint("[-] in CreatedPollItemDetailedView");
-    createdPollFull = fetchCreatedPollFull(createdPollItem.poll_id.toString());
+    createdPollFull = fetchPoll(createdPollItem.poll_id.toString());
   }
 
   @override
@@ -175,7 +175,7 @@ class OpenPollItemDetailedView extends StatelessWidget {
 
   OpenPollItemDetailedView({super.key,required, required this.openPollItem}){
     debugPrint("[-] in CreatedPollItemDetailedView");
-    createdPollFull = fetchCreatedPollFull(openPollItem.poll_id.toString());
+    createdPollFull = fetchPoll(openPollItem.poll_id.toString());
   }
 
   @override

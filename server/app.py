@@ -6,10 +6,11 @@ import middleware as mid
 
 app = Flask(__name__)
 
-@app.route("/submit/answer", methods=['POST'])
-def submitAnswer():
-    try:
-        data = request.get_json()
+@app.route("/answer", methods=['POST'])
+def answer():
+    if request.method == 'POST':
+        #Create a poll
+        data = request.json
         pprint(data)
 
         #data['poll_id']
@@ -17,11 +18,10 @@ def submitAnswer():
         #data['user_id']
         #data['answers']
         #ret = mid.mark_poll_as_answered(data['poll_id'], data['username'])
-        ret = mid.answer_poll(data['poll_id'], data['user_id'], data['votes'])
+
+        ret = mid.answer_poll(data['poll_id'], data['user_id'], data['answers'])
 
         return make_response(jsonify(message="OK"), 200)
-    except Exception:
-        return make_response(jsonify(message="Error"), 200)
 
 @app.route("/submit/poll", methods=['POST'])
 def submitQuestion():
@@ -67,7 +67,14 @@ def fetch():
 @app.route("/poll", methods=['GET', 'POST'])
 def poll():
 
-    if request.method == 'POST':
+    if request.method == 'GET':
+        data = request.args
+
+        poll = mid.get_poll(data['user_id'], data['poll_id'])
+
+        return make_response(jsonify(poll), 200)
+
+    elif request.method == 'POST':
         #Create a poll
         data = request.json
         pprint(data)
@@ -76,11 +83,7 @@ def poll():
         contacts = [contact['id'] for contact in data['recipients']]
         mid.add_new_poll(data['user_id'], data, contacts)
 
-
         return make_response(jsonify(message="OK"), 200)
-
-
-
 
 @app.route("/polls", methods=['GET'])
 #This end point only returns metadata on a poll

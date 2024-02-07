@@ -37,14 +37,17 @@ def create_polls(username: str, contacts: list):
             }
 
 
+    contact_ids = [db.convert_username_to_id(contact) for contact in contacts]
+
     poll = {'title':"Poll title user {}".format(creator_id),
-            'contacts':contacts,
+            'contacts':contact_ids,
             'poll_id': str(uuid.uuid4()),
             'questions':[question1, question2, question3, question4]
             }
 
 
-    mid.add_new_poll(username, poll, contacts, True)
+    user_id = db.convert_username_to_id(username)
+    mid.add_new_poll(user_id, poll, contact_ids)
     #uuid = db.add_poll_to_polls_table(creator_id, polls)
 
     #for contact in contacts:

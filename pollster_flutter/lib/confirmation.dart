@@ -9,7 +9,7 @@ import 'package:pollster_flutter/user_session.dart';
 
 class Confirmation extends StatelessWidget {
   final String title;
-  final List<Questions> questions;
+  final List<Question> questions;
   final List<Contact> selectedContacts;
   //final CreatedPoll createdPoll;
   final List<CreatingQuestion> createdQuestions = [];
@@ -20,7 +20,7 @@ class Confirmation extends StatelessWidget {
     required this.questions
     });
 
-  CreatedPoll finalizeCreatedPoll(List<Contact> contacts, String title, List<Questions> votes){
+  CreatedPoll finalizeCreatedPoll(List<Contact> contacts, String title, List<Question> votes){
     return CreatedPoll(title: title, poll_id: getUUID(), questions: votes, user_id: UserSession().userId, username: UserSession().username, contacts: contacts);
   }
 
@@ -83,7 +83,7 @@ class Confirmation extends StatelessWidget {
 }
 
 class PollReview extends StatelessWidget {
-  final Questions poll;
+  final Question poll;
 
   const PollReview({required this.poll});
 

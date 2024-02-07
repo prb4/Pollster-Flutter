@@ -80,11 +80,12 @@ def get_polls(_polls):
 #    pprint.pprint(final_polls)
 #    return final_polls
 
-def answer_poll(poll_id: str, user_id: int, votes):
+def answer_poll(poll_id: str, user_id: int, answers):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    for vote in votes:
-        db.insert_answer(user_id, vote['question_id'], poll_id, vote['answer'])
+    for answer in answers:
+        pdb.set_trace()
+        db.insert_answer(user_id, answers['question_id'], poll_id, answer['answer'])
 
     return db.update_poll_as_answered(user_id, poll_id)
 
@@ -122,6 +123,13 @@ def get_all_received_polls_metadata(user_id: int) -> list:
 
     receieved_polls = db.get_polls_received(user_id)
     return receieved_polls
+
+def get_poll(user_id: int, poll_id: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    poll = db.get_poll(user_id, poll_id)
+
+    return poll
 
 def get_polls_created(user_id: int):
     db = database.Database(database.host, database.user, database.password, "Pollster")

@@ -8,9 +8,9 @@ import 'package:pollster_flutter/user_session.dart';
 String ip = "http://192.168.1.151:5000/";
 //String ip = "http://172.16.44.50:5000/";
 
-Future<CreatedPollFull> fetchCreatedPollFull(String poll_id) async {
+Future<CreatedPollFull> fetchPoll(String poll_id) async {
   debugPrint("in fetchCreatedPollFull: $poll_id");
-  String endpoint = "/poll/created?user_id=${UserSession().userId}&poll_id=$poll_id";
+  String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=$poll_id";
   Map<String, dynamic> jsonData = await fetch(endpoint);
   debugPrint("[-] Received poll data: ${jsonData.runtimeType},  ${jsonData.toString()}");
   debugPrint("[---] ${jsonData['createdPollMetadata']}");
@@ -105,13 +105,13 @@ Future<List<ReceivedVotes>> fetchPolls() async {
       final String title = data[i]['title'];
       int len = data[i]['votes'].length;
 
-      List<Questions> polls = [];
+      List<Question> polls = [];
 
       for (var x = 0; x < len; x++){
         final _polls = data[i]['votes'][x];
         //debugPrint("Polls question: ${_polls['question']}");
         //debugPrint("Polls answers: ${_polls['answers']}");
-        Questions poll = Questions.fromJson(_polls);
+        Question poll = Question.fromJson(_polls);
         polls.add(poll);
       }
 

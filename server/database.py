@@ -227,18 +227,21 @@ class Database():
 
         return recipients
 
-    def get_poll(self, poll_id: str, user_id: Union[str, None] = None):
+    def get_poll(self, user_id: int, poll_id: str):
         sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'title', TITLE, 'created', CREATED, 'creator', CREATOR) as JSON_OUTPUT from POLLS where POLL_ID = %s"
         val = (poll_id, )
 
-        if user_id:
-            sql += "and CREATOR = %s"
-            val = (poll_id, user_id, )
+        poll_metadata = self._get_polls(sql, val)
+        poll_metadata = [json.loads(poll[0]) for poll in poll_metadata]
+        poll_metadata = poll_metadata[0]
 
-        created_poll = self._get_polls(sql, val)
-        created_poll = [json.loads(poll[0]) for poll in created_poll]
+        if str(poll_metadata['creator']) == str(user_id):
+            pass
+        sql = ""
+        val = ()
 
-        return created_poll
+        #pdb.set_trace()
+        return poll_metadata
 
     def get_polls_created(self, user_id: int):
         sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'title', TITLE, 'creator', CREATOR, 'created', created) as JSON_OUTPUT from POLLS where CREATOR = %s"
@@ -333,6 +336,15 @@ if __name__ == "__main__":
                         CHOICES VARCHAR(500) NOT NULL
                         )"""
     database.create_table(questions_table_statement)
+
+    answers_table_statement = """CREATE TABLE IF NOT EXISTS ANSWERS (
+                        ANSWER_ID INT AUTO_INCREMENT PRIMARY KEY,
+                        QUESTION_ID VARCHAR(50) NOT NULL,
+                        POLL_ID VARCHAR(50) NOT NULL,
+                        ANSWER VARCHAR(500) NOT NULL
+                        )"""
+    database.create_table(answers_table_statement)
+
 
     recipient_table_statement = """CREATE TABLE IF NOT EXISTS RECIPIENT (
                         ID INT AUTO_INCREMENT PRIMARY KEY,

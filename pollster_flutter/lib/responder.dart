@@ -207,7 +207,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
                     question: receivedVotes.votes[i].prompt,
                     answers: receivedVotes.votes[i].choices,
                     onAnswerSelected: (int index) {
-                      updateSelectedAnswers(selectedAnswers, i, receivedVotes.votes[i].question_id, receivedVotes.votes[i].choices![index]);
+                      updateSelectedAnswers(selectedAnswers, i, receivedVotes.votes[i].question_id, receivedVotes.votes[i].choices[index]);
                       //selectedAnswers[i] = index;
                       //debugPrint("Current selected answers: ${selectedAnswers.toString()}");
                     });
@@ -219,7 +219,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
                 //  "answer": answers[getSelectedCard()]
                 //};
 
-                sendPostRequest(prepAnswerSubmit(selectedAnswers), "submit/answer");
+                sendPostRequest(prepAnswerSubmit(selectedAnswers), "/answer");
                 //Navigator.pop(context); //TODO - when this is called, need to re-call the previous screen so the updated list loads (ie: without the just answered poll)
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               }),
