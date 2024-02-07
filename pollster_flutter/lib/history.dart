@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pollster_flutter/clickable_card.dart';
 import 'models/poll.dart';
 import 'http.dart';
-import 'selectable_card.dart';
 
 class History extends StatelessWidget {
 
@@ -99,9 +98,9 @@ class CreatedPollMetadataCardLayout extends StatelessWidget {
     return ListView.builder(
         itemCount: createdPollMetadata.length,
         itemBuilder: (context, i) {
-          return ClickableCreatedPollCard(
-            createdPollMetadata: createdPollMetadata[i]
-          );
+          return ClickablePollCard(
+            pollMetadata: createdPollMetadata[i], 
+            pollMetadataType: "createdPollMetadata");
         }
     );
   }
@@ -117,9 +116,9 @@ class ReceivedPollMetadataCardLayout extends StatelessWidget {
     return ListView.builder(
         itemCount: receivedPollMetadata.length,
         itemBuilder: (context, i) {
-          return ClickableReceivedPollCard(
-            receivedPollMetadata: receivedPollMetadata[i]
-          );
+          return ClickablePollCard(
+            pollMetadata: receivedPollMetadata[i], 
+            pollMetadataType: "receivedPollMetadata");
         }
     );
   }

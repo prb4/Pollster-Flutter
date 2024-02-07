@@ -1,13 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:http/http.dart' as http;
 import 'package:pollster_flutter/models/poll.dart';
 import 'package:pollster_flutter/user_session.dart';
 
-//String ip = "http://192.168.1.151:5000/";
-String ip = "http://192.168.11.48:5000/";
+String ip = "http://192.168.1.151:5000/";
 //String ip = "http://172.16.44.50:5000/";
 
 Future<CreatedPollFull> fetchCreatedPollFull(String poll_id) async {

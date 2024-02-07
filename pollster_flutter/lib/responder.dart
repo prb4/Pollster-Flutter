@@ -45,8 +45,9 @@ class OpenPollMetadataCardLayout extends StatelessWidget {
     return ListView.builder(
         itemCount: openPollMetadata.length,
         itemBuilder: (context, i) {
-          return ClickableOpenPollCard(
-            openPollMetadata: openPollMetadata[i]
+          return ClickablePollCard(
+            pollMetadata: openPollMetadata[i], 
+            pollMetadataType: "openPollMetadata"
           );
         }
     );
