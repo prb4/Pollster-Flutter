@@ -212,15 +212,22 @@ class Database():
         questions = self._get_polls(sql, val)
         questions = [json.loads(question[0]) for question in questions]
 
+        for i in range(len(questions)):
+            questions[i]['choices'] = json.loads(questions[i]['choices'])
+
         return questions
 
-    def get_recipients(self, poll_id: str, creator: Union[str, None] = None):
+    def get_recipients(self, poll_id: str, creator: Union[str, None] = None, recipient: Union[str, None] = None):
         sql = "SELECT JSON_OBJECT('recipient', RECIPIENT, 'creator', CREATOR, 'poll_id', POLL_ID, 'answered', ANSWERED) as JSON_OUTPUT from RECIPIENT where POLL_ID = %s"
         val = (poll_id, )
 
         if creator:
             sql += "and CREATOR = %s"
-            val = (poll_id, creator)
+            val = (poll_id, creator, )
+
+        elif recipient:
+            sql += "and RECIPIENT = %s"
+            val = (poll_id, recipient)
 
         recipients = self._get_polls(sql, val)
         recipients = [json.loads(recipient[0]) for recipient in recipients]

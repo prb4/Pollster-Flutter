@@ -158,37 +158,57 @@ class Answer {
 class Poll {
   List<Question> questions;
   PollMetadata pollMetadata;
-  List<Recipient> recipeints;
+  List<Recipient> recipients;
   
 
   Poll({
     required this.questions,
     required this.pollMetadata,
-    required this.recipeints,
+    required this.recipients,
   });
 
   // Convert the Dart object to a Map
   Map<String, dynamic> toJson() {
     return {
-      'recipients': recipeints,
+      'recipients': recipients,
       'pollMetadata': pollMetadata,
       'questions': questions,
     };
   }
 
+
+
   // Factory method to create a Person object from a Map
   factory Poll.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> dynamicRecipients = json['recipients'];
+    List<Recipient> recipientList = dynamicRecipients
+      .map((dynamic item) => Recipient(
+        answered: item['answered'], 
+        recipient: item['recipient'],
+        creator: item['creator'],
+        poll_id: item['poll_id'],
+        )).toList();
+
+    final List<dynamic> dynamicQuestions = json['questions'];
+    List<Question> questionList = dynamicQuestions
+      .map((dynamic item) => Question(
+        prompt: item['prompt'], 
+        question_id: item['question_id'], 
+      choices: item['choices'].map((dynamic choice) {
+          return choice.toString();
+        }).toList(),
+      )).toList();
     return Poll(
-      recipeints: json['recipients'],
-      pollMetadata: json['pollMetadata'],
-      questions: json['questions'],
-    );
+      questions: questionList,
+      pollMetadata: json['pollMetadata'], 
+      recipients: recipientList
+      );
   }
 
   // Override the toString method for better display in print statements
   @override
   String toString() {
-    return 'Poll(recipients: ${recipeints.toString()}, pollMetadata: ${pollMetadata.toString()}, questions: ${questions.toString()})';
+    return 'Poll(recipients: ${recipients.toString()}, pollMetadata: ${pollMetadata.toString()}, questions: ${questions.toString()})';
   }
 }
 
@@ -257,9 +277,9 @@ class Recipient {
   Map<String, dynamic> toJson() {
     return {
       'answered': answered,
-      'recipient': recipient,
+      'recipient': recipient, 
       'poll_id': poll_id,
-      'originator': creator
+      'creator': creator
     };
   }
 
@@ -269,14 +289,14 @@ class Recipient {
       answered: json['answered'],
       recipient: json['recipient'],
       poll_id: json['poll_id'],
-      creator: json['originator']
+      creator: json['creator']
     );
   }
 
   // Override the toString method for better display in print statements
   @override
   String toString() {
-    return 'Recipient(answered: $answered, recipient: ${recipient.toString()}, poll_id: $poll_id, originator: ${creator.toString()})';
+    return 'Recipient(answered: $answered, recipient: ${recipient.toString()}, poll_id: $poll_id, creator: ${creator.toString()})';
   }
 }
 

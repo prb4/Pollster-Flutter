@@ -13,7 +13,7 @@ Future<Poll> fetchPoll(String poll_id) async {
   String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=$poll_id";
   Map<String, dynamic> jsonData = await fetch(endpoint);
   debugPrint("[-] Received poll data: ${jsonData.runtimeType},  ${jsonData.toString()}");
-  debugPrint("[---] ${jsonData['createdPollMetadata']}");
+  debugPrint("[---] ${jsonData['questions'][0]['choices'].runtimeType}");
 
   return Poll.fromJson(jsonData);
 

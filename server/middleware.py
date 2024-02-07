@@ -135,11 +135,12 @@ def get_answer_poll(user_id: int, poll_id: str):
         return -1
 
     questions = db.get_questions(poll_id)
+    recipients = db.get_recipients(poll_id, recipient = user_id)
 
     data = {}
     data['pollMetadata'] = poll_metadata
     data['questions'] = questions
-    data['recipients'] = [user_id]
+    data['recipients'] = recipients
 
     return data
 
