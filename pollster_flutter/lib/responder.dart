@@ -220,6 +220,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
                 //};
 
                 sendPostRequest(prepAnswerSubmit(selectedAnswers), "/answer");
+                
                 //Navigator.pop(context); //TODO - when this is called, need to re-call the previous screen so the updated list loads (ie: without the just answered poll)
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               }),

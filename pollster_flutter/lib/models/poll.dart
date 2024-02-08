@@ -190,17 +190,23 @@ class Poll {
         )).toList();
 
     final List<dynamic> dynamicQuestions = json['questions'];
-    List<Question> questionList = dynamicQuestions
-      .map((dynamic item) => Question(
-        prompt: item['prompt'], 
-        question_id: item['question_id'], 
-      choices: item['choices'].map((dynamic choice) {
-          return choice.toString();
-        }).toList(),
-      )).toList();
+
+    List<Question> questions = [];
+    for (var question in dynamicQuestions){
+      
+      final List<dynamic> choicesList = question['choices'];
+      final List<String> choices = List<String>.from(choicesList);
+
+      Question tmp = Question(
+        prompt: question['prompt'], 
+        question_id: question['question_id'], 
+        choices: choices);
+        questions.add(tmp);
+    }
+
     return Poll(
-      questions: questionList,
-      pollMetadata: json['pollMetadata'], 
+      questions: questions,
+      pollMetadata: PollMetadata.fromJson(json['pollMetadata']),
       recipients: recipientList
       );
   }
@@ -326,7 +332,7 @@ class PollMetadata {
   // Factory method to create a Person object from a Map
   factory PollMetadata.fromJson(Map<String, dynamic> json) {
     return PollMetadata(
-      creator: json['creator'],
+      creator: json['creator'].toString(),
       title: json['title'],
       poll_id: json['poll_id'],
       created: json['created'],

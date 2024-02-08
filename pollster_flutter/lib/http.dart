@@ -12,8 +12,6 @@ Future<Poll> fetchPoll(String poll_id) async {
   debugPrint("in fetchCreatedPoll: $poll_id");
   String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=$poll_id";
   Map<String, dynamic> jsonData = await fetch(endpoint);
-  debugPrint("[-] Received poll data: ${jsonData.runtimeType},  ${jsonData.toString()}");
-  debugPrint("[---] ${jsonData['questions'][0]['choices'].runtimeType}");
 
   return Poll.fromJson(jsonData);
 
@@ -66,7 +64,9 @@ Future<List<Map<String, dynamic>>> fetchList(String endpoint) async {
       {
         debugPrint("[-] Key contains openPollsMetadata");
         final List<Map<String, dynamic>> finalData = data['openPollsMetadata'].cast<Map<String, dynamic>>();
-        return finalData;      }
+        debugPrint("Final data: ${finalData.toString()}");
+        return finalData;      
+      }
       else
       {
         debugPrint("[-] Key contained nothing");
