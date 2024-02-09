@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/common.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
 import 'package:pollster_flutter/crypto.dart';
 import 'package:pollster_flutter/models/poll.dart';
@@ -41,17 +42,7 @@ class TitlePoll extends StatelessWidget {
   Widget build(BuildContext context) {
   return Material(
     child: Scaffold (
-      appBar: AppBar(
-          title: const Text(
-            "Create poll",
-            style: TextStyle(
-              fontSize: 15.0,
-              color: Colors.black,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-      ),
+      appBar: CommonAppBar(msg: "Create Poll"),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -258,26 +249,7 @@ class _BuildPollState extends State<BuildPoll> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Create poll",
-          style: TextStyle(
-            fontSize: 15.0,
-            color: Colors.black,
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.normal,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            debugPrint("Implement go back"); //TODO
-          }
-        ),
-      ),
+      appBar: const CommonAppBar(msg: "Create Poll"),
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),

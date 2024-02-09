@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/common.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
 import 'package:pollster_flutter/user_session.dart';
 import 'http.dart';
@@ -18,17 +19,7 @@ class OpenPolls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold (
-      appBar: AppBar(
-          title: const Text(
-            "Create poll",
-            style: TextStyle(
-              fontSize: 15.0,
-              color: Colors.black,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-      ),
+      appBar: const CommonAppBar(msg: "Create Poll"),
       body: FutureBuilder<List<PollMetadata>> (
         future: fetchOpen(),
         builder: (context, snapshot) {
@@ -84,17 +75,7 @@ class _ResponderState extends State<Responder> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Open polls",
-          style: TextStyle(
-            fontSize: 15.0,
-            color: Colors.black,
-            fontFamily: 'Montserrat',
-            fontWeight: FontWeight.normal,
-          ),
-        ),
-      ),
+      appBar: const CommonAppBar(msg: "Open Polls"),
       body: Center (
         child: FutureBuilder<List<ReceivedVotes>> (
           future: futurePolls,
@@ -115,35 +96,6 @@ class _ResponderState extends State<Responder> {
     );
   }
 }
-
-/*
-class ChoosePoll extends StatelessWidget {
-  final List<ReceivedVotes> receivedPolls;
-
-  const ChoosePoll({required this.receivedPolls});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: receivedPolls.length,
-        itemBuilder: (context, i) {
-          return MyClickableChip(
-            
-            label: receivedPolls[i].title,
-            onTap: () {
-              debugPrint("Clicked poll: ${receivedPolls[i].title}");
-              Navigator.push(
-                context, 
-                MaterialPageRoute(builder: (context) => PollLayout(poll: receivedPolls[i]))
-              );
-              
-            });
-        }
-      
-    );
-  }
-}
-*/
 
 class PollLayout extends StatelessWidget {
   final Poll poll;
@@ -199,17 +151,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
   Widget build(BuildContext context) {
     List<Answer> selectedAnswers = List.generate(poll.questions.length, (index) => Answer(poll_id: poll.pollMetadata.poll_id));
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            poll.pollMetadata.title,
-            style: const TextStyle(
-              fontSize: 15.0,
-              color: Colors.black,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.normal,
-            ),
-          ),
-        ),
+      appBar: CommonAppBar(msg: poll.pollMetadata.title),
       body: Center(
         child: Column(
           children: [
