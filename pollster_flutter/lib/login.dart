@@ -29,7 +29,7 @@ class LoginPage extends StatelessWidget {
       routes: {
         '/home':(BuildContext context) => const Home()
       },
-      theme: darkTheme,
+      theme: lightTheme,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Login Page'),

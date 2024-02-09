@@ -13,7 +13,7 @@ class ClickablePollCard extends StatelessWidget {
   }){
     if (pollMetadataType == 'createdPollMetadata'){
       materialPageRoute = MaterialPageRoute(
-            builder: (context) => CreatedPollItemDetailedView(createdPollItem: pollMetadata)
+            builder: (context) => PollItemDetailedView(pollItem: pollMetadata, isOpenPoll: false,)
           );
     } else if (pollMetadataType == 'receivedPollMetadata') {
       materialPageRoute = MaterialPageRoute(
@@ -21,7 +21,7 @@ class ClickablePollCard extends StatelessWidget {
           );
     } else if (pollMetadataType == 'openPollMetadata') {
       materialPageRoute = MaterialPageRoute(
-            builder: (context) => OpenPollItemDetailedView(pollItem: pollMetadata)
+            builder: (context) => PollItemDetailedView(pollItem: pollMetadata, isOpenPoll: true,)
           );
     }
   }

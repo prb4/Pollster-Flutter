@@ -29,7 +29,6 @@ class Home extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  //MaterialPageRoute(builder: (context) => const Responder()),
                   MaterialPageRoute(builder: (context) => OpenPolls()),
                 );
               },

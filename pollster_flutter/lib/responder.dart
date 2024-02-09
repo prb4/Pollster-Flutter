@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/common.dart';
-import 'package:pollster_flutter/contacts_widget.dart';
 import 'package:pollster_flutter/user_session.dart';
 import 'http.dart';
 import 'selectable_card.dart';
 import 'package:pollster_flutter/models/poll.dart';
-import 'crypto.dart';
 import 'package:pollster_flutter/clickable_card.dart';
-class Responder extends StatefulWidget {
-  const Responder({super.key});
-
-    @override
-  State<Responder> createState() => _ResponderState();
-}
 
 class OpenPolls extends StatelessWidget {
 
@@ -54,45 +46,6 @@ class OpenPollMetadataCardLayout extends StatelessWidget {
             pollMetadataType: "openPollMetadata"
           );
         }
-    );
-  }
-}
-
-class _ResponderState extends State<Responder> {
-  //Class that actually fetches the data
-  late Future<List<ReceivedVotes>> futurePolls;
-
-
-  @override
-  void initState() {
-    super.initState();
-    
-    futurePolls = fetchPolls();
-    debugPrint("Have futureQuestion");
-
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CommonAppBar(msg: "Open Polls"),
-      body: Center (
-        child: FutureBuilder<List<ReceivedVotes>> (
-          future: futurePolls,
-          builder: (context, snapshot) {
-            
-            if (snapshot.hasData) {
-              debugPrint("snapshot has data");
-
-              //return ChoosePoll(receivedPolls: snapshot.data!);
-
-            } else if (snapshot.hasError) {
-              return const Text("Snapshot error"); // TODO - improve
-            }
-            return const CircularProgressIndicator();
-          }
-        )
-      )
     );
   }
 }
@@ -165,20 +118,14 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
                     choices: poll.questions[i].choices,
                     onAnswerSelected: (int index) {
                       updateSelectedAnswers(selectedAnswers, i, poll.questions[i].question_id, poll.questions[i].choices[index]);
-                      //selectedAnswers[i] = index;
-                      //debugPrint("Current selected answers: ${selectedAnswers.toString()}");
                     });
               })
             ),
             SubmitButton(message: "Submit", onPressed: () {
                 debugPrint("Submit click, final answers: ${selectedAnswers.toString()}");
-                //Map<String, dynamic> data = {
-                //  "answer": answers[getSelectedCard()]
-                //};
 
                 sendPostRequest(prepAnswerSubmit(selectedAnswers), "/answer");
                 
-                //Navigator.pop(context); //TODO - when this is called, need to re-call the previous screen so the updated list loads (ie: without the just answered poll)
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               }),
           ]
@@ -295,7 +242,6 @@ class QuestionTextBox extends StatelessWidget {
 }
 
 class SubmitButton extends StatelessWidget {
-  //const OutlinedButtonExample({super.key});
   final String message;
   final Function onPressed;
   const SubmitButton({required this.message, required this.onPressed});

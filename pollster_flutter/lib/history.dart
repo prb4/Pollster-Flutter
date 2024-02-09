@@ -177,11 +177,12 @@ class CreatedPollItemDetailedView extends StatelessWidget {
   }
 }
 
-class OpenPollItemDetailedView extends StatelessWidget {
+class PollItemDetailedView extends StatelessWidget {
   final PollMetadata pollItem;
+  final bool isOpenPoll;
   late Future<Poll> poll;
 
-  OpenPollItemDetailedView({super.key,required, required this.pollItem}){
+  PollItemDetailedView({super.key,required, required this.pollItem, required this.isOpenPoll}){
     debugPrint("[-] in OpenPollItemDetailedView");
     poll = fetchPoll(pollItem.poll_id.toString());
   }
@@ -193,7 +194,12 @@ class OpenPollItemDetailedView extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           //return OpenPollItemDisplay(poll: snapshot.data!);
-          return PollLayout(poll: snapshot.data!);
+          if (isOpenPoll == true){
+            return PollLayout(poll: snapshot.data!);
+          } else {
+            return CreatedPollItemDisplay(poll: snapshot.data!);
+          }
+          
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
