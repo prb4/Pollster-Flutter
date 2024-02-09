@@ -155,6 +155,11 @@ def get_polls_created(user_id: int):
 
     return db.get_polls_created(user_id)
 
+def get_polls_closed_received(user_id: int):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    return db.get_polls_received(user_id, answered = True) 
+
 def get_polls_received(user_id: int):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 

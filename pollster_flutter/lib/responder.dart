@@ -17,20 +17,33 @@ class OpenPolls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<PollMetadata>> (
-      future: fetchOpen(),
-      builder: (context, snapshot) {
-        
-        if (snapshot.hasData) {
-          debugPrint("snapshot has data!");
+    return Scaffold (
+      appBar: AppBar(
+          title: const Text(
+            "Create poll",
+            style: TextStyle(
+              fontSize: 15.0,
+              color: Colors.black,
+              fontFamily: 'Montserrat',
+              fontWeight: FontWeight.normal,
+            ),
+          ),
+      ),
+      body: FutureBuilder<List<PollMetadata>> (
+        future: fetchOpen(),
+        builder: (context, snapshot) {
+          
+          if (snapshot.hasData) {
+            debugPrint("snapshot has data!");
 
-          return OpenPollMetadataCardLayout(openPollMetadata: snapshot.data!);
+            return OpenPollMetadataCardLayout(openPollMetadata: snapshot.data!);
 
-        } else if (snapshot.hasError) {
-          return const Text("Snapshot error"); // TODO - improve
+          } else if (snapshot.hasError) {
+            return const Text("Snapshot error"); // TODO - improve
+          }
+          return const CircularProgressIndicator();
         }
-        return const CircularProgressIndicator();
-      }
+      )
     );
   }
 }

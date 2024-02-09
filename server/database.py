@@ -269,7 +269,7 @@ class Database():
         '''
         return self.get_polls_received(user_id, answered=False)
 
-    def get_polls_received(self, user_id: int, answered: Union[str, None] = None):
+    def get_polls_received(self, user_id: int, answered: Union[bool, None] = None):
         '''
         Returns open polls that a user needs to answer
 

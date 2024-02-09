@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pollster_flutter/models/poll.dart';
 import 'package:pollster_flutter/user_session.dart';
 
-String ip = "http://192.168.1.151:5000/";
+String ip = "http://192.168.1.162:5000/";
 //String ip = "http://172.16.44.50:5000/";
 
 Future<Poll> fetchPoll(String poll_id) async {
@@ -186,6 +186,25 @@ Future<List<PollMetadata>> fetchCreated() async {
   }
 }
 */
+
+Future<List<PollMetadata>> fetchHistoricalReceived() async {
+  debugPrint("in fetchReceived");
+  String endpoint = "/polls?user_id=${UserSession().userId}&created=False&received=True&answered=True";
+  List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
+
+
+  List<PollMetadata> pollMetadataList = jsonData.map((Map<String, dynamic> item) {
+    return PollMetadata(
+      creator: item['creator'].toString(),
+      title: item['title'], 
+      poll_id: item['poll_id'], 
+      created: item['created'],
+    );
+  }).toList();
+
+  return pollMetadataList;
+}
+
 Future<List<PollMetadata>> fetchReceieved() async {
   debugPrint("in fetchReceived");
   String endpoint = "/polls?user_id=${UserSession().userId}&created=False&received=True";

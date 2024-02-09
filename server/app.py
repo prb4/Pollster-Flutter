@@ -104,7 +104,7 @@ def polls():
                 open_polls = mid.get_polls_open(data['user_id'])
                 resp['openPollsMetadata'] = open_polls
         except KeyError:
-            received_polls = mid.get_polls_received(data['user_id'])
+            received_polls = mid.get_polls_closed_received(data['user_id'])
             resp['receivedPollsMetadata'] = received_polls
 
     pprint(resp)

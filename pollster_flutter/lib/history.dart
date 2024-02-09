@@ -8,7 +8,7 @@ class History extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return const Scaffold (
       body: Center (
         child: HistoricTab()
       )
@@ -33,6 +33,13 @@ class HistoricTab extends StatelessWidget {
               ],
             ),
             title: const Text('Historic Polls'),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                // Handle back button press here
+                Navigator.pop(context);
+              },
+            ),
           ),
           body: TabBarView(
             children: [
@@ -73,7 +80,7 @@ class FutureReceivedPollMetadataBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<PollMetadata>> (
-      future: fetchReceieved(),
+      future: fetchHistoricalReceived(),
       builder: (context, snapshot) {
         
         if (snapshot.hasData) {
