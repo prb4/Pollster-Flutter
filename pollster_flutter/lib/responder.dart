@@ -52,7 +52,6 @@ class OpenPollMetadataCardLayout extends StatelessWidget {
 
 class PollLayout extends StatelessWidget {
   final Poll poll;
-  //late List<Answer> selectedAnswers;
 
   const PollLayout ({
     required this.poll,
@@ -109,23 +108,25 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
         child: Column(
           children: [
             Expanded(
-              
-              child: ListView.builder(
-                itemCount: poll.questions.length,
-                itemBuilder: (context, i) {
-                  return _PollLayout(
-                    question: poll.questions[i].prompt,
-                    choices: poll.questions[i].choices,
-                    onAnswerSelected: (int index) {
-                      updateSelectedAnswers(selectedAnswers, i, poll.questions[i].question_id, poll.questions[i].choices[index]);
-                    });
-              })
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: ListView.separated(
+                  itemCount: poll.questions.length,
+                  itemBuilder: (context, i) {
+                    return _PollLayout(
+                      question: poll.questions[i].prompt,
+                      choices: poll.questions[i].choices,
+                      onAnswerSelected: (int index) {
+                        updateSelectedAnswers(selectedAnswers, i, poll.questions[i].question_id, poll.questions[i].choices[index]);
+                      });
+                  },
+                  separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 32.0),
+                )
+              ),
             ),
             SubmitButton(message: "Submit", onPressed: () {
                 debugPrint("Submit click, final answers: ${selectedAnswers.toString()}");
-
                 sendPostRequest(prepAnswerSubmit(selectedAnswers), "/answer");
-                
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               }),
           ]
@@ -152,6 +153,7 @@ class _PollLayout extends StatelessWidget {
     debugPrint("PollLayout");
     return Container(
       //color: Colors.blue,
+      //padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         color: Colors.grey,
