@@ -128,7 +128,7 @@ class Database():
         '''
         When a poll gets submitted with an answer, update the CHOICES table with the correct anser
         '''
-        sql = "INSERT INTO CHOICES (QUESTION_ID, RECIPIENT_ID, POLL_ID, ANSWER) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO ANSWERS (QUESTION_ID, RECIPIENT, POLL_ID, ANSWER) VALUES (%s, %s, %s, %s)"
         val = (question_id, recipient_id, poll_id, answer)
 
         cursor = self.dataBase.cursor()
@@ -141,7 +141,7 @@ class Database():
         For when a poll gets answered, update it in the recipient poll
         '''
 
-        print("[-] Updating {}: {} as answered".format(recipient_id, poll_id))
+        print("[-] Updating {}: {} as answered".format(str(recipient_id), poll_id))
         sql = "UPDATE RECIPIENT SET ANSWERED = 1 WHERE RECIPIENT = %s AND POLL_ID = %s"
         val = (recipient_id, poll_id)
 
@@ -348,6 +348,7 @@ if __name__ == "__main__":
                         ANSWER_ID INT AUTO_INCREMENT PRIMARY KEY,
                         QUESTION_ID VARCHAR(50) NOT NULL,
                         POLL_ID VARCHAR(50) NOT NULL,
+                        RECIPIENT INT NOT NULL,
                         ANSWER VARCHAR(500) NOT NULL
                         )"""
     database.create_table(answers_table_statement)

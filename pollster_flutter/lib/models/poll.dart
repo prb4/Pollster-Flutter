@@ -151,7 +151,7 @@ class Answer {
   // Override the toString method for better display in print statements
   @override
   String toString() {
-    return 'SelectedAnswer(question_id: $question_id, answer: $answer, answer_id:${answer_id.toString()}, poll_id: ${poll_id.toString()})';
+    return 'Answer(question_id: $question_id, answer: $answer, answer_id:${answer_id.toString()}, poll_id: ${poll_id.toString()})';
   }
 }
 

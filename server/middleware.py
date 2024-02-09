@@ -84,8 +84,7 @@ def answer_poll(poll_id: str, user_id: int, answers):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
     for answer in answers:
-        pdb.set_trace()
-        db.insert_answer(user_id, answers['question_id'], poll_id, answer['answer'])
+        ret = db.insert_answer(user_id, answer['question_id'], poll_id, answer['answer'])
 
     return db.update_poll_as_answered(user_id, poll_id)
 

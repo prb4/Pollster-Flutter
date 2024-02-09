@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/clickable_card.dart';
+import 'package:pollster_flutter/responder.dart';
 import 'models/poll.dart';
 import 'http.dart';
 
@@ -158,7 +159,7 @@ class CreatedPollItemDetailedView extends StatelessWidget {
       future: poll,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return CreatedPollItemDisplay(pollDisplay: snapshot.data!);
+          return CreatedPollItemDisplay(poll: snapshot.data!);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
@@ -174,7 +175,7 @@ class OpenPollItemDetailedView extends StatelessWidget {
   late Future<Poll> poll;
 
   OpenPollItemDetailedView({super.key,required, required this.pollItem}){
-    debugPrint("[-] in CreatedPollItemDetailedView");
+    debugPrint("[-] in OpenPollItemDetailedView");
     poll = fetchPoll(pollItem.poll_id.toString());
   }
 
@@ -184,7 +185,8 @@ class OpenPollItemDetailedView extends StatelessWidget {
       future: poll,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return CreatedPollItemDisplay(pollDisplay: snapshot.data!);
+          //return OpenPollItemDisplay(poll: snapshot.data!);
+          return PollLayout(poll: snapshot.data!);
         } else if (snapshot.hasError) {
           return Text('${snapshot.error}');
         }
@@ -196,9 +198,9 @@ class OpenPollItemDetailedView extends StatelessWidget {
 }
 
 class CreatedPollItemDisplay extends StatelessWidget {
-  final Poll pollDisplay;
+  final Poll poll;
 
-  const CreatedPollItemDisplay({super.key,required, required this.pollDisplay});
+  const CreatedPollItemDisplay({super.key,required, required this.poll});
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +208,7 @@ class CreatedPollItemDisplay extends StatelessWidget {
         body: Center(
           child: Column (
             children: [
-              Text(pollDisplay.questions[0].toString())
+              Text(poll.questions[0].prompt)
             ],
           )),
     );

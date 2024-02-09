@@ -90,7 +90,7 @@ class _ResponderState extends State<Responder> {
             if (snapshot.hasData) {
               debugPrint("snapshot has data");
 
-              return ChoosePoll(receivedPolls: snapshot.data!);
+              //return ChoosePoll(receivedPolls: snapshot.data!);
 
             } else if (snapshot.hasError) {
               return const Text("Snapshot error"); // TODO - improve
@@ -103,6 +103,7 @@ class _ResponderState extends State<Responder> {
   }
 }
 
+/*
 class ChoosePoll extends StatelessWidget {
   final List<ReceivedVotes> receivedPolls;
 
@@ -120,7 +121,7 @@ class ChoosePoll extends StatelessWidget {
               debugPrint("Clicked poll: ${receivedPolls[i].title}");
               Navigator.push(
                 context, 
-                MaterialPageRoute(builder: (context) => PollLayout(receivedVotes: receivedPolls[i]))
+                MaterialPageRoute(builder: (context) => PollLayout(poll: receivedPolls[i]))
               );
               
             });
@@ -129,13 +130,14 @@ class ChoosePoll extends StatelessWidget {
     );
   }
 }
+*/
 
 class PollLayout extends StatelessWidget {
+  final Poll poll;
+  //late List<Answer> selectedAnswers;
 
-  final ReceivedVotes receivedVotes;
-
-  const PollLayout({
-    required this.receivedVotes,
+  const PollLayout ({
+    required this.poll,
   });
 
   List<Answer> updateSelectedAnswers(selectedAnswers, index, question_id, answer){
@@ -143,7 +145,7 @@ class PollLayout extends StatelessWidget {
     debugPrint("index: ${index.toString()}, question_id: ${question_id.toString()}, answer: ${answer.toString()}");
 
     selectedAnswers[index].question_id = question_id;
-    selectedAnswers[index].selectedAnswer = answer;
+    selectedAnswers[index].answer = answer;
     
     debugPrint("Updated selectedAnswer: ${selectedAnswers.toString()}");
     return selectedAnswers;
@@ -173,7 +175,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
   data['answers'] = convertSelectedAnswersListToMap(selectedAnswer);  
   data['username'] = UserSession().username;
   data['user_id'] = UserSession().userId;
-  data['poll_id'] = getUUID();
+  data['poll_id'] = poll.pollMetadata.poll_id;
 
   debugPrint("[-] Sending ${data.toString()}");
 
@@ -182,11 +184,11 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
   
   @override
   Widget build(BuildContext context) {
-    List<Answer> selectedAnswers = List.generate(receivedVotes.votes.length, (index) => Answer(poll_id: receivedVotes.uuid));
+    List<Answer> selectedAnswers = List.generate(poll.questions.length, (index) => Answer(poll_id: poll.pollMetadata.poll_id));
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            receivedVotes.title,
+            poll.pollMetadata.title,
             style: const TextStyle(
               fontSize: 15.0,
               color: Colors.black,
@@ -201,13 +203,13 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
             Expanded(
               
               child: ListView.builder(
-                itemCount: receivedVotes.votes.length,
+                itemCount: poll.questions.length,
                 itemBuilder: (context, i) {
                   return _PollLayout(
-                    question: receivedVotes.votes[i].prompt,
-                    answers: receivedVotes.votes[i].choices,
+                    question: poll.questions[i].prompt,
+                    choices: poll.questions[i].choices,
                     onAnswerSelected: (int index) {
-                      updateSelectedAnswers(selectedAnswers, i, receivedVotes.votes[i].question_id, receivedVotes.votes[i].choices[index]);
+                      updateSelectedAnswers(selectedAnswers, i, poll.questions[i].question_id, poll.questions[i].choices[index]);
                       //selectedAnswers[i] = index;
                       //debugPrint("Current selected answers: ${selectedAnswers.toString()}");
                     });
@@ -234,12 +236,12 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
 class _PollLayout extends StatelessWidget {
 
   final String question;
-  final List<String> answers;
+  final List<String> choices;
   final Function(int) onAnswerSelected;
 
   const _PollLayout({
     required this.question,
-    required this.answers,
+    required this.choices,
     required this.onAnswerSelected,
   });
 
@@ -258,7 +260,7 @@ class _PollLayout extends StatelessWidget {
         children: <Widget>[
               QuestionTextBox(question),
               AnswerList(
-                answers: answers, 
+                answers: choices, 
                 onAnswerSelected: (index) => onAnswerSelected(index)),
         ],
       ),
