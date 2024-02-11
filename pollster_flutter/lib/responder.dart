@@ -162,7 +162,7 @@ class QuestionLayout extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-              QuestionTextBox(question),
+              PromptTextBox(question),
               AnswerList(
                 answers: choices, 
                 onAnswerSelected: (index) => onAnswerSelected(index)),
@@ -232,14 +232,14 @@ class _AnswerListState extends State<AnswerList> {
   }
 }
 
-class QuestionTextBox extends StatelessWidget {
+class PromptTextBox extends StatelessWidget {
   final String msg;
-  const QuestionTextBox(this.msg);
+  const PromptTextBox(this.msg);
 
   @override
   Widget build(BuildContext context) {
     return Text(msg,
-      style: const TextStyle(fontSize: 20)
+      style: Theme.of(context).textTheme.displaySmall
     );
   }
 }

@@ -233,10 +233,44 @@ class AnsweredQuestionDisplay extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-              Text(answeredQuestion.prompt),
-              Text(answeredQuestion.choices[0])
+              PromptTextBox(answeredQuestion.prompt),
+              ChoicesDisplay(choices: answeredQuestion.choices, answer: answeredQuestion.answer,),
         ],
       ),
+    );
+  }
+}
+
+class PromptDisplay extends StatelessWidget {
+  final String msg;
+  const PromptDisplay({super.key, required this.msg});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(msg);
+  }
+}
+
+class ChoicesDisplay extends StatelessWidget {
+  final List<String> choices;
+  final String answer;
+  const ChoicesDisplay({super.key, required this.choices, required this.answer});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true, //TODO - this may not be the best solution, but it works
+      itemCount: choices.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Card(
+          color: choices[index] == answer ? Colors.yellow : Colors.white,
+          child: Text(
+            choices[index],
+            textAlign: TextAlign.center,
+          ),
+        );
+      }
     );
   }
 }
