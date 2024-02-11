@@ -250,6 +250,16 @@ class Database():
         #pdb.set_trace()
         return poll_metadata
 
+    def get_poll_answered(self, user_id: str, poll_id: str):
+        sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'answer_id', ANSWER_ID, 'question_id', QUESTION_ID, 'recipient', RECIPIENT, 'answer', ANSWER) as JSON_OUTPUT from ANSWERS where POLL_ID = %s and RECIPIENT = %s"
+        val = (poll_id, user_id)
+
+        poll = self._get_polls(sql, val)
+        poll = [json.loads(_poll[0]) for _poll in poll]
+
+        return poll
+
+
     def get_polls_created(self, user_id: int):
         sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'title', TITLE, 'creator', CREATOR, 'created', created) as JSON_OUTPUT from POLLS where CREATOR = %s"
         val = (user_id, )

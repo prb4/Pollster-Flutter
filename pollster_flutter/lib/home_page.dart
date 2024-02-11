@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pollster_flutter/creator.dart';
 import 'package:pollster_flutter/history.dart';
 import 'package:pollster_flutter/responder.dart';
+import 'package:pollster_flutter/theme/text_theme.dart';
 
 
 class Home extends StatelessWidget {
@@ -29,6 +30,7 @@ class Home extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
+                  //MaterialPageRoute(builder: (context) => const Responder()),
                   MaterialPageRoute(builder: (context) => OpenPolls()),
                 );
               },
@@ -64,7 +66,12 @@ class CardWidget extends StatelessWidget {
       child: SizedBox(
         width: 300,
         height: 100,
-        child: Center(child:  Text(message)),
+        child: Center(
+          child: Text(
+            message,
+            style: Theme.of(context).textTheme.headlineMedium,
+          )
+        ),
       ),
       
     );

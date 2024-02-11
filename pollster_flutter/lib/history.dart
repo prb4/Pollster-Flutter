@@ -132,25 +132,6 @@ class ReceivedPollMetadataCardLayout extends StatelessWidget {
   }
 }
 
-class ReceivedPollItemDetailedView extends StatelessWidget {
-  final PollMetadata receivedPollItem;
-  const ReceivedPollItemDetailedView({super.key,required, required this.receivedPollItem});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            Text(receivedPollItem.poll_id.toString()),
-            Text(receivedPollItem.title),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class PollItemDetailedView extends StatelessWidget {
   final PollMetadata pollItem;
   final bool isOpenPoll;
@@ -184,7 +165,37 @@ class PollItemDetailedView extends StatelessWidget {
   }
 }
 
-class CreatedPollLayout extends StatelessWidget {
+class ReceivedPollItemDetailedView extends StatelessWidget {
+  final PollMetadata receivedPollMetadata;
+
+  const ReceivedPollItemDetailedView({super.key,required, required this.receivedPollMetadata});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<AnsweredPoll> (
+      future: fetchAnsweredPoll(receivedPollMetadata.poll_id),
+      builder: (context, snapshot) {
+        
+        if (snapshot.hasData) {
+          debugPrint("snapshot has data");
+          return Column(
+            children: [
+              Text(snapshot.data!.pollId),
+              Text(snapshot.data!.recipient),
+              Text(snapshot.data!.answeredQuestions.toString())
+            ],
+          );
+
+        } else if (snapshot.hasError) {
+          return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
+        }
+        return const CircularProgressIndicator();
+      }
+    );
+  }
+}
+
+  class CreatedPollLayout extends StatelessWidget {
   final Poll poll;
 
   const CreatedPollLayout({super.key,required, required this.poll});

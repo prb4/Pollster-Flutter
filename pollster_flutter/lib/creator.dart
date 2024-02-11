@@ -183,7 +183,7 @@ class _BuildPollState extends State<BuildPoll> {
 
   Question createVote(String question, int question_id, List<String> answers) {
     debugPrint("Creating vote with $question, ${answers.toString()}");
-    Question vote = Question(prompt: question, question_id: question_id, choices: answers);
+    Question vote = Question(prompt: question, questionId: question_id, choices: answers);
     return vote;
   }
 

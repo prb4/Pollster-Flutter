@@ -17,7 +17,7 @@ class ClickablePollCard extends StatelessWidget {
           );
     } else if (pollMetadataType == 'receivedPollMetadata') {
       materialPageRoute = MaterialPageRoute(
-            builder: (context) => ReceivedPollItemDetailedView(receivedPollItem: pollMetadata)
+            builder: (context) => ReceivedPollItemDetailedView(receivedPollMetadata: pollMetadata)
           );
     } else if (pollMetadataType == 'openPollMetadata') {
       materialPageRoute = MaterialPageRoute(
@@ -39,7 +39,7 @@ class ClickablePollCard extends StatelessWidget {
       },
       child: Card(
         child: ListTile(
-          title: Text(pollMetadata.title),
+          title: Text(pollMetadata.title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:pollster_flutter/history.dart';
 
 class PollItem extends StatelessWidget{
   final String input;
@@ -45,12 +44,12 @@ class PollItem extends StatelessWidget{
 
 class Question {
   final String prompt;
-  final int question_id;
+  final int questionId;
   final List<String> choices;
 
   const Question({
     required this.prompt,
-    required this.question_id,
+    required this.questionId,
     required this.choices,
   });
 
@@ -62,14 +61,14 @@ class Question {
     debugPrint(parsedAnswers.toString());
     return Question(
       prompt: json['prompt'] as String,
-      question_id: json['question_id'] as int,
+      questionId: json['question_id'] as int,
       choices: parsedAnswers,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'prompt': prompt,
-    'question_id': question_id,
+    'question_id': questionId,
     'choices': choices,
   };
 }
@@ -87,7 +86,7 @@ class ReceivedVotes {
 
   factory ReceivedVotes.fromJson(String uuid, Map<String, dynamic> json, String title) {
     debugPrint("Converting ReceivedVotes");
-    debugPrint("Poll: ${json}");
+    debugPrint("Poll: $json");
     final List<dynamic> dynamicPolls = json['votes'];
     debugPrint("dynamicPolls: ${dynamicPolls.toString()}");
     
@@ -95,7 +94,7 @@ class ReceivedVotes {
     List<Question> votesList = dynamicPolls
       .map((dynamic item) => Question(
         prompt: item['question'],
-        question_id: item['question_id'],
+        questionId: item['question_id'],
         choices: item['answers'],
       )).toList();
 
@@ -116,42 +115,42 @@ class ReceivedVotes {
 }
 
 class Answer {
-  String? answer_id;
-  int? question_id;
-  String poll_id;
+  String? answerId;
+  int? questionId;
+  String pollId;
   String? answer;
 
   Answer({
-    this.answer_id,
-    this.question_id,
-    required this.poll_id,
+    this.answerId,
+    this.questionId,
+    required this.pollId,
     this.answer,
   });
 
   // Convert the Dart object to a Map
   Map<String, dynamic> toJson() {
     return {
-      'question_id': question_id,
+      'question_id': questionId,
       'answer': answer,
-      'poll_id': poll_id,
-      'answer_id': answer_id,
+      'poll_id': pollId,
+      'answer_id': answerId,
     };
   }
 
   // Factory method to create a Person object from a Map
   factory Answer.fromJson(Map<String, dynamic> json) {
     return Answer(
-      question_id: json['question_id'],
+      questionId: json['question_id'],
       answer: json['answer'],
-      poll_id: json['poll_id'],
-      answer_id: json['answer_id'],
+      pollId: json['poll_id'],
+      answerId: json['answer_id'],
     );
   }
 
   // Override the toString method for better display in print statements
   @override
   String toString() {
-    return 'Answer(question_id: $question_id, answer: $answer, answer_id:${answer_id.toString()}, poll_id: ${poll_id.toString()})';
+    return 'Answer(question_id: $questionId, answer: $answer, answer_id:${answerId.toString()}, poll_id: ${pollId.toString()})';
   }
 }
 
@@ -199,7 +198,7 @@ class Poll {
 
       Question tmp = Question(
         prompt: question['prompt'], 
-        question_id: question['question_id'], 
+        questionId: question['question_id'], 
         choices: choices);
         questions.add(tmp);
     }
@@ -215,6 +214,82 @@ class Poll {
   @override
   String toString() {
     return 'Poll(recipients: ${recipients.toString()}, pollMetadata: ${pollMetadata.toString()}, questions: ${questions.toString()})';
+  }
+}
+
+class AnsweredQuestion {
+  String answer;
+  String answerId;
+  String questionId;
+  
+
+  AnsweredQuestion({
+    required this.answer,
+    required this.answerId,
+    required this.questionId,
+  });
+
+  // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'answer': answer,
+      'answer_id': answerId,
+      'question_id': questionId,
+    };
+  }
+
+  // Factory method to create a Person object from a Map
+  factory AnsweredQuestion.fromJson(Map<String, dynamic> json) {
+    return AnsweredQuestion(
+      answer: json['answer'],
+      answerId: json['answer_id'],
+      questionId: json['question_id'],
+      );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'AnsweredQuestion(answer: $answer, anwer_id: ${answerId.toString()}, question_id: ${questionId.toString()})';
+  }
+}
+
+class AnsweredPoll {
+  String pollId;
+  String recipient;
+  List<AnsweredQuestion> answeredQuestions;
+  
+
+  AnsweredPoll({
+    required this.pollId,
+    required this.recipient,
+    required this.answeredQuestions,
+  });
+
+  // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'poll_id': pollId,
+      'recipient': recipient,
+      'answeredQuestions': answeredQuestions
+    };
+  }
+
+
+
+  // Factory method to create a Person object from a Map
+  factory AnsweredPoll.fromJson(Map<String, dynamic> json) {
+    return AnsweredPoll(
+      pollId: json['poll_id'],
+      recipient: json['recipient'],
+      answeredQuestions: json['answeredQuestions']
+      );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'AnsweredPoll(recipient: ${recipient.toString()},poll_id: ${pollId.toString()}, answeredQuestions: ${answeredQuestions.toString()})';
   }
 }
 
@@ -363,7 +438,7 @@ class CreatingQuestion {
     final List<dynamic> contactsList = json['contacts'];
     final List<Contact> parsedContacts = List<Contact>.from(contactsList);
 
-    Question newPoll = Question(prompt: json['question'], question_id: json['question_id'], choices: parsedAnswers);
+    Question newPoll = Question(prompt: json['question'], questionId: json['question_id'], choices: parsedAnswers);
 
     debugPrint(parsedAnswers.toString());
     return CreatingQuestion(

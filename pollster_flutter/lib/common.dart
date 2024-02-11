@@ -11,12 +11,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget{
       appBar: AppBar(
           title: Text(
             msg,
-            style: const TextStyle(
-              fontSize: 15.0,
-              color: Colors.black,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.normal,
-            ),
+            style: Theme.of(context).textTheme.headlineLarge
           ),
           leading: IconButton(
           icon: const Icon(

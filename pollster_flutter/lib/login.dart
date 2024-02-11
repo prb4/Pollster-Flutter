@@ -4,8 +4,7 @@ import 'package:pollster_flutter/home_page.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/user.dart';
 import 'package:pollster_flutter/signup.dart';
-import 'package:pollster_flutter/theme/dark_theme.dart';
-import 'package:pollster_flutter/theme/light_theme.dart';
+import 'package:pollster_flutter/theme/theme.dart';
 import 'package:pollster_flutter/user_session.dart';
 
 class LoginPage extends StatelessWidget {
@@ -29,7 +28,9 @@ class LoginPage extends StatelessWidget {
       routes: {
         '/home':(BuildContext context) => const Home()
       },
-      theme: lightTheme,
+      themeMode: ThemeMode.system,
+      theme: TAppTheme.lightTheme,
+      darkTheme: TAppTheme.darkTheme,
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Login Page'),

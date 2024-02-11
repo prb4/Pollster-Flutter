@@ -150,6 +150,13 @@ def get_poll(user_id: int, poll_id: str):
 
     return poll
 
+def get_poll_answered(user_id: int, poll_id: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    poll = db.get_poll_answered(user_id, poll_id)
+
+    return poll 
+
 def get_polls_created(user_id: int):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 

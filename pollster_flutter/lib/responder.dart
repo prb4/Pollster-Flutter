@@ -76,7 +76,7 @@ List<Map<String, dynamic>> convertSelectedAnswersListToMap(List<Answer> selected
 
   for (Answer answer in selectedAnswers) {
     Map<String, dynamic> result = {};
-    result['question_id'] = answer.question_id;
+    result['question_id'] = answer.questionId;
     result['answer'] = answer.answer;
 
     data.add(result);
@@ -101,7 +101,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
   
   @override
   Widget build(BuildContext context) {
-    List<Answer> selectedAnswers = List.generate(poll.questions.length, (index) => Answer(poll_id: poll.pollMetadata.poll_id));
+    List<Answer> selectedAnswers = List.generate(poll.questions.length, (index) => Answer(pollId: poll.pollMetadata.poll_id));
     return Scaffold(
       appBar: CommonAppBar(msg: poll.pollMetadata.title),
       body: Center(
@@ -117,7 +117,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
                       question: poll.questions[i].prompt,
                       choices: poll.questions[i].choices,
                       onAnswerSelected: (int index) {
-                        updateSelectedAnswers(selectedAnswers, i, poll.questions[i].question_id, poll.questions[i].choices[index]);
+                        updateSelectedAnswers(selectedAnswers, i, poll.questions[i].questionId, poll.questions[i].choices[index]);
                       });
                   },
                   separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 32.0),

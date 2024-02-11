@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:pollster_flutter/models/poll.dart';
 import 'package:pollster_flutter/user_session.dart';
 
-String ip = "http://192.168.1.162:5000/";
+String ip = "http://192.168.1.174:5000/";
 //String ip = "http://172.16.44.50:5000/";
 
 Future<Poll> fetchPoll(String poll_id) async {
@@ -127,7 +127,7 @@ Future<List<ReceivedVotes>> fetchPolls() async {
 
 Future<List<PollMetadata>> fetchCreated() async {
   debugPrint("in fetchCreated");
-  String endpoint = "/polls?user_id=${UserSession().userId}&created=True&received=False";
+  String endpoint = "/polls?user_id=${UserSession().userId}&created=True";
   List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
 
@@ -146,50 +146,9 @@ Future<List<PollMetadata>> fetchCreated() async {
 
 }
 
-
-/*
-  String address = ip + "/history/created?user_id=${UserSession().userId.toString()}";
-
-  final response = await http
-    .get(Uri.parse(address));
-
-  if (response.statusCode == 200) {
-    debugPrint("Response code is 200");
-    //debugPrint("response body: ${response.body}");
-    final jsonData = jsonDecode(response.body);
-    //debugPrint("json: ${data.toString()}");
-
-    List<dynamic> createdPollsJsonDynamicList = jsonData['createdPollMetadata'];
-
-    debugPrint("Created Polls Metadata: ${createdPollsJsonDynamicList.runtimeType}");
-
-    List<PollMetadata> createdPollMetadataList = [];
-    for (var createdPollMetadata in createdPollsJsonDynamicList){
-
-      // Convert List<dynamic> to List<Recipient>
-      List<Recipient> recipientList = [];
-      for (Map<String, dynamic> item in createdPollMetadata['recipients']){
-        debugPrint("[-] Recipient: ${item.toString()}");
-        recipientList.add(Recipient.fromJson(item));
-      }
-
-      createdPollMetadata['recipients'] = recipientList;
-      PollMetadata tmp = PollMetadata.fromJson(createdPollMetadata);
-      createdPollMetadataList.add(tmp);
-      debugPrint("[-] Added item to createdPollMetadataList: ${tmp.toString()}");
-    }
-
-    return createdPollMetadataList;
-  } else {
-    debugPrint("Response code is NOT 200");
-    throw Exception("Failed fetchHistory");
-  }
-}
-*/
-
 Future<List<PollMetadata>> fetchHistoricalReceived() async {
   debugPrint("in fetchReceived");
-  String endpoint = "/polls?user_id=${UserSession().userId}&created=False&received=True&answered=True";
+  String endpoint = "/polls?user_id=${UserSession().userId}&created=False&answered=True";
   List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
 
@@ -207,7 +166,7 @@ Future<List<PollMetadata>> fetchHistoricalReceived() async {
 
 Future<List<PollMetadata>> fetchReceieved() async {
   debugPrint("in fetchReceived");
-  String endpoint = "/polls?user_id=${UserSession().userId}&created=False&received=True";
+  String endpoint = "/polls?user_id=${UserSession().userId}&created=False";
   List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
 
@@ -221,11 +180,33 @@ Future<List<PollMetadata>> fetchReceieved() async {
   }).toList();
 
   return pollMetadataList;
+}
+
+Future<AnsweredPoll> fetchAnsweredPoll(String pollId) async {
+  debugPrint("in fetchAnsweredPoll");
+  String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=${pollId.toString()}&created=False&open=False";
+  Map<String, dynamic> data = await fetch(endpoint);
+
+  List<AnsweredQuestion> answeredQuestions = [];
+  for (var item in data['answeredQuestions']) {
+    debugPrint("Item: ${item['answer'].toString()}");
+    debugPrint("Item: ${item['question_id'].toString()}");
+    debugPrint("Item: ${item['answer_id'].toString()}");
+    AnsweredQuestion answeredQuestion = AnsweredQuestion(answer: item['answer'], answerId: item['answer_id'].toString(), questionId: item['question_id'].toString());
+    debugPrint("answeredQuestion: ${answeredQuestion.toString()}");
+    answeredQuestions.add(answeredQuestion);
+  }
+  
+  AnsweredPoll answeredPoll = AnsweredPoll(pollId: data['pollId'], recipient: data['recipient'], answeredQuestions: answeredQuestions);
+
+  debugPrint("${answeredPoll.toString()}");
+
+  return answeredPoll;
 }
 
 Future<List<PollMetadata>> fetchOpen() async {
   debugPrint("in fetchOpen");
-  String endpoint = "/polls?user_id=${UserSession().userId}&open=True&created=False&received=True";
+  String endpoint = "/polls?user_id=${UserSession().userId}&open=True&created=False";
   List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
 
@@ -240,6 +221,7 @@ Future<List<PollMetadata>> fetchOpen() async {
 
   return pollMetadataList;
 }
+
 
 
 Future<Map<String, dynamic>> sendPostRequest(Map<String, dynamic> data, String endpoint) async {

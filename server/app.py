@@ -67,13 +67,30 @@ def fetch():
 @app.route("/poll", methods=['GET', 'POST'])
 def poll():
 
+    resp = {}
+
     if request.method == 'GET':
         data = request.args
 
-        poll = mid.get_answer_poll(data['user_id'], data['poll_id'])
+        try:
+            if "True" == data['created']:
+                #Get a poll that the user created
+                pass
+            else:
+                #Get a poll that the user recieved
+                if "True" == data['open']:
+                    pass
+                else:
+                    #Get an answered poll
+                    resp['answeredQuestions'] = mid.get_poll_answered(data['user_id'], data['poll_id'])
+                    resp['pollId'] = data['poll_id']
+                    resp['recipient'] = data['user_id']
+        except KeyError:
+            resp = mid.get_answer_poll(data['user_id'], data['poll_id'])
 
-        pprint(poll)
-        return make_response(jsonify(poll), 200)
+
+        pprint(resp)
+        return make_response(jsonify(resp), 200)
 
     elif request.method == 'POST':
         #Create a poll
@@ -95,15 +112,19 @@ def polls():
     resp = {}
 
     if "True" == data['created']:
+        #Get polls that the user created
         created_polls = mid.get_polls_created(data['user_id'])
         resp['createdPollsMetadata'] = created_polls
 
-    elif "True" == data['received']:
+    else:
+        #Get polls that the user received
         try:
             if "True" == data['open']:
+                #Get the polls that have NOT been answered
                 open_polls = mid.get_polls_open(data['user_id'])
                 resp['openPollsMetadata'] = open_polls
         except KeyError:
+            #Get the polls that have been answered
             received_polls = mid.get_polls_closed_received(data['user_id'])
             resp['receivedPollsMetadata'] = received_polls
 
@@ -111,29 +132,29 @@ def polls():
 
     return make_response(jsonify(resp), 200)
 
-@app.route("/history/created", methods=['GET'])
-def history_created():
-    data = request.args
-
-    created_polls = mid.get_all_created_polls_metadata(data['user_id'])
-
-    resp = {}
-    resp['pollMetadata'] = created_polls
-    pprint(resp)
-
-    return make_response(jsonify(resp), 200)
-
-@app.route("/history/received", methods=['GET'])
-def history_received():
-    data = request.args
-
-    received_polls = mid.get_all_received_polls_metadata(data['user_id'])
-
-    resp = {}
-    resp['pollMetadata'] = received_polls
-    pprint(resp)
-
-    return make_response(jsonify(resp), 200)
+#@app.route("/history/created", methods=['GET'])
+#def history_created():
+#    data = request.args
+#
+#    created_polls = mid.get_all_created_polls_metadata(data['user_id'])
+#
+#    resp = {}
+#    resp['pollMetadata'] = created_polls
+#    pprint(resp)
+#
+#    return make_response(jsonify(resp), 200)
+#
+#@app.route("/history/received", methods=['GET'])
+#def history_received():
+#    data = request.args
+#
+#    received_polls = mid.get_all_received_polls_metadata(data['user_id'])
+#
+#    resp = {}
+#    resp['pollMetadata'] = received_polls
+#    pprint(resp)
+#
+#    return make_response(jsonify(resp), 200)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)
