@@ -189,7 +189,16 @@ Future<AnsweredPoll> fetchAnsweredPoll(String pollId) async {
 
   List<AnsweredQuestion> answeredQuestions = [];
   for (var item in data['answeredQuestions']) {
-    AnsweredQuestion answeredQuestion = AnsweredQuestion(answer: item['answer'], answerId: item['answer_id'].toString(), questionId: item['question_id'].toString());
+    String prompt = item['prompt'].toString();
+    List<String> choices = [];
+    for (var choice in item['choices']){
+      choices.add(choice.toString());
+    }
+    String answer = item['answer'].toString();
+    String questionId = item['question_id'].toString();
+
+    AnsweredQuestion answeredQuestion = AnsweredQuestion(prompt: prompt, answer: answer, choices: choices, questionId: questionId);
+    debugPrint(answeredQuestion.toString());
     answeredQuestions.add(answeredQuestion);
   }
   

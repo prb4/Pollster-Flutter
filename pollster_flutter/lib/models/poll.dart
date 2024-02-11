@@ -218,22 +218,25 @@ class Poll {
 }
 
 class AnsweredQuestion {
+  String prompt;
   String answer;
-  String answerId;
+  List<String> choices;
   String questionId;
   
 
   AnsweredQuestion({
+    required this.prompt,
     required this.answer,
-    required this.answerId,
+    required this.choices,
     required this.questionId,
   });
 
   // Convert the Dart object to a Map
   Map<String, dynamic> toJson() {
     return {
-      'answer': answer,
-      'answer_id': answerId,
+      'answer': prompt,
+      'answer_id': answer,
+      'choices': choices,
       'question_id': questionId,
     };
   }
@@ -241,8 +244,9 @@ class AnsweredQuestion {
   // Factory method to create a Person object from a Map
   factory AnsweredQuestion.fromJson(Map<String, dynamic> json) {
     return AnsweredQuestion(
-      answer: json['answer'],
-      answerId: json['answer_id'],
+      prompt: json['answer'],
+      answer: json['answer_id'],
+      choices: json['choices'],
       questionId: json['question_id'],
       );
   }
@@ -250,7 +254,7 @@ class AnsweredQuestion {
   // Override the toString method for better display in print statements
   @override
   String toString() {
-    return 'AnsweredQuestion(answer: $answer, anwer_id: ${answerId.toString()}, question_id: ${questionId.toString()})';
+    return 'AnsweredQuestion(answer: $prompt, anwer_id: ${answer.toString()}, choices: ${choices.toString()}, questionId: ${questionId.toString()})';
   }
 }
 

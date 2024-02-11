@@ -251,11 +251,14 @@ class Database():
         return poll_metadata
 
     def get_poll_answered(self, user_id: str, poll_id: str):
-        sql = "SELECT JSON_OBJECT('poll_id', POLL_ID, 'answer_id', ANSWER_ID, 'question_id', QUESTION_ID, 'recipient', RECIPIENT, 'answer', ANSWER) as JSON_OUTPUT from ANSWERS where POLL_ID = %s and RECIPIENT = %s"
+        sql = "select JSON_OBJECT('answer', ANSWERS.ANSWER, 'question_id', QUESTIONS.QUESTION_ID, 'prompt', QUESTIONS.PROMPT, 'choices', QUESTIONS.CHOICES) as JSON_OUTPUT from QUESTIONS JOIN ANSWERS on ANSWERS.QUESTION_ID = QUESTIONS.QUESTION_ID WHERE ANSWERS.POLL_ID = %s and ANSWERS.RECIPIENT = %s"
         val = (poll_id, user_id)
 
         poll = self._get_polls(sql, val)
         poll = [json.loads(_poll[0]) for _poll in poll]
+
+        for i in range(len(poll)):
+            poll[i]['choices'] = json.loads(poll[i]['choices'])
 
         return poll
 

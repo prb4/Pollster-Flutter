@@ -233,8 +233,8 @@ class AnsweredQuestionDisplay extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-              Text(answeredQuestion.questionId),
-              Text(answeredQuestion.answer)
+              Text(answeredQuestion.prompt),
+              Text(answeredQuestion.choices[0])
         ],
       ),
     );

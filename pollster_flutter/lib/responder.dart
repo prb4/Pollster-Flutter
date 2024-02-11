@@ -57,11 +57,11 @@ class PollLayout extends StatelessWidget {
     required this.poll,
   });
 
-  List<Answer> updateSelectedAnswers(selectedAnswers, index, question_id, answer){
+  List<Answer> updateSelectedAnswers(selectedAnswers, index, questionId, answer){
     debugPrint("Current selectedAnswer: ${selectedAnswers.toString()}");
-    debugPrint("index: ${index.toString()}, question_id: ${question_id.toString()}, answer: ${answer.toString()}");
+    debugPrint("index: ${index.toString()}, question_id: ${questionId.toString()}, answer: ${answer.toString()}");
 
-    selectedAnswers[index].question_id = question_id;
+    selectedAnswers[index].questionId = questionId;
     selectedAnswers[index].answer = answer;
     
     debugPrint("Updated selectedAnswer: ${selectedAnswers.toString()}");
@@ -113,7 +113,7 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
                 child: ListView.separated(
                   itemCount: poll.questions.length,
                   itemBuilder: (context, i) {
-                    return _PollLayout(
+                    return QuestionLayout(
                       question: poll.questions[i].prompt,
                       choices: poll.questions[i].choices,
                       onAnswerSelected: (int index) {
@@ -136,13 +136,13 @@ Map<String, dynamic> prepAnswerSubmit(List<Answer> selectedAnswer) {
   }
 }
 
-class _PollLayout extends StatelessWidget {
+class QuestionLayout extends StatelessWidget {
 
   final String question;
   final List<String> choices;
   final Function(int) onAnswerSelected;
 
-  const _PollLayout({
+  const QuestionLayout({
     required this.question,
     required this.choices,
     required this.onAnswerSelected,
@@ -171,6 +171,7 @@ class _PollLayout extends StatelessWidget {
     );
   }
 }
+
 
 class AnswerList extends StatefulWidget {
   final List<String> answers;
