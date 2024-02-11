@@ -259,6 +259,7 @@ class Database():
 
         for i in range(len(poll)):
             poll[i]['choices'] = json.loads(poll[i]['choices'])
+            poll[i]['prompt'] = json.loads(poll[i]['prompt'])
 
         return poll
 
