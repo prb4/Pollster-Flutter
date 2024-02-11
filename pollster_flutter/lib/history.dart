@@ -178,19 +178,65 @@ class ReceivedPollItemDetailedView extends StatelessWidget {
         
         if (snapshot.hasData) {
           debugPrint("snapshot has data");
-          return Column(
-            children: [
-              Text(snapshot.data!.pollId),
-              Text(snapshot.data!.recipient),
-              Text(snapshot.data!.answeredQuestions.toString())
-            ],
-          );
+          return AnsweredPollDisplayList(answeredPoll: snapshot.data!);
 
         } else if (snapshot.hasError) {
           return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
         }
         return const CircularProgressIndicator();
       }
+    );
+  }
+}
+
+class AnsweredPollDisplayList extends StatelessWidget {
+  final AnsweredPoll answeredPoll;
+  AnsweredPollDisplayList({super.key, required this.answeredPoll});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: ListView.separated(
+                  itemCount: answeredPoll.answeredQuestions.length,
+                  itemBuilder: (context, i) {
+                    return AnsweredQuestionDisplay(answeredQuestion: answeredPoll.answeredQuestions[i]);
+                  },
+                  separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 32.0),
+                )
+              ),
+            ),
+          ]
+        )
+      );
+  }
+}
+
+class AnsweredQuestionDisplay extends StatelessWidget {
+  final AnsweredQuestion answeredQuestion;
+  const AnsweredQuestionDisplay({super.key, required this.answeredQuestion});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //color: Colors.blue,
+      //padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey,
+        border: Border.all(width: 8),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+              Text(answeredQuestion.questionId),
+              Text(answeredQuestion.answer)
+        ],
+      ),
     );
   }
 }
