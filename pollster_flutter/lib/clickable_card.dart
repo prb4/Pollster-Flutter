@@ -13,11 +13,12 @@ class ClickablePollCard extends StatelessWidget {
   }){
     if (pollMetadataType == 'createdPollMetadata'){
       materialPageRoute = MaterialPageRoute(
-            builder: (context) => PollItemDetailedView(pollItem: pollMetadata, isOpenPoll: false,)
+            //builder: (context) => PollItemDetailedView(pollItem: pollMetadata, isOpenPoll: false,)
+            builder: (context) => CreatedPollFutureBuilder(pollItem: pollMetadata)
           );
     } else if (pollMetadataType == 'receivedPollMetadata') {
       materialPageRoute = MaterialPageRoute(
-            builder: (context) => ReceivedPollItemDetailedView(receivedPollMetadata: pollMetadata)
+            builder: (context) => ReceivedPollFutureBuilder(receivedPollMetadata: pollMetadata)
           );
     } else if (pollMetadataType == 'openPollMetadata') {
       materialPageRoute = MaterialPageRoute(

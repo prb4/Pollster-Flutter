@@ -123,6 +123,23 @@ def get_all_received_polls_metadata(user_id: int) -> list:
     receieved_polls = db.get_polls_received(user_id)
     return receieved_polls
 
+def get_poll_created(user_id: str, poll_id: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    questions = db.get_questions(poll_id)
+
+    recipients = db.get_recipients(poll_id, creator=user_id)
+    for i in range(len(recipients)):
+        if 1 == recipients[i]['answered']:
+            #Recipient has answered the poll, get the answers
+            recipients[i]['answers'] = db.get_answers(recipients[i]['recipient'], poll_id)
+
+    resp = {}
+    resp['questions'] = questions
+    resp['recipients'] = recipients
+
+    return resp
+
 def get_answer_poll(user_id: int, poll_id: str):
     #Based on user id and poll id, return the entire poll (with answers) for answering
     db = database.Database(database.host, database.user, database.password, "Pollster")

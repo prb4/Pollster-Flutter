@@ -53,28 +53,6 @@ class HistoricTab extends StatelessWidget {
   }
 }
 
-class FutureCreatedPollMetadataBuilder extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<PollMetadata>> (
-      future: fetchCreated(),
-      builder: (context, snapshot) {
-        
-        if (snapshot.hasData) {
-          debugPrint("snapshot has data!");
-
-          return CreatedPollMetadataCardLayout(createdPollMetadata: snapshot.data!);
-
-        } else if (snapshot.hasError) {
-          return const Text("Snapshot error"); // TODO - improve
-        }
-        return const CircularProgressIndicator();
-      }
-    );
-  }
-}
-
 class FutureReceivedPollMetadataBuilder extends StatelessWidget {
 
   @override
@@ -92,24 +70,6 @@ class FutureReceivedPollMetadataBuilder extends StatelessWidget {
         }
         return const CircularProgressIndicator();
       }
-    );
-  }
-}
-
-class CreatedPollMetadataCardLayout extends StatelessWidget {
-  final List<PollMetadata> createdPollMetadata;
-
-  const CreatedPollMetadataCardLayout({required this.createdPollMetadata});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: createdPollMetadata.length,
-        itemBuilder: (context, i) {
-          return ClickablePollCard(
-            pollMetadata: createdPollMetadata[i], 
-            pollMetadataType: "createdPollMetadata");
-        }
     );
   }
 }
@@ -132,43 +92,10 @@ class ReceivedPollMetadataCardLayout extends StatelessWidget {
   }
 }
 
-class PollItemDetailedView extends StatelessWidget {
-  final PollMetadata pollItem;
-  final bool isOpenPoll;
-  late Future<Poll> poll;
-
-  PollItemDetailedView({super.key,required, required this.pollItem, required this.isOpenPoll}){
-    debugPrint("[-] in OpenPollItemDetailedView");
-    poll = fetchPoll(pollItem.poll_id.toString());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<Poll>(
-      future: poll,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          //return OpenPollItemDisplay(poll: snapshot.data!);
-          if (isOpenPoll == true){
-            return PollLayout(poll: snapshot.data!);
-          } else {
-            return CreatedPollLayout(poll: snapshot.data!);
-          }
-          
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-        // By default, show a loading spinner.
-        return const CircularProgressIndicator();
-      },
-    );
-  }
-}
-
-class ReceivedPollItemDetailedView extends StatelessWidget {
+class ReceivedPollFutureBuilder extends StatelessWidget {
   final PollMetadata receivedPollMetadata;
 
-  const ReceivedPollItemDetailedView({super.key,required, required this.receivedPollMetadata});
+  const ReceivedPollFutureBuilder({super.key,required, required this.receivedPollMetadata});
 
   @override
   Widget build(BuildContext context) {
@@ -241,16 +168,6 @@ class AnsweredQuestionDisplay extends StatelessWidget {
   }
 }
 
-class PromptDisplay extends StatelessWidget {
-  final String msg;
-  const PromptDisplay({super.key, required this.msg});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(msg);
-  }
-}
-
 class ChoicesDisplay extends StatelessWidget {
   final List<String> choices;
   final String answer;
@@ -275,7 +192,100 @@ class ChoicesDisplay extends StatelessWidget {
   }
 }
 
-  class CreatedPollLayout extends StatelessWidget {
+
+
+class FutureCreatedPollMetadataBuilder extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<PollMetadata>> (
+      future: fetchCreated(),
+      builder: (context, snapshot) {
+        
+        if (snapshot.hasData) {
+          debugPrint("snapshot has data!");
+
+          return CreatedPollMetadataCardLayout(createdPollMetadata: snapshot.data!);
+
+        } else if (snapshot.hasError) {
+          return const Text("Snapshot error"); // TODO - improve
+        }
+        return const CircularProgressIndicator();
+      }
+    );
+  }
+}
+
+class CreatedPollMetadataCardLayout extends StatelessWidget {
+  final List<PollMetadata> createdPollMetadata;
+
+  const CreatedPollMetadataCardLayout({required this.createdPollMetadata});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: createdPollMetadata.length,
+        itemBuilder: (context, i) {
+          return ClickablePollCard(
+            pollMetadata: createdPollMetadata[i], 
+            pollMetadataType: "createdPollMetadata");
+        }
+    );
+  }
+}
+
+class CreatedPollFutureBuilder extends StatelessWidget {
+  final PollMetadata pollItem;
+
+  const CreatedPollFutureBuilder({super.key, required this.pollItem});
+  
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<AnsweredPoll> (
+      future: fetchCreatedPoll(pollItem.poll_id),
+      builder: (context, snapshot) {
+        
+        if (snapshot.hasData) {
+          debugPrint("snapshot has data");
+          return CreatedPollDisplayList(answeredPoll: snapshot.data!);
+
+        } else if (snapshot.hasError) {
+          return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
+        }
+        return const CircularProgressIndicator();
+      }
+    );
+  }
+}
+
+class CreatedPollDisplayList extends StatelessWidget {
+  const CreatedPollDisplayList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CreatedPollDisplayItem();
+  }
+}
+
+class CreatedPollDisplayItem extends StatelessWidget {
+  const CreatedPollDisplayItem({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+
+
+
+
+
+
+
+
+
+class CreatedPollLayout extends StatelessWidget {
   final Poll poll;
 
   const CreatedPollLayout({super.key,required, required this.poll});
@@ -289,6 +299,43 @@ class ChoicesDisplay extends StatelessWidget {
               Text(poll.questions[0].prompt)
             ],
           )),
+    );
+  }
+}
+
+
+
+
+
+class PollItemDetailedView extends StatelessWidget {
+  final PollMetadata pollItem;
+  final bool isOpenPoll;
+  late Future<Poll> poll;
+
+  PollItemDetailedView({super.key,required, required this.pollItem, required this.isOpenPoll}){
+    debugPrint("[-] in OpenPollItemDetailedView");
+    poll = fetchPoll(pollItem.poll_id.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Poll>(
+      future: poll,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          //return OpenPollItemDisplay(poll: snapshot.data!);
+          if (isOpenPoll == true){
+            return PollLayout(poll: snapshot.data!);
+          } else {
+            return CreatedPollLayout(poll: snapshot.data!);
+          }
+          
+        } else if (snapshot.hasError) {
+          return Text('${snapshot.error}');
+        }
+        // By default, show a loading spinner.
+        return const CircularProgressIndicator();
+      },
     );
   }
 }

@@ -75,7 +75,7 @@ def poll():
         try:
             if "True" == data['created']:
                 #Get a poll that the user created
-                pass
+                resp = mid.get_poll_created(data['user_id'], data['poll_id'])
             else:
                 #Get a poll that the user recieved
                 if "True" == data['open']:
