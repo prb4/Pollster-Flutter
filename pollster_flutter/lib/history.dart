@@ -105,7 +105,7 @@ class ReceivedPollFutureBuilder extends StatelessWidget {
         
         if (snapshot.hasData) {
           debugPrint("snapshot has data");
-          return AnsweredPollDisplayList(answeredPoll: snapshot.data!);
+          return AnsweredPollLayout(answeredPoll: snapshot.data!);
 
         } else if (snapshot.hasError) {
           return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
@@ -116,9 +116,9 @@ class ReceivedPollFutureBuilder extends StatelessWidget {
   }
 }
 
-class AnsweredPollDisplayList extends StatelessWidget {
+class AnsweredPollLayout extends StatelessWidget {
   final AnsweredPoll answeredPoll;
-  AnsweredPollDisplayList({super.key, required this.answeredPoll});
+  AnsweredPollLayout({super.key, required this.answeredPoll});
 
   @override
   Widget build(BuildContext context) {
@@ -241,13 +241,14 @@ class CreatedPollFutureBuilder extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<AnsweredPoll> (
+    return FutureBuilder<HistoricCreatedPoll> (
       future: fetchCreatedPoll(pollItem.poll_id),
       builder: (context, snapshot) {
         
         if (snapshot.hasData) {
           debugPrint("snapshot has data");
-          return CreatedPollDisplayList(answeredPoll: snapshot.data!);
+          return const Placeholder();
+          //return CreatedPollDisplay(createdPoll: snapshot.data!);
 
         } else if (snapshot.hasError) {
           return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
@@ -258,21 +259,58 @@ class CreatedPollFutureBuilder extends StatelessWidget {
   }
 }
 
-class CreatedPollDisplayList extends StatelessWidget {
-  const CreatedPollDisplayList({super.key});
+class CreatedPollDisplay extends StatelessWidget {
+  final Poll createdPoll;
+  const CreatedPollDisplay({super.key, required this.createdPoll});
 
   @override
   Widget build(BuildContext context) {
-    return CreatedPollDisplayItem();
+    return Center(
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: ListView.separated(
+                  itemCount: createdPoll.questions.length,
+                  itemBuilder: (context, i) {
+                    return const Placeholder();
+                    //return CreatedQuestionDisplay(answeredQuestion: answeredPoll.answeredQuestions[i]);
+                  },
+                  separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 32.0),
+                )
+              ),
+            ),
+          ]
+        )
+      );
   }
 }
 
-class CreatedPollDisplayItem extends StatelessWidget {
-  const CreatedPollDisplayItem({super.key});
+class CreatedQuestionDisplay extends StatelessWidget {
+  const CreatedQuestionDisplay({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
+    /*
+    return Container(
+      //color: Colors.blue,
+      //padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey,
+        border: Border.all(width: 8),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+              PromptTextBox(answeredQuestion.prompt),
+              ChoicesDisplay(choices: answeredQuestion.choices, answer: answeredQuestion.answer,),
+        ],
+      ),
+    );
+    */
   }
 }
 

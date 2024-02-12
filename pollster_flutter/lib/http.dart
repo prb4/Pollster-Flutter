@@ -209,6 +209,38 @@ Future<AnsweredPoll> fetchAnsweredPoll(String pollId) async {
   return answeredPoll;
 }
 
+Future<HistoricCreatedPoll> fetchCreatedPoll(String pollId) async {
+  debugPrint("in fetchCreatedPoll");
+  String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=${pollId.toString()}&created=True";
+  Map<String, dynamic> data = await fetch(endpoint);
+
+  debugPrint("Recipients: ${data['recipients'].toString()}");
+  debugPrint("Questions: ${data['questions'].toString()}");
+
+  List<HistoricCreatedRecipient> historicCreatedRecipients = []; 
+  for (var recipient in data['recipients']){
+    int answered = recipient['answered'];
+    String creator = recipient['creator'].toString();
+    String pollId = recipient['poll_id'];
+    String recipientId = recipient['recipient'].toString();
+
+    HistoricCreatedRecipient historicCreatedRecipient = HistoricCreatedRecipient(answered: answered, creator: creator, pollId: pollId, recipient: recipientId);
+    historicCreatedRecipients.add(historicCreatedRecipient);
+  }
+  debugPrint("HistoricCreatedRecipients List: ${historicCreatedRecipients.toString()}");
+
+  List<HistoricCreatedQuestion> historicCreatedQuestions = []; 
+  for (var question in data['questions']){
+    HistoricCreatedQuestion historicCreatedQuestion = HistoricCreatedQuestion.fromJson(question);
+    historicCreatedQuestions.add(historicCreatedQuestion);
+  }
+  debugPrint("HistoricCreatedQuestion List: ${historicCreatedQuestions.toString()}");
+
+  HistoricCreatedPoll historicCreatedPoll = HistoricCreatedPoll(historicCreatedQuestions: historicCreatedQuestions, historicCreatedRecipients: historicCreatedRecipients);
+  debugPrint("Historic Created Poll: ${historicCreatedPoll.toString()}");
+  return historicCreatedPoll;
+}
+
 Future<List<PollMetadata>> fetchOpen() async {
   debugPrint("in fetchOpen");
   String endpoint = "/polls?user_id=${UserSession().userId}&open=True&created=False";

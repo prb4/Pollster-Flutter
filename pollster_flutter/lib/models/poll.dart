@@ -458,3 +458,113 @@ class CreatingQuestion {
     'contacts': contacts,
   };
 }
+
+class HistoricCreatedQuestion {
+  final String pollId;
+  final String prompt;
+  final String questionId;
+  final List<String> choices;
+
+  const HistoricCreatedQuestion({
+    required this.pollId,
+    required this.prompt,
+    required this.questionId,
+    required this.choices,
+  });
+
+  factory HistoricCreatedQuestion.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> choicesList = json['choices'];
+    final List<String> choices = List<String>.from(choicesList);
+    debugPrint("poll choicess: ${choices.runtimeType}");
+
+    return HistoricCreatedQuestion(
+      pollId: json['pollId'].toString(),
+      prompt: json['prompt'].toString(),
+      questionId: json['questionId'].toString(),
+      choices: choices
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'pollId': pollId,
+    'prompt': prompt,
+    'questionId': questionId,
+    'choices': choices
+  };
+
+  @override
+  String toString() {
+    return 'HistoricCreatedQuestion(questionId: $questionId, prompt: $prompt, pollId: $pollId, choices: ${choices.toList()})';
+  }
+}
+
+class HistoricCreatedRecipient {
+  final int answered;
+  final String creator;
+  final String pollId;
+  final String recipient;
+  //answers 
+
+  const HistoricCreatedRecipient({
+    required this.answered,
+    required this.creator,
+    required this.pollId,
+    required this.recipient
+  });
+
+  factory HistoricCreatedRecipient.fromJson(Map<String, dynamic> json) {
+    //final List<dynamic> choicesList = json['choices'];
+    //final List<String> choices = List<String>.from(choicesList);
+
+    return HistoricCreatedRecipient(
+      answered: json['answered'],
+      creator: json['creator'],
+      pollId: json['poll_id'],
+      recipient: json['recipient']
+      
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'answered': answered,
+    'creator': creator,
+    'pollId': pollId,
+    'recipient': recipient
+  };
+
+  @override
+  String toString() {
+    return 'HistoricCreatedRecipient(answered: ${answered.toString()}, creator: $creator, pollId: $pollId, recipient: $recipient)';
+  }
+}
+
+class HistoricCreatedPoll {
+  final List<HistoricCreatedQuestion> historicCreatedQuestions;
+  final List<HistoricCreatedRecipient> historicCreatedRecipients;
+
+  const HistoricCreatedPoll({
+    required this.historicCreatedQuestions,
+    required this.historicCreatedRecipients
+  });
+
+  factory HistoricCreatedPoll.fromJson(Map<String, dynamic> json) {
+    //final List<dynamic> choicesList = json['choices'];
+    //final List<String> choices = List<String>.from(choicesList);
+
+    return HistoricCreatedPoll(
+      historicCreatedQuestions: json['historicCreatedQuestion'],
+      historicCreatedRecipients: json['historicCreatedRecipient'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'historicCreatedQuestion': historicCreatedQuestions,
+    'historicCreatedRecipient': historicCreatedRecipients
+  };
+
+  @override
+  String toString() {
+    return 'HistoricCreatedPoll(historicCreatedQuestion: ${historicCreatedQuestions.toString()}, historicCreatedRecipient: ${historicCreatedRecipients.toString()})';
+  }
+
+}
