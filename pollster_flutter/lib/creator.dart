@@ -42,7 +42,7 @@ class TitlePoll extends StatelessWidget {
   Widget build(BuildContext context) {
   return Material(
     child: Scaffold (
-      appBar: CommonAppBar(msg: "Create Poll"),
+      appBar: const CommonAppBar(msg: "Create Poll"),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

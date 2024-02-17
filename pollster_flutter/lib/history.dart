@@ -247,8 +247,7 @@ class CreatedPollFutureBuilder extends StatelessWidget {
         
         if (snapshot.hasData) {
           debugPrint("snapshot has data");
-          return const Placeholder();
-          //return CreatedPollDisplay(createdPoll: snapshot.data!);
+          return CreatedPollDisplay(createdPoll: snapshot.data!);
 
         } else if (snapshot.hasError) {
           return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
@@ -260,32 +259,83 @@ class CreatedPollFutureBuilder extends StatelessWidget {
 }
 
 class CreatedPollDisplay extends StatelessWidget {
-  final Poll createdPoll;
+  final HistoricCreatedPoll createdPoll;
   const CreatedPollDisplay({super.key, required this.createdPoll});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: Column(
-          children: [
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: ListView.separated(
-                  itemCount: createdPoll.questions.length,
-                  itemBuilder: (context, i) {
-                    return const Placeholder();
-                    //return CreatedQuestionDisplay(answeredQuestion: answeredPoll.answeredQuestions[i]);
-                  },
-                  separatorBuilder: (BuildContext context, int index) => const SizedBox(height: 32.0),
-                )
-              ),
-            ),
-          ]
-        )
-      );
+    return Column(
+      children: [
+        ListView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true, //TODO - this may not be the best solution, but it works
+          itemCount: createdPoll.historicCreatedQuestions.length,
+          itemBuilder: (BuildContext context, int index) {
+            return CreatedPollItem(historicCreatedQuestion: createdPoll.historicCreatedQuestions[index]);
+          }
+        ),
+      ]
+    );
   }
 }
+
+class CreatedPollItem extends StatelessWidget {
+  final HistoricCreatedQuestion historicCreatedQuestion;
+  const CreatedPollItem({super.key, required this.historicCreatedQuestion});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //color: Colors.blue,
+      //padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey,
+        border: Border.all(width: 8),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+              PromptTextBox(historicCreatedQuestion.prompt),
+              CreatedeChoicesDisplay(choices: historicCreatedQuestion.choices),
+        ],
+      ),
+    );
+  }
+}
+
+class CreatedeChoicesDisplay extends StatelessWidget {
+  final List<String> choices;
+  const CreatedeChoicesDisplay({super.key, required this.choices});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true, //TODO - this may not be the best solution, but it works
+      itemCount: choices.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Card(
+          child: Text(
+            choices[index],
+            textAlign: TextAlign.center,
+          ),
+        );
+      }
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 
 class CreatedQuestionDisplay extends StatelessWidget {
   const CreatedQuestionDisplay({super.key});
