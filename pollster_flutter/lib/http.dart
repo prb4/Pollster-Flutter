@@ -223,8 +223,16 @@ Future<HistoricCreatedPoll> fetchCreatedPoll(String pollId) async {
     String creator = recipient['creator'].toString();
     String pollId = recipient['poll_id'];
     String recipientId = recipient['recipient'].toString();
+    debugPrint("Answers: ${recipient['answers']}");
+    List<ReturnedAnswer> answers = [];
+    for (var answer in recipient['answers']) {
+      ReturnedAnswer tmp_returnedAnswer = ReturnedAnswer.fromJson(answer);
+      debugPrint("Tmp returned answer: ${tmp_returnedAnswer.toString()}");
+      answers.add(tmp_returnedAnswer);
+    }
+    
 
-    HistoricCreatedRecipient historicCreatedRecipient = HistoricCreatedRecipient(answered: answered, creator: creator, pollId: pollId, recipient: recipientId);
+    HistoricCreatedRecipient historicCreatedRecipient = HistoricCreatedRecipient(answered: answered, creator: creator, pollId: pollId, recipient: recipientId, answers: answers);
     historicCreatedRecipients.add(historicCreatedRecipient);
   }
   debugPrint("HistoricCreatedRecipients List: ${historicCreatedRecipients.toString()}");
@@ -232,6 +240,7 @@ Future<HistoricCreatedPoll> fetchCreatedPoll(String pollId) async {
   List<HistoricCreatedQuestion> historicCreatedQuestions = []; 
   for (var question in data['questions']){
     HistoricCreatedQuestion historicCreatedQuestion = HistoricCreatedQuestion.fromJson(question);
+    debugPrint("!!!! ${historicCreatedQuestion.toString()}");
     historicCreatedQuestions.add(historicCreatedQuestion);
   }
   debugPrint("HistoricCreatedQuestion List: ${historicCreatedQuestions.toString()}");

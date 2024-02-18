@@ -297,8 +297,8 @@ class CreatedPollItem extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-              PromptTextBox(historicCreatedQuestion.prompt),
-              CreatedChoicesDisplay(choices: historicCreatedQuestion.choices, historicCreatedRecipients: historicCreatedRecipients),
+            PromptTextBox(historicCreatedQuestion.prompt),
+            CreatedChoicesDisplay(choices: historicCreatedQuestion.choices, historicCreatedRecipients: historicCreatedRecipients, questionId: historicCreatedQuestion.questionId),
         ],
       ),
     );
@@ -308,25 +308,32 @@ class CreatedPollItem extends StatelessWidget {
 class CreatedChoicesDisplay extends StatelessWidget {
   final List<String> choices;
   final List<HistoricCreatedRecipient> historicCreatedRecipients;
+  final String questionId;
 
-  const CreatedChoicesDisplay({super.key, required this.choices, required this.historicCreatedRecipients});
+  const CreatedChoicesDisplay({super.key, required this.choices, required this.historicCreatedRecipients, required this.questionId});
 
-  double getPercentage(String choice, int index, List<HistoricCreatedRecipient> recipients) {
+  double getPercentage(String choice, List<HistoricCreatedRecipient> recipients, String questionId) {
     //TODO - this is assuming that the order of the list is accurate. Would probably be better as a dictionary
-    debugPrint("In getPercentage");
     int total = recipients.length;
     int selected = 0;
 
     for (HistoricCreatedRecipient hcr in recipients) {
-      if (hcr.answers != null){
-        if (hcr.answers![index] == choice) {
-          selected = selected + 1;
+      if (hcr.answers == []) {
+        continue;
+      } else {
+        for (ReturnedAnswer answer in hcr.answers){
+          if (answer.questionId.toString() == questionId) { //TODO - Once questionId type gets stabilized this can remove the toString() call
+            if (answer.answer == choice) {
+              selected = selected + 1;
+            }
+          }
         }
       }
+
     }
     debugPrint("Choice $choice is returning ${selected / total}");  
 
-    return 50.0;
+    return selected / total;
   }
 
   @override
@@ -338,28 +345,13 @@ class CreatedChoicesDisplay extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         return Center(
           child: PercentageHighlightedCard(
-            percentage: getPercentage(choices[index], index, historicCreatedRecipients),
+            percentage: getPercentage(choices[index], historicCreatedRecipients, questionId),
             child: Card(
               child: Text(
                 choices[index],
                 textAlign: TextAlign.center,
               ),
-            )
-
-/*
-            child: Container(
-              width: 200,
-              height: 100,
-              color: Colors.blue,
-              child: Center(
-                child: Text(
-                  choices[index], 
-                  style: const TextStyle(color: Colors.white),
-                  textAlign: TextAlign.center,                  
-                ),
-              ),
-            ),
-*/            
+            )         
           ),
         );
       }

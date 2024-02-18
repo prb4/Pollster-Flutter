@@ -475,12 +475,14 @@ class HistoricCreatedQuestion {
   factory HistoricCreatedQuestion.fromJson(Map<String, dynamic> json) {
     final List<dynamic> choicesList = json['choices'];
     final List<String> choices = List<String>.from(choicesList);
-    debugPrint("poll choicess: ${choices.runtimeType}");
-
+    final questionId = json['question_id'].toString();
+    final pollId = json['pollId'].toString();
+    debugPrint("QuestionId: $questionId, pollId: $pollId");
+    
     return HistoricCreatedQuestion(
-      pollId: json['pollId'].toString(),
+      pollId: pollId,
       prompt: json['prompt'].toString(),
-      questionId: json['questionId'].toString(),
+      questionId: questionId,
       choices: choices
     );
   }
@@ -498,12 +500,44 @@ class HistoricCreatedQuestion {
   }
 }
 
+class ReturnedAnswer {
+  final int questionId;
+  final String answer;
+
+  ReturnedAnswer({
+    required this.questionId,
+    required this.answer,
+  });
+
+  // Convert the Dart object to a Map
+  Map<String, dynamic> toJson() {
+    return {
+      'question_id': questionId,
+      'answer': answer,
+    };
+  }
+
+  // Factory method to create a Person object from a Map
+  factory ReturnedAnswer.fromJson(Map<String, dynamic> json) {
+    return ReturnedAnswer(
+      questionId: json['question_id'],
+      answer: json['answer'],
+    );
+  }
+
+  // Override the toString method for better display in print statements
+  @override
+  String toString() {
+    return 'ReturnedAnswer(question_id: $questionId, answer: $answer)';
+  }
+}
+
 class HistoricCreatedRecipient {
   final int answered;
   final String creator;
   final String pollId;
   final String recipient;
-  List<String>? answers;
+  final List<ReturnedAnswer> answers;
   //answers 
 
   HistoricCreatedRecipient({
@@ -511,19 +545,19 @@ class HistoricCreatedRecipient {
     required this.creator,
     required this.pollId,
     required this.recipient,
-    this.answers,
+    required this.answers,
   });
 
   factory HistoricCreatedRecipient.fromJson(Map<String, dynamic> json) {
-    //final List<dynamic> choicesList = json['choices'];
-    //final List<String> choices = List<String>.from(choicesList);
+    final List<dynamic> answersList = json['answers'];
+    final List<ReturnedAnswer> answers = List<ReturnedAnswer>.from(answersList);
 
     return HistoricCreatedRecipient(
       answered: json['answered'],
       creator: json['creator'],
       pollId: json['poll_id'],
       recipient: json['recipient'],
-      answers: json['answers'],
+      answers: answers,
       
     );
   }

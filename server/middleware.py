@@ -127,12 +127,17 @@ def get_poll_created(user_id: str, poll_id: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
     questions = db.get_questions(poll_id)
+    #TODO - this will need to go once the type of question_id is stabilized
+    for i in range(len(questions)):
+        questions[i]['question_id'] = str(questions[i]['question_id'])
 
     recipients = db.get_recipients(poll_id, creator=user_id)
     for i in range(len(recipients)):
         if 1 == recipients[i]['answered']:
             #Recipient has answered the poll, get the answers
             recipients[i]['answers'] = db.get_answers(recipients[i]['recipient'], poll_id)
+        else:
+            recipients[i]['answers'] = []
 
     resp = {}
     resp['questions'] = questions
