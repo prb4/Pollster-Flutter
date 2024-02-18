@@ -271,7 +271,7 @@ class CreatedPollDisplay extends StatelessWidget {
           shrinkWrap: true, //TODO - this may not be the best solution, but it works
           itemCount: createdPoll.historicCreatedQuestions.length,
           itemBuilder: (BuildContext context, int index) {
-            return CreatedPollItem(historicCreatedQuestion: createdPoll.historicCreatedQuestions[index]);
+            return CreatedPollItem(historicCreatedQuestion: createdPoll.historicCreatedQuestions[index], historicCreatedRecipients: createdPoll.historicCreatedRecipients);
           }
         ),
       ]
@@ -281,7 +281,8 @@ class CreatedPollDisplay extends StatelessWidget {
 
 class CreatedPollItem extends StatelessWidget {
   final HistoricCreatedQuestion historicCreatedQuestion;
-  const CreatedPollItem({super.key, required this.historicCreatedQuestion});
+  final List<HistoricCreatedRecipient> historicCreatedRecipients;
+  const CreatedPollItem({super.key, required this.historicCreatedQuestion, required this.historicCreatedRecipients});
 
   @override
   Widget build(BuildContext context) {
@@ -297,28 +298,68 @@ class CreatedPollItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
               PromptTextBox(historicCreatedQuestion.prompt),
-              CreatedeChoicesDisplay(choices: historicCreatedQuestion.choices),
+              CreatedChoicesDisplay(choices: historicCreatedQuestion.choices, historicCreatedRecipients: historicCreatedRecipients),
         ],
       ),
     );
   }
 }
 
-class CreatedeChoicesDisplay extends StatelessWidget {
+class CreatedChoicesDisplay extends StatelessWidget {
   final List<String> choices;
-  const CreatedeChoicesDisplay({super.key, required this.choices});
+  final List<HistoricCreatedRecipient> historicCreatedRecipients;
+
+  const CreatedChoicesDisplay({super.key, required this.choices, required this.historicCreatedRecipients});
+
+  double getPercentage(String choice, int index, List<HistoricCreatedRecipient> recipients) {
+    //TODO - this is assuming that the order of the list is accurate. Would probably be better as a dictionary
+    debugPrint("In getPercentage");
+    int total = recipients.length;
+    int selected = 0;
+
+    for (HistoricCreatedRecipient hcr in recipients) {
+      if (hcr.answers != null){
+        if (hcr.answers![index] == choice) {
+          selected = selected + 1;
+        }
+      }
+    }
+    debugPrint("Choice $choice is returning ${selected / total}");  
+
+    return 50.0;
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true, //TODO - this may not be the best solution, but it works
-      itemCount: choices.length,
+      itemCount: choices.length,  
       itemBuilder: (BuildContext context, int index) {
-        return Card(
-          child: Text(
-            choices[index],
-            textAlign: TextAlign.center,
+        return Center(
+          child: PercentageHighlightedCard(
+            percentage: getPercentage(choices[index], index, historicCreatedRecipients),
+            child: Card(
+              child: Text(
+                choices[index],
+                textAlign: TextAlign.center,
+              ),
+            )
+
+/*
+            child: Container(
+              width: 200,
+              height: 100,
+              color: Colors.blue,
+              child: Center(
+                child: Text(
+                  choices[index], 
+                  style: const TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,                  
+                ),
+              ),
+            ),
+*/            
           ),
         );
       }
@@ -326,8 +367,31 @@ class CreatedeChoicesDisplay extends StatelessWidget {
   }
 }
 
+class PercentageHighlightedCard extends StatelessWidget {
+  final double percentage;
+  final Widget child;
+  
+  const PercentageHighlightedCard({super.key, required this.percentage, required this.child});
+  
 
-
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        child,
+        Positioned.fill(
+          child: FractionallySizedBox(
+            alignment: Alignment.centerLeft,
+            widthFactor: percentage,
+            child: Container(
+              color: Colors.yellow.withOpacity(0.5),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 
 

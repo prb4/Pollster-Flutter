@@ -159,7 +159,10 @@ def get_answer_poll(user_id: int, poll_id: str):
     data['recipients'] = recipients
 
     for i in range(len(data['questions'])):
-        data['questions'][i]['prompt'] = json.loads(data['questions'][i]['prompt'])
+        if isinstance(data['questions'][i]['prompt'], str):
+            continue
+        else:
+            data['questions'][i]['prompt'] = json.loads(data['questions'][i]['prompt'])
 
     return data
 

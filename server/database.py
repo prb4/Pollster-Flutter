@@ -214,6 +214,7 @@ class Database():
 
         for i in range(len(questions)):
             questions[i]['choices'] = json.loads(questions[i]['choices'])
+            questions[i]['prompt'] = json.loads(questions[i]['prompt'])
 
         return questions
 

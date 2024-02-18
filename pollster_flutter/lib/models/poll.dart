@@ -503,13 +503,15 @@ class HistoricCreatedRecipient {
   final String creator;
   final String pollId;
   final String recipient;
+  List<String>? answers;
   //answers 
 
-  const HistoricCreatedRecipient({
+  HistoricCreatedRecipient({
     required this.answered,
     required this.creator,
     required this.pollId,
-    required this.recipient
+    required this.recipient,
+    this.answers,
   });
 
   factory HistoricCreatedRecipient.fromJson(Map<String, dynamic> json) {
@@ -520,7 +522,8 @@ class HistoricCreatedRecipient {
       answered: json['answered'],
       creator: json['creator'],
       pollId: json['poll_id'],
-      recipient: json['recipient']
+      recipient: json['recipient'],
+      answers: json['answers'],
       
     );
   }
@@ -529,12 +532,13 @@ class HistoricCreatedRecipient {
     'answered': answered,
     'creator': creator,
     'pollId': pollId,
-    'recipient': recipient
+    'recipient': recipient,
+    'answers': answers
   };
 
   @override
   String toString() {
-    return 'HistoricCreatedRecipient(answered: ${answered.toString()}, creator: $creator, pollId: $pollId, recipient: $recipient)';
+    return 'HistoricCreatedRecipient(answered: ${answered.toString()}, creator: $creator, pollId: $pollId, recipient: $recipient, answers: ${answers.toString()})';
   }
 }
 
