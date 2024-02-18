@@ -313,7 +313,6 @@ class CreatedChoicesDisplay extends StatelessWidget {
   const CreatedChoicesDisplay({super.key, required this.choices, required this.historicCreatedRecipients, required this.questionId});
 
   double getPercentage(String choice, List<HistoricCreatedRecipient> recipients, String questionId) {
-    //TODO - this is assuming that the order of the list is accurate. Would probably be better as a dictionary
     int total = recipients.length;
     int selected = 0;
 
@@ -376,10 +375,16 @@ class PercentageHighlightedCard extends StatelessWidget {
             alignment: Alignment.centerLeft,
             widthFactor: percentage,
             child: Container(
-              color: Colors.yellow.withOpacity(0.5),
+              decoration: BoxDecoration(
+                color: Colors.yellow.withOpacity(0.5),
+                borderRadius: const BorderRadius.horizontal(
+                left: Radius.circular(20), // Adjust the radius value as needed
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+        //),
       ],
     );
   }
