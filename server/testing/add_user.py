@@ -28,10 +28,10 @@ def main():
     #db.add_user("user3@email.com", "c7cc9c9911b3221c6222b213f37acf1a75e75b02f392488ae481ec6721c7a6cd", "38675309", "user3")
     #db.add_user("user4@email.com", "1d4598d1949b47f7f211134b639ec32238ce73086a83c2f745713b3f12f817e5", "48675309", "user4")
 
-    db.add_user("user1@email.com", hash_password("1"), "18675309", "user1")
-    db.add_user("user2@email.com", hash_password("2"), "28675309", "user2")
-    db.add_user("user3@email.com", hash_password("3"), "38675309", "user3")
-    db.add_user("user4@email.com", hash_password("4"), "48675309", "user4")
+    db.add_user("user1@email.com", hash_password("1"), "18675309")
+    db.add_user("user2@email.com", hash_password("2"), "28675309")
+    db.add_user("user3@email.com", hash_password("3"), "38675309")
+    db.add_user("user4@email.com", hash_password("4"), "48675309")
 
 
 if __name__ == "__main__":

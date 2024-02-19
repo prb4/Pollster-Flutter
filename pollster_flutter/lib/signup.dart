@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/common.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/user.dart';
 
 
 class SignUp extends StatelessWidget {
   String password = "";
-  String username = "";
+  String email = "";
   String confirmedPassword = "";
   String phoneNumber = "";
 
@@ -19,14 +20,14 @@ class SignUp extends StatelessWidget {
     confirmedPassword = value;
   }
 
-  void updateUsername(String value){
-    debugPrint("Username: $value");
-    username = value;
+  void updateEmail(String value){
+    debugPrint("Email: $value");
+    email = value;
   }
 
   void updatedPhoneNumber(String value){
     debugPrint("Phone Number: $value");
-    username = value;
+    email = value;
   }
 
   void sign_up_button_clicked() {
@@ -35,7 +36,7 @@ class SignUp extends StatelessWidget {
       debugPrint("Password and confirmed password do NOT match: password: $password, confirmedPassword: $confirmedPassword");
     }
 
-    NewUser newUser = NewUser(username: username, password: password, phoneNumber: phoneNumber);
+    NewUser newUser = NewUser(email: email, password: password, phoneNumber: phoneNumber);
 
     sendPostRequest(newUser.toJson(), "/signup");
 
@@ -44,7 +45,9 @@ class SignUp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+      child: Scaffold(
+        appBar: const CommonAppBar(msg: "Sign up"),
         body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -52,9 +55,9 @@ class SignUp extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               TextField(
-                decoration: const InputDecoration(labelText: 'Username'),
+                decoration: const InputDecoration(labelText: 'Email'),
                 onChanged: (String value) {
-                  updateUsername(value);
+                  updateEmail(value);
                 },
               ),
               TextField(
@@ -88,6 +91,7 @@ class SignUp extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

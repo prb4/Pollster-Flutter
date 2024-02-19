@@ -55,15 +55,15 @@ class Database():
         matching_rows = cursor.fetchall()
         return matching_rows[0][0]
 
-    def add_user(self, email, password, phonenumber, username):
+    def add_user(self, email, password, phonenumber):
         '''
         For when a user has signed up for the first time
         '''
         last_access = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         start_date = last_access.split(" ")[0] #Only want the date
 
-        sql = "INSERT INTO USERS (EMAIL, PASSWORD, PHONENUMBER, USERNAME, START_DATE, LAST_ACCESS) VALUES (%s, %s, %s, %s, %s, %s)"
-        val = (email, password, phonenumber, username, start_date, last_access)
+        sql = "INSERT INTO USERS (EMAIL, PASSWORD, PHONENUMBER, START_DATE, LAST_ACCESS) VALUES (%s, %s, %s, %s, %s)"
+        val = (email, password, phonenumber, start_date, last_access)
 
 
         cursor = self.dataBase.cursor()
@@ -165,28 +165,38 @@ class Database():
         return matching_rows[0][0]
 
 
-    def convert_username_to_id(self, username: str) -> int: 
+    def convert_email_to_id(self, email: str) -> int: 
         '''
-        Convert username to id
+        Convert email to id
         '''
-        sql = "SELECT USER_ID FROM USERS WHERE USERNAME = %s"
-        val = (username,)
+        sql = "SELECT USER_ID FROM USERS WHERE EMAIL = %s"
+        val = (email,)
 
-        print("[-] Converting username: {}".format(username))
+        print("[-] Converting email: {}".format(email))
 
         cursor = self.dataBase.cursor()
         cursor.execute(sql, val)
 
         matching_rows = cursor.fetchall()
         if len(matching_rows) > 1:
-            print("[!] Found too many users: {}".format(username))
+            print("[!] Found too many users: {}".format(email))
             return None
 
         elif len(matching_rows) == 0:
-            print("[!] Didn't find any users: {}".format(username))
+            print("[!] Didn't find any users: {}".format(email))
             return None
 
         return matching_rows[0][0]
+
+    def confirm_email(self, email: str):
+        sql = "SELECT * from USERS where EMAIL = %s"
+        val = (email,)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        matching_rows = cursor.fetchall()
+        return matching_rows
 
     def convert_phonenumber_to_id(self, phonenumber: str) -> int: 
         '''
@@ -347,7 +357,6 @@ if __name__ == "__main__":
                         EMAIL VARCHAR(100) NOT NULL,
                         PASSWORD VARCHAR(100) NOT NULL,
                         PHONENUMBER VARCHAR(15) NOT NULL,
-                        USERNAME VARCHAR(20) NOT NULL,
                         START_DATE DATE NOT NULL,
                         LAST_ACCESS DATETIME NOT NULL
                         )"""

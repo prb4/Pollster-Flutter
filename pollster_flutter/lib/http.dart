@@ -288,9 +288,11 @@ Future<Map<String, dynamic>> sendPostRequest(Map<String, dynamic> data, String e
     debugPrint(response.body.toString());
     var jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
     debugPrint(jsonResponse.toString());
+
     return jsonResponse;
   } else {
     debugPrint("Failed to send");
+    //TODO - how to handle
     throw Exception('Post failed');
   }
 }

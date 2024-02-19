@@ -23,17 +23,27 @@ def answer():
 
         return make_response(jsonify(message="OK"), 200)
 
-@app.route("/submit/poll", methods=['POST'])
-def submitQuestion():
+@app.route("/password/forgot", methods=['POST'])
+def forgot_password():
     data = request.get_json()
     pprint(data)
 
-    #TODO - fix to get around the contacts data structure from flutter
-    contacts = [contact['id'] for contact in data['recipients']]
-    mid.add_new_poll(data['username'], data, contacts, False)
+    ret = mid.initiate_password_reset(data['email'])
+    return make_response(jsonify(message=ret), 200)
+
+@app.route("/password/reset", methods=['POST'])
+def reset_password():
+    data = request.get_json()
+    pprint(data)
+
+    ret = mid.reset_password(data['email'])
+    if ret:
+        return make_response(jsonify({"message":"Confirmed email", "status": "ok"}), 200)
+    else:
+        return make_response(jsonify({"message":"Failed to find email", "status": "fail"}), 200)
 
 
-    return make_response(jsonify(message="OK"), 200)
+
 
 @app.route("/login", methods=['POST'])
 def login():

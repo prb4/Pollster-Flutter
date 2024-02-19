@@ -1,31 +1,31 @@
 class User {
-  final String username;
+  final String email;
   final String password;
 
   const User({
-    required this.username,
+    required this.email,
     required this.password,
   });
 
   Map<String, dynamic> toJson() => {
-    'username': username,
+    'username': email,
     'password': password,
   };
 }
 
 class NewUser {
-  final String username;
+  final String email;
   final String password;
   final String phoneNumber;
 
   const NewUser({
-    required this.username,
+    required this.email,
     required this.password,
     required this.phoneNumber
   });
 
   Map<String, dynamic> toJson() => {
-    'username': username,
+    'username': email,
     'password': password,
     'phoneNumber' : phoneNumber,
   };

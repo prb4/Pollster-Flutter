@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:pollster_flutter/creator.dart';
 import 'package:pollster_flutter/history.dart';
 import 'package:pollster_flutter/responder.dart';
-import 'package:pollster_flutter/theme/text_theme.dart';
 
 
 class Home extends StatelessWidget {

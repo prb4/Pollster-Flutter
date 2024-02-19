@@ -5,3 +5,6 @@ Current limitation is that wont be able to log polls that are sent to individual
 - viewing historical polls
 - when clicking back button on viewing created histoirical poll, brings you to create poll creen
 - Confirmation view safe area isnt big enough
+- Proper handling for bad log in creds
+- Reset password
+- User signup email confirmation

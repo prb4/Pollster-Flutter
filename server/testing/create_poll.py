@@ -15,8 +15,9 @@ import middleware as mid
 db = database.Database(database.host, database.user, database.password, "Pollster")
 #db.create_database("Pollster")
 
-def create_polls(username: str, contacts: list):
-    creator_id = username[-1]
+def create_polls(email: str, contacts: list):
+    creator_id = email.split("@")[0][-1]
+
     print("[-] Creator ID: {}".format(creator_id))
 
     question1 = {'prompt': "Question 1 from user {}".format(creator_id),
@@ -37,7 +38,7 @@ def create_polls(username: str, contacts: list):
             }
 
 
-    contact_ids = [db.convert_username_to_id(contact) for contact in contacts]
+    contact_ids = [db.convert_email_to_id(contact) for contact in contacts]
 
     poll = {'title':"Poll title user {}".format(creator_id),
             'contacts':contact_ids,
@@ -46,7 +47,7 @@ def create_polls(username: str, contacts: list):
             }
 
 
-    user_id = db.convert_username_to_id(username)
+    user_id = db.convert_email_to_id(email)
     mid.add_new_poll(user_id, poll, contact_ids)
     #uuid = db.add_poll_to_polls_table(creator_id, polls)
 
@@ -54,7 +55,7 @@ def create_polls(username: str, contacts: list):
     #    recipient_id = db.convert_username_to_id(contact)
     #    db.add_poll_recipient(recipient_id, creator_id, uuid)
 
-create_polls("user1", ["user2", "user3", "user4"])
-create_polls("user2", ["user1", "user3", "user4"])
-create_polls("user3", ["user2", "user1", "user4"])
-create_polls("user4", ["user2", "user3", "user1"])
+create_polls("user1@email.com", ["user2@email.com", "user3@email.com", "user4@email.com"])
+create_polls("user2@email.com", ["user1@email.com", "user3@email.com", "user4@email.com"])
+create_polls("user3@email.com", ["user2@email.com", "user1@email.com", "user4@email.com"])
+create_polls("user4@email.com", ["user2@email.com", "user3@email.com", "user1@email.com"])
