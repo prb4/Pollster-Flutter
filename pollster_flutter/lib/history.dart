@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/clickable_card.dart';
+import 'package:pollster_flutter/common.dart';
 import 'package:pollster_flutter/responder.dart';
 import 'models/poll.dart';
 import 'http.dart';
@@ -34,9 +35,10 @@ class HistoricTab extends StatelessWidget {
             ),
             title: const Text('Historic Polls'),
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 // Handle back button press here
+                debugPrint("Popping from Historic Polls");
                 Navigator.pop(context);
               },
             ),
@@ -264,17 +266,16 @@ class CreatedPollDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true, //TODO - this may not be the best solution, but it works
-          itemCount: createdPoll.historicCreatedQuestions.length,
-          itemBuilder: (BuildContext context, int index) {
-            return CreatedPollItem(historicCreatedQuestion: createdPoll.historicCreatedQuestions[index], historicCreatedRecipients: createdPoll.historicCreatedRecipients);
-          }
-        ),
-      ]
+    return CommonScrollableList( 
+      child: ListView.separated(
+        //physics: const AlwaysScrollableScrollPhysics(),
+        shrinkWrap: true, //TODO - this may not be the best solution, but it works
+        itemCount: createdPoll.historicCreatedQuestions.length,
+        itemBuilder: (BuildContext context, int index) {
+          return CreatedPollItem(historicCreatedQuestion: createdPoll.historicCreatedQuestions[index], historicCreatedRecipients: createdPoll.historicCreatedRecipients);
+        },
+        separatorBuilder: (BuildContext context, int index) => const Divider(),
+      ),
     );
   }
 }
@@ -328,7 +329,6 @@ class CreatedChoicesDisplay extends StatelessWidget {
           }
         }
       }
-
     }
     debugPrint("Choice $choice is returning ${selected / total}");  
 
@@ -343,14 +343,21 @@ class CreatedChoicesDisplay extends StatelessWidget {
       itemCount: choices.length,  
       itemBuilder: (BuildContext context, int index) {
         return Center(
+          //PercentageHighlightedCard(
           child: PercentageHighlightedCard(
             percentage: getPercentage(choices[index], historicCreatedRecipients, questionId),
             child: Card(
-              child: Text(
-                choices[index],
-                textAlign: TextAlign.center,
+              child: SizedBox(
+                //TODO - fix these hard coded numbers, if nothing else, fix with MediaQuery...
+                width: 350,
+                height: 20,
+                  child: Center(child: Text(choices[index])),
+    
+              //child: Text(
+              //  choices[index],
+              //  textAlign: TextAlign.center,
               ),
-            )         
+            ),
           ),
         );
       }
@@ -363,7 +370,6 @@ class PercentageHighlightedCard extends StatelessWidget {
   final Widget child;
   
   const PercentageHighlightedCard({super.key, required this.percentage, required this.child});
-  
 
   @override
   Widget build(BuildContext context) {
@@ -375,24 +381,20 @@ class PercentageHighlightedCard extends StatelessWidget {
             alignment: Alignment.centerLeft,
             widthFactor: percentage,
             child: Container(
+              //padding: EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Colors.yellow.withOpacity(0.5),
                 borderRadius: const BorderRadius.horizontal(
-                left: Radius.circular(20), // Adjust the radius value as needed
-                  ),
+                left: Radius.circular(40), // Adjust the radius value as needed
                 ),
               ),
             ),
           ),
-        //),
+        ),
       ],
     );
   }
 }
-
-
-
-
 
 
 
@@ -404,24 +406,7 @@ class CreatedQuestionDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
-    /*
-    return Container(
-      //color: Colors.blue,
-      //padding: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.grey,
-        border: Border.all(width: 8),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-              PromptTextBox(answeredQuestion.prompt),
-              ChoicesDisplay(choices: answeredQuestion.choices, answer: answeredQuestion.answer,),
-        ],
-      ),
-    );
-    */
+
   }
 }
 
@@ -447,7 +432,8 @@ class CreatedPollLayout extends StatelessWidget {
             children: [
               Text(poll.questions[0].prompt)
             ],
-          )),
+          ),
+        ),
     );
   }
 }

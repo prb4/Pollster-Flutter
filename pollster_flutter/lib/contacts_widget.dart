@@ -55,7 +55,8 @@ class _ContactsWidget extends ConsumerWidget {
     return MaterialApp(
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
-        body: Center(
+        body: SafeArea(
+          child: Center(
           //child: SingleChildScrollView(
             //child: Container(
             //  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
@@ -75,8 +76,9 @@ class _ContactsWidget extends ConsumerWidget {
                   ),
                 ]
             )
+          )
         )
-      )
+      ),
     );
   }
 }

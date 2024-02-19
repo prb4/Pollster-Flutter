@@ -19,6 +19,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget{
             color: Colors.black,
           ),
           onPressed: () {
+            debugPrint("Popping off: $msg");
             Navigator.pop(context);
           }
           ),
@@ -29,5 +30,32 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget{
   
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-  
+}
+
+class CommonScrollableList extends StatelessWidget {
+  final Widget child;
+  const CommonScrollableList({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: child
+          ),
+        ]
+      ),
+    );
+  }
+}
+
+class CommonUnscrollableList extends StatelessWidget {
+  const CommonUnscrollableList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
 }
