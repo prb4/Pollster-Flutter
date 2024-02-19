@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/common.dart';
 import 'package:pollster_flutter/http.dart';
@@ -27,10 +29,10 @@ class SignUp extends StatelessWidget {
 
   void updatedPhoneNumber(String value){
     debugPrint("Phone Number: $value");
-    email = value;
+    phoneNumber = value;
   }
 
-  void sign_up_button_clicked() {
+  void signUpButtonClicked(BuildContext context) async {
     if (password != confirmedPassword) {
       //TODO - throw error and notify user
       debugPrint("Password and confirmed password do NOT match: password: $password, confirmedPassword: $confirmedPassword");
@@ -38,7 +40,40 @@ class SignUp extends StatelessWidget {
 
     NewUser newUser = NewUser(email: email, password: password, phoneNumber: phoneNumber);
 
-    sendPostRequest(newUser.toJson(), "/signup");
+    final response = await sendPostRequest(newUser.toJson(), "/signup");
+    debugPrint("Respones: ${response.toString()}");
+
+    if (response['status'] == "ok") {
+      debugPrint("Success");
+
+      Timer(const Duration(seconds: 2), () {
+        Navigator.pop(context); // Dismisses dialog
+        Navigator.pop(context); // Navigates back to previous screen
+        }
+      );
+
+      showDialog( //TODO - fix this error here and below
+        context: context,
+        builder: (_) => const AlertDialog(
+          title: Text('User added successful'),
+          content: Text('Welcome!'),
+        ),
+      );
+    } else {
+      debugPrint("Failed to re-set password");
+        Timer(const Duration(seconds: 2), () {
+        Navigator.pop(context); // Dismisses dialog
+        }
+      );
+
+      showDialog(
+        context: context,
+        builder: (_) => const AlertDialog(
+          title: Text('Failed to add user'),
+          content: Text('Try again, or try a new the forgot password option'),
+        ),
+      );
+    }
 
 
   }
@@ -83,7 +118,7 @@ class SignUp extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  sign_up_button_clicked();
+                  signUpButtonClicked(context);
                 },
                 child: const Text('Sign Up'),
               ),

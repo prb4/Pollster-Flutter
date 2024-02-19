@@ -70,6 +70,10 @@ class Database():
         cursor.execute(sql, val)
         self.dataBase.commit()
 
+        #TODo - confirm username and/or phone number doesn't already exist
+        #TODO - confirm if this was successful
+        return True
+
     def insert_new_question(self, prompt, choices, poll_id):
         #add_question(s)
         sql = "INSERT INTO QUESTIONS (POLL_ID, PROMPT, CHOICES) VALUES (%s, %s, %s)"

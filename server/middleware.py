@@ -123,6 +123,11 @@ def get_all_received_polls_metadata(user_id: int) -> list:
     receieved_polls = db.get_polls_received(user_id)
     return receieved_polls
 
+def add_user(email: str, password: str, phoneNumber: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+    ret = db.add_user(email, password, phoneNumber)
+    return ret
+
 def reset_password(email: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")
     confirmation = db.confirm_email(email)

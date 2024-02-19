@@ -35,7 +35,12 @@ class LoginPage extends StatelessWidget {
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
       home: Scaffold(
-        appBar: const CommonAppBar(msg: "Login Page"),
+        appBar: AppBar(
+          title: Text(
+            "Login",
+            style: Theme.of(context).textTheme.headlineLarge
+          ),
+        ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),

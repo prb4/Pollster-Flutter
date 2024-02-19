@@ -42,9 +42,6 @@ def reset_password():
     else:
         return make_response(jsonify({"message":"Failed to find email", "status": "fail"}), 200)
 
-
-
-
 @app.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
@@ -65,7 +62,11 @@ def signup():
     data = request.get_json()
     pprint(data)
 
-    return make_response(jsonify(message="OK"), 200)
+    ret = mid.add_user(data['email'], data['password'], data['phoneNumber'])
+    if ret:
+        return make_response(jsonify({"message":"User added", "status": "ok"}), 200)
+    else:
+        return make_response(jsonify({"message":"Failed to add user", "status": "fail"}), 200)
 
 @app.route("/fetch", methods=['GET'])
 def fetch():
