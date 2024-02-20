@@ -59,8 +59,33 @@ class Database():
         '''
         For when a user has signed up for the first time
         '''
+        sql = "SELECT JSON_OBJECT('email', EMAIL, 'phonenumber', PHONENUMBER) AS JSON_OUTPUT FROM USERS WHERE EMAIL = %s OR PHONENUMBER = %s"
+        val = (email, phonenumber,)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+
+        email_flag = False
+        phone_flag = False
+
+        matching_rows = cursor.fetchall()
+        for row in matching_rows:
+            data = json.loads(row[0])
+            if email == data['email']:
+                email_flag = True
+            if phonenumber == data['phonenumber']:
+                phone_flag = True
+
+        if phone_flag and email_flag:
+            return {'message' : "Phone number and email already exist"}, False
+        elif phone_flag:
+            return {'message' : "Phone number already exists"}, False
+        elif email_flag:
+            return {"message" : "Email already exists"}, False
+
         last_access = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         start_date = last_access.split(" ")[0] #Only want the date
+
 
         sql = "INSERT INTO USERS (EMAIL, PASSWORD, PHONENUMBER, START_DATE, LAST_ACCESS) VALUES (%s, %s, %s, %s, %s)"
         val = (email, password, phonenumber, start_date, last_access)
@@ -70,9 +95,7 @@ class Database():
         cursor.execute(sql, val)
         self.dataBase.commit()
 
-        #TODo - confirm username and/or phone number doesn't already exist
-        #TODO - confirm if this was successful
-        return True
+        return {"message" : "User created"}, True
 
     def insert_new_question(self, prompt, choices, poll_id):
         #add_question(s)

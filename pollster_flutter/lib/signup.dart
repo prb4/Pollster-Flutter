@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/common.dart';
+import 'package:pollster_flutter/crypto.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/models/user.dart';
 
@@ -38,7 +39,7 @@ class SignUp extends StatelessWidget {
       debugPrint("Password and confirmed password do NOT match: password: $password, confirmedPassword: $confirmedPassword");
     }
 
-    NewUser newUser = NewUser(email: email, password: password, phoneNumber: phoneNumber);
+    NewUser newUser = NewUser(email: email, password: encrypt(password), phoneNumber: phoneNumber);
 
     final response = await sendPostRequest(newUser.toJson(), "/signup");
     debugPrint("Respones: ${response.toString()}");

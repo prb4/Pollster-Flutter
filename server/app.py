@@ -62,12 +62,23 @@ def signup():
     data = request.get_json()
     pprint(data)
 
-    ret = mid.add_user(data['email'], data['password'], data['phoneNumber'])
-    if ret:
-        return make_response(jsonify({"message":"User added", "status": "ok"}), 200)
-    else:
-        return make_response(jsonify({"message":"Failed to add user", "status": "fail"}), 200)
+    msg, ret = mid.add_user(data['email'], data['password'], data['phoneNumber'])
 
+    resp = {}
+    resp['detail'] = msg['message']
+
+    if ret:
+        resp["message"] = "User added"
+        resp["status"] = "ok"
+    else:
+        resp["message"] = "Failed to add user"
+        resp["status"] = "fail"
+
+    pprint(resp)
+    return make_response(jsonify(resp), 200)
+
+
+    
 @app.route("/fetch", methods=['GET'])
 def fetch():
     data = request.args

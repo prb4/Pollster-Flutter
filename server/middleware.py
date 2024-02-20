@@ -125,8 +125,11 @@ def get_all_received_polls_metadata(user_id: int) -> list:
 
 def add_user(email: str, password: str, phoneNumber: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")
-    ret = db.add_user(email, password, phoneNumber)
-    return ret
+    msg, ret = db.add_user(email, password, phoneNumber)
+    #TODO - validate email is legit
+    #TODO - valid password meets length check
+    #TODO - validate phone number is good
+    return msg, ret
 
 def reset_password(email: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")
