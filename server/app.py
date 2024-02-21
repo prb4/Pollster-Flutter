@@ -29,6 +29,8 @@ def forgot_password():
     pprint(data)
 
     ret = mid.initiate_password_reset(data['email'])
+
+    pprint(ret)
     return make_response(jsonify(message=ret), 200)
 
 @app.route("/password/reset", methods=['POST'])
