@@ -11,7 +11,7 @@ class OpenPolls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold (
-      appBar: const CommonAppBar(msg: "Create Poll"),
+      appBar: const CommonAppBar(msg: "Open Polls"),
       body: FutureBuilder<List<PollMetadata>> (
         future: fetchOpen(),
         builder: (context, snapshot) {

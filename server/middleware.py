@@ -3,11 +3,11 @@ import pprint
 import json
 import pdb
 
-def validate_login(username:str, hashed_password:str):
+def validate_login(email:str, hashed_password:str):
 
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
-    user_id = db.convert_username_to_id(username)
+    user_id = db.convert_email_to_id(email)
 
     password = db.get_password(user_id)
 

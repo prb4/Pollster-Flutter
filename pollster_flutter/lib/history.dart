@@ -101,19 +101,22 @@ class ReceivedPollFutureBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<AnsweredPoll> (
-      future: fetchAnsweredPoll(receivedPollMetadata.poll_id),
-      builder: (context, snapshot) {
-        
-        if (snapshot.hasData) {
-          debugPrint("snapshot has data");
-          return AnsweredPollLayout(answeredPoll: snapshot.data!);
+    return Scaffold(
+      appBar: CommonAppBar(msg: "Back to View Polls"), 
+      body: FutureBuilder<AnsweredPoll> (
+        future: fetchAnsweredPoll(receivedPollMetadata.poll_id),
+        builder: (context, snapshot) {
+          
+          if (snapshot.hasData) {
+            debugPrint("snapshot has data");
+            return AnsweredPollLayout(answeredPoll: snapshot.data!);
 
-        } else if (snapshot.hasError) {
-          return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
+          } else if (snapshot.hasError) {
+            return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
+          }
+          return const CircularProgressIndicator();
         }
-        return const CircularProgressIndicator();
-      }
+      ),
     );
   }
 }
@@ -243,19 +246,22 @@ class CreatedPollFutureBuilder extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<HistoricCreatedPoll> (
-      future: fetchCreatedPoll(pollItem.poll_id),
-      builder: (context, snapshot) {
-        
-        if (snapshot.hasData) {
-          debugPrint("snapshot has data");
-          return CreatedPollDisplay(createdPoll: snapshot.data!);
+    return Scaffold(
+      appBar: CommonAppBar(msg: "Back to View Polls"),
+      body:FutureBuilder<HistoricCreatedPoll> (
+        future: fetchCreatedPoll(pollItem.poll_id),
+        builder: (context, snapshot) {
+          
+          if (snapshot.hasData) {
+            debugPrint("snapshot has data");
+            return CreatedPollDisplay(createdPoll: snapshot.data!);
 
-        } else if (snapshot.hasError) {
-          return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
+          } else if (snapshot.hasError) {
+            return const Text("Snapshot error in CreatedPollLayout"); // TODO - improve
+          }
+          return const CircularProgressIndicator();
         }
-        return const CircularProgressIndicator();
-      }
+      ),
     );
   }
 }
