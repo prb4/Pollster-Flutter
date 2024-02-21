@@ -35,25 +35,25 @@ class SignUp extends StatelessWidget {
     phoneNumber = value;
   }
 
-  void validateEmail(String value){
+  bool validateEmail(String value){
     debugPrint("Validating email: $value");
 
     if (value.isEmpty) {
       debugPrint('This field is required');
       emailValidated = false;
-      return;
+      return false;
     }
 
     // using regular expression
     if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
       debugPrint("Please enter a valid email address");
       emailValidated = false;
-      return;
+      return false;
     }
 
     debugPrint("Valid email");
     emailValidated = true;
-    return;
+    return true;
   }
 
   void validateNumber(String value) {
