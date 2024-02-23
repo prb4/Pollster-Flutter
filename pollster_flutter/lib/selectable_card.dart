@@ -21,6 +21,12 @@ class SelectableCard extends StatelessWidget {
         debugPrint("${index.toString()} clicked");
       },
       child: Card(
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(
+            color: Colors.black, //<-- SEE HERE
+          ),
+          borderRadius: BorderRadius.circular(20.0),
+        ),
         color: isSelected ? Colors.blue : Colors.white,
         child: ListTile(
           title: Text(message),

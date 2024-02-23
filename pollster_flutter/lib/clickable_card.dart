@@ -39,6 +39,12 @@ class ClickablePollCard extends StatelessWidget {
         );
       },
       child: Card(
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(
+            color: Colors.black, //<-- SEE HERE
+          ),
+          borderRadius: BorderRadius.circular(20.0),
+        ),
         child: ListTile(
           title: Text(pollMetadata.title, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
         ),

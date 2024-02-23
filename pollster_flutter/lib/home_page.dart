@@ -14,6 +14,7 @@ class Home extends StatelessWidget {
         child: Column(
         children: [
           Expanded(
+            flex:5,
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -25,6 +26,11 @@ class Home extends StatelessWidget {
             ),
           ),
           Expanded(
+            flex: 1,
+            child: Container()
+          ),
+          Expanded(
+            flex: 5,
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -37,6 +43,11 @@ class Home extends StatelessWidget {
             ),
           ),
           Expanded(
+            flex: 1,
+            child: Container()
+          ),
+          Expanded(
+            flex: 5,
             child: GestureDetector(
               onTap: () {
                 Navigator.push(

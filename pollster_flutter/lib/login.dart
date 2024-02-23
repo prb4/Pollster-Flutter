@@ -97,7 +97,7 @@ class LoginPage extends StatelessWidget {
                         }
 
                       },
-                      child: const Text('Login'),
+                      child: Text('Login', style: Theme.of(context).textTheme.bodyLarge),
                     ),
                     const SizedBox(height: 10),
                     TextButton(

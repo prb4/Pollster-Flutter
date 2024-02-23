@@ -240,7 +240,8 @@ class PromptTextBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(msg,
-      style: Theme.of(context).textTheme.displaySmall
+      style: Theme.of(context).textTheme.displaySmall,
+      textAlign: TextAlign.center,
     );
   }
 }
