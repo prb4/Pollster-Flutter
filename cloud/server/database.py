@@ -8,11 +8,12 @@ import pdb
 # docker run --network host --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql
 # mysql -h127.0.0.1 -u root -p
 
-host = "localhost"
-#host="143.198.13.195"
+#host = "localhost"
+#host = "10.17.0.5"
+#host = "143.198.13.195"
+host = "database"
 user = "root"
-password = "my-secret-pw"
-#password="DatabasePassword8675309!"
+password = "DatabasePassword8675309"
 
 class Database():
     dataBase = None
@@ -427,4 +428,3 @@ if __name__ == "__main__":
                         )"""
     database.create_table(recipient_table_statement)
 
-#mysqldump --socket mysqld/mysqld.sock --databases Pollster --user root --password > dump.sql

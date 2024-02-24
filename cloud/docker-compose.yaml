@@ -1,0 +1,49 @@
+version: '3.9'
+services:
+  server:
+    #docker build -t server:latest .
+    image: server:latest
+    restart: always
+    volumes:
+        - ./server:/app
+    ports:
+      - 5000:5000
+    networks:
+      - backplane
+
+  database:
+    image: mysql:latest
+    restart: always
+    ports:
+      - 3306:3306
+    #command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: DatabasePassword8675309!
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./server/init/:/docker-entrypoint-initdb.d/
+    networks:
+      - backplane
+
+  proxy:
+    image: nginx
+    restart: always
+    networks:
+      - backplane
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      #- ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/debug.conf:/etc/nginx/nginx.conf:ro
+      - nginx-logs:/etc/nginx/logs
+      #- ./etc/letsencrypt/live:/etc/letsencrypt/live
+      - ./live:/etc/letsencrypt/live
+    command: [nginx-debug, '-g', 'daemon off;']
+
+volumes:
+  nginx-logs:
+  db-data:
+networks:
+  backplane:
+
