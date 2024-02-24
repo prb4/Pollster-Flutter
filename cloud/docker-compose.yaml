@@ -21,7 +21,7 @@ services:
       MYSQL_ROOT_PASSWORD: DatabasePassword8675309!
     volumes:
       - db-data:/var/lib/mysql
-      - ./server/init/:/docker-entrypoint-initdb.d/
+      - ./database/init/:/docker-entrypoint-initdb.d/
     networks:
       - backplane
 

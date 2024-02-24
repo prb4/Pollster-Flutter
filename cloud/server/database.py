@@ -12,8 +12,10 @@ import pdb
 #host = "10.17.0.5"
 #host = "143.198.13.195"
 host = "database"
-user = "root"
-password = "DatabasePassword8675309"
+#user = "root"
+user = "admin"
+#password = "DatabasePassword8675309"
+password = ""
 
 class Database():
     dataBase = None
@@ -56,7 +58,11 @@ class Database():
         cursor.execute(sql, val)
 
         matching_rows = cursor.fetchall()
-        return matching_rows[0][0]
+        try:
+            return matching_rows[0][0]
+        except IndexError:
+            return None
+        
 
     def add_user(self, email, password, phonenumber):
         '''
