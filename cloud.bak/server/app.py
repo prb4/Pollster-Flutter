@@ -6,7 +6,7 @@ import middleware as mid
 
 app = Flask(__name__)
 
-@app.route("/answer", methods=['POST'])
+@app.route("/api/v1/answer", methods=['POST'])
 def answer():
     if request.method == 'POST':
         #Create a poll
@@ -23,7 +23,7 @@ def answer():
 
         return make_response(jsonify(message="OK"), 200)
 
-@app.route("/password/forgot", methods=['POST'])
+@app.route("/api/v1/password/forgot", methods=['POST'])
 def forgot_password():
     data = request.get_json()
     pprint(data)
@@ -33,7 +33,7 @@ def forgot_password():
     pprint(ret)
     return make_response(jsonify(message=ret), 200)
 
-@app.route("/password/reset", methods=['POST'])
+@app.route("/api/v1/password/reset", methods=['POST'])
 def reset_password():
     data = request.get_json()
     pprint(data)
@@ -44,7 +44,7 @@ def reset_password():
     else:
         return make_response(jsonify({"message":"Failed to find email", "status": "fail"}), 200)
 
-@app.route("/login", methods=['POST'])
+@app.route("/api/v1/login", methods=['POST'])
 def login():
     data = request.get_json()
     pprint(data)
@@ -59,7 +59,7 @@ def login():
         return make_response(jsonify(message="Login failure"), 200)
 
 
-@app.route("/signup", methods=['POST'])
+@app.route("/api/v1/signup", methods=['POST'])
 def signup():
     data = request.get_json()
     pprint(data)
@@ -81,14 +81,14 @@ def signup():
 
 
     
-@app.route("/fetch", methods=['GET'])
+@app.route("/api/v1/fetch", methods=['GET'])
 def fetch():
     data = request.args
     polls = mid.get_polls_open(data['user_id'])
     #TODO - add a return code
     return jsonify(polls)
 
-@app.route("/poll", methods=['GET', 'POST'])
+@app.route("/api/v1/poll", methods=['GET', 'POST'])
 def poll():
 
     resp = {}
@@ -127,7 +127,7 @@ def poll():
 
         return make_response(jsonify(message="OK"), 200)
 
-@app.route("/polls", methods=['GET'])
+@app.route("/api/v1/polls", methods=['GET'])
 #This end point only returns metadata on a poll
 def polls():
     data = request.args
@@ -155,30 +155,6 @@ def polls():
     pprint(resp)
 
     return make_response(jsonify(resp), 200)
-
-#@app.route("/history/created", methods=['GET'])
-#def history_created():
-#    data = request.args
-#
-#    created_polls = mid.get_all_created_polls_metadata(data['user_id'])
-#
-#    resp = {}
-#    resp['pollMetadata'] = created_polls
-#    pprint(resp)
-#
-#    return make_response(jsonify(resp), 200)
-#
-#@app.route("/history/received", methods=['GET'])
-#def history_received():
-#    data = request.args
-#
-#    received_polls = mid.get_all_received_polls_metadata(data['user_id'])
-#
-#    resp = {}
-#    resp['pollMetadata'] = received_polls
-#    pprint(resp)
-#
-#    return make_response(jsonify(resp), 200)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

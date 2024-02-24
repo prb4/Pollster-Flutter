@@ -26,22 +26,19 @@ services:
       - backplane
 
   proxy:
-    image: nginx:alpine
+    image: nginx
     restart: always
     networks:
       - backplane
     ports:
       - 80:80
       - 443:443
-    environment:
-      - BACKEND_IP=143.198.13.195
-      - WEBSITE_NAME=pollpal.io
-      - NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template:ro
-      #- ./nginx/debug.conf:/etc/nginx/nginx.conf:ro
+      #- ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/debug.conf:/etc/nginx/nginx.conf:ro
       - nginx-logs:/etc/nginx/logs
-      - ./nginx/live:/etc/letsencrypt/live
+      #- ./etc/letsencrypt/live:/etc/letsencrypt/live
+      - ./live:/etc/letsencrypt/live
     command: [nginx-debug, '-g', 'daemon off;']
 
 volumes:

@@ -8,11 +8,14 @@ import pdb
 # docker run --network host --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql
 # mysql -h127.0.0.1 -u root -p
 
-host = "localhost"
-#host="143.198.13.195"
-user = "root"
-password = "my-secret-pw"
-#password="DatabasePassword8675309!"
+#host = "localhost"
+#host = "10.17.0.5"
+#host = "143.198.13.195"
+host = "database"
+#user = "root"
+user = "admin"
+#password = "DatabasePassword8675309"
+password = ""
 
 class Database():
     dataBase = None
@@ -55,7 +58,11 @@ class Database():
         cursor.execute(sql, val)
 
         matching_rows = cursor.fetchall()
-        return matching_rows[0][0]
+        try:
+            return matching_rows[0][0]
+        except IndexError:
+            return None
+        
 
     def add_user(self, email, password, phonenumber):
         '''
@@ -427,4 +434,3 @@ if __name__ == "__main__":
                         )"""
     database.create_table(recipient_table_statement)
 
-#mysqldump --socket mysqld/mysqld.sock --databases Pollster --user root --password > dump.sql
