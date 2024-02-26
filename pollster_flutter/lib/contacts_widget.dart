@@ -108,7 +108,7 @@ class PhoneNumberEntry extends ConsumerWidget {
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: 'Phone Number',
-          hintText: 'Enter your phone number',
+          hintText: 'Enter a phone number',
         ),
         onFieldSubmitted: (String number) {
           debugPrint("[-] Adding contact to list: $number");

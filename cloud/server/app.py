@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, make_response
+from flask_cors import CORS
 import os
 from pprint import pprint
 import pdb
@@ -6,6 +7,7 @@ import pdb
 import middleware as mid
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/api/v1/answer", methods=['POST'])
 def answer():

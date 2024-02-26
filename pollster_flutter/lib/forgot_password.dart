@@ -95,7 +95,7 @@ class ForgotPassword extends StatelessWidget {
                       "email": email
                     };
 
-                  final response = await sendPostRequest(data, "password/reset");
+                  final response = await sendPostRequest(data, "/password/reset");
                   debugPrint("Respones: ${response.toString()}");
 
                   if (response['status'] == "ok") {

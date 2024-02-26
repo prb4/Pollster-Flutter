@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/common.dart';
 import 'package:pollster_flutter/crypto.dart';
+import 'package:pollster_flutter/drawer.dart';
 import 'package:pollster_flutter/forgot_password.dart';
 import 'package:pollster_flutter/home_page.dart';
 import 'package:pollster_flutter/http.dart';
@@ -35,6 +36,8 @@ class LoginPage extends StatelessWidget {
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
       home: Scaffold(
+        drawer: DrawerMenu(),
+        //endDrawer: const Drawer(),
         appBar: AppBar(
           title: Text(
             "Login",
@@ -69,7 +72,7 @@ class LoginPage extends StatelessWidget {
                         // Handle login button click
                         User user = User(email: username, password: encrypt(password));
                         //User user = User(email: "user1@email.com", password: "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b");
-                        final response = await sendPostRequest(user.toJson(), "login");
+                        final response = await sendPostRequest(user.toJson(), "/login");
                         //TODO - improve authentication
                         debugPrint("Response: ${response.toString()}");
                         debugPrint("Response message: ${response['message']}");

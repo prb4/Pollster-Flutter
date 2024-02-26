@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/common.dart';
 import 'package:pollster_flutter/contacts_widget.dart';
-import 'package:pollster_flutter/crypto.dart';
 import 'package:pollster_flutter/models/poll.dart';
 
 
@@ -129,7 +128,6 @@ class _BuildPollState extends State<BuildPoll> {
     //Save and join the answers that are currently on the screen and convert them into a poll
     List<String> currentAnswers = joinAnswers();
     Question poll = createVote(question, question_id, currentAnswers);
-
 
     //Check if the poll has been added to the on-going list yet. 
     //TODO - def needs work.
@@ -316,7 +314,8 @@ class _BuildPollState extends State<BuildPoll> {
                         savePoll();
 
                         //final CreatedPoll createdPoll = CreatedPoll(title: title, poll_id: getUUID(), votes: polls);
-
+                        debugPrint("Moving to contacts");
+                        //TODO - likely an issue here when on a desktop, throws error: No implementation found for method requestPermission on channel github.com/QuisApp/flutter_contacts
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => ContactsWidget(title: title, votes: polls))
