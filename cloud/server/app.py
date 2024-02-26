@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, make_response
+import os
 from pprint import pprint
 import pdb
 
@@ -157,4 +158,6 @@ def polls():
     return make_response(jsonify(resp), 200)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug=True)
+    server_port = int(os.getenv("SERVER_PORT"))
+    print("[-] Running on port: {}".format(str(server_port)))
+    app.run(host='0.0.0.0', port=server_port, debug=True)
