@@ -7,7 +7,8 @@ import 'package:pollster_flutter/user_session.dart';
 
 //String ip = "http://192.168.1.174:80/";
 //String ip = "https://pollpal.io/api/v1";
-String ip = "http://172.16.44.47:5000/api/v1";
+//String ip = "http://172.16.44.47:5000/api/v1";
+String ip = "http://172.16.44.47:80/api/v1";
 
 Future<Poll> fetchPoll(String pollId) async {
   debugPrint("in fetchCreatedPoll: $pollId");

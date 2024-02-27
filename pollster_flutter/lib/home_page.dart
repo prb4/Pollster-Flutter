@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pollster_flutter/creator.dart';
 import 'package:pollster_flutter/history.dart';
 import 'package:pollster_flutter/responder.dart';
+import 'package:pollster_flutter/drawer.dart';
 
 
 class Home extends StatelessWidget {
@@ -11,55 +12,62 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Column(
-        children: [
-          Expanded(
-            flex:5,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TitlePoll()),
-                );
-              },
-              child: const CardWidget(message: "Create new poll"),
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text("Home page"),
+          ),
+          endDrawer: DrawerMenu(),
+        
+          body: Column(
+          children: [
+            Expanded(
+              flex:5,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TitlePoll()),
+                  );
+                },
+                child: const CardWidget(message: "Create new poll"),
+              ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container()
-          ),
-          Expanded(
-            flex: 5,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  //MaterialPageRoute(builder: (context) => const Responder()),
-                  MaterialPageRoute(builder: (context) => OpenPolls()),
-                );
-              },
-              child: const CardWidget(message: "Answer open poll"),
+            Expanded(
+              flex: 1,
+              child: Container()
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Container()
-          ),
-          Expanded(
-            flex: 5,
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => History()),
-                );
-              },
-              child: const CardWidget(message: "View history"),
+            Expanded(
+              flex: 5,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    //MaterialPageRoute(builder: (context) => const Responder()),
+                    MaterialPageRoute(builder: (context) => OpenPolls()),
+                  );
+                },
+                child: const CardWidget(message: "Answer open poll"),
+              ),
             ),
-          ),
-        ]
-      )
+            Expanded(
+              flex: 1,
+              child: Container()
+            ),
+            Expanded(
+              flex: 5,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => History()),
+                  );
+                },
+                child: const CardWidget(message: "View history"),
+              ),
+            ),
+          ]
+        )
+      ),
     );
   }
 }

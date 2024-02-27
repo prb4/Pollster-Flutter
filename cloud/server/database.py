@@ -8,13 +8,13 @@ import pdb
 # docker run --network host --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql
 # mysql -h127.0.0.1 -u root -p
 
-host = "localhost"
-#host = "database"
-user = "root"
-#user = "admin"
+#host = "localhost"
+host = "database"
+#user = "root"
+user = "admin"
 #password = "DatabasePassword8675309"
-#password = ""
-password = "my-secret-pw"
+password = ""
+#password = "my-secret-pw"
 
 class Database():
     dataBase = None

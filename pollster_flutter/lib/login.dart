@@ -31,101 +31,103 @@ class LoginPage extends StatelessWidget {
       routes: {
         '/home':(BuildContext context) => const Home(),
         '/forgotPassword': (BuildContext context) => ForgotPassword(),
+        '/login': (BuildContext context) => LoginPage(),
       },
       themeMode: ThemeMode.system,
       theme: TAppTheme.lightTheme,
       darkTheme: TAppTheme.darkTheme,
-      home: Scaffold(
-        drawer: DrawerMenu(),
-        //endDrawer: const Drawer(),
-        appBar: AppBar(
-          title: Text(
-            "Login",
-            style: Theme.of(context).textTheme.headlineLarge
+      home: PopScope(
+        canPop: false,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "Login",
+              style: Theme.of(context).textTheme.headlineLarge
+            ),
           ),
-        ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Builder(
-              builder: (context) => Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    TextField(
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      onChanged: (String value) {
-                        updateEmail(value);
-                      },                  
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      decoration: const InputDecoration(labelText: 'Password'),
-                      obscureText: true, // To hide password input
-                      onChanged: (String value) {
-                        updatePassword(value);
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        // Handle login button click
-                        User user = User(email: username, password: encrypt(password));
-                        //User user = User(email: "user1@email.com", password: "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b");
-                        final response = await sendPostRequest(user.toJson(), "/login");
-                        //TODO - improve authentication
-                        debugPrint("Response: ${response.toString()}");
-                        debugPrint("Response message: ${response['message']}");
-                        if (response['message'] == "OK") {
-                          //Navigator.push(
-                          //  context,
-                          //  MaterialPageRoute(builder: (context) => const Home(), settings: const RouteSettings(name: "/home")),
-                          //  MaterialPageRoute(builder: (context) => const Home()),
-                          //); 
-                          debugPrint("Log in response: ${response.toString()}");
-                          UserSession().username = username;
-                          UserSession().userId = response['user_id'];
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Builder(
+                builder: (context) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      TextField(
+                        decoration: const InputDecoration(labelText: 'Email'),
+                        onChanged: (String value) {
+                          updateEmail(value);
+                        },                  
+                      ),
+                      const SizedBox(height: 10),
+                      TextField(
+                        decoration: const InputDecoration(labelText: 'Password'),
+                        obscureText: true, // To hide password input
+                        onChanged: (String value) {
+                          updatePassword(value);
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          // Handle login button click
+                          User user = User(email: username, password: encrypt(password));
+                          //User user = User(email: "user1@email.com", password: "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b");
+                          final response = await sendPostRequest(user.toJson(), "/login");
+                          //TODO - improve authentication
+                          debugPrint("Response: ${response.toString()}");
+                          if (response['message'] == "OK") {
+                            //Navigator.push(
+                            //  context,
+                            //  MaterialPageRoute(builder: (context) => const Home(), settings: const RouteSettings(name: "/home")),
+                            //  MaterialPageRoute(builder: (context) => const Home()),
+                            //); 
+                            debugPrint("Log in response: ${response.toString()}");
+                            UserSession().username = username;
+                            UserSession().userId = response['user_id'];
+                            UserSession().accessToken = response['accessToken'];
 
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              settings: const RouteSettings(name: "/home"),
-                              builder: (context) => const Home(),
-                            ),
-                          );
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                settings: const RouteSettings(name: "/home"),
+                                builder: (context) => const Home(),
+                              ),
+                            );
 
-                          //Navigator.of(context).pushNamed('/home');
-                        } else {
-                          debugPrint("[!] Failed to authenticate properly");
-                          //TODO
-                        }
+                            //Navigator.of(context).pushNamed('/home');
+                          } else {
+                            debugPrint("[!] Failed to authenticate properly");
+                            //TODO
+                          }
 
-                      },
-                      child: Text('Login', style: Theme.of(context).textTheme.bodyLarge),
-                    ),
-                    const SizedBox(height: 10),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/forgotPassword');
-                        //Navigator.of(context).push(
-                          
-                            //MaterialPageRoute(
-                            //  settings: const RouteSettings(name: "/login"),
-                            //  builder: (context) => ForgotPassword(),
-                            //)
-                        //);
-                      },
-                      child: const Text('Forgot Password?'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUp()),
-                        ); 
-                      },
-                      child: const Text('Sign Up'),
-                    ),
-                  ],
+                        },
+                        child: Text('Login', style: Theme.of(context).textTheme.bodyLarge),
+                      ),
+                      const SizedBox(height: 10),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/forgotPassword');
+                          //Navigator.of(context).push(
+                            
+                              //MaterialPageRoute(
+                              //  settings: const RouteSettings(name: "/login"),
+                              //  builder: (context) => ForgotPassword(),
+                              //)
+                          //);
+                        },
+                        child: const Text('Forgot Password?'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SignUp()),
+                          ); 
+                        },
+                        child: const Text('Sign Up'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

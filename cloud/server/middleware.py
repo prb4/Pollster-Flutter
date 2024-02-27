@@ -2,6 +2,13 @@ import database
 import pprint
 import json
 import pdb
+import redis
+import os
+import uuid
+
+def redis_connect():
+    storage = redis.Redis(host=os.getenv("REDIS_SERVER"), port=6379, decode_responses=True)
+    return storage
 
 def validate_login(email:str, hashed_password:str):
 
@@ -12,9 +19,23 @@ def validate_login(email:str, hashed_password:str):
     password = db.get_password(user_id)
 
     if password == hashed_password:
-        return user_id
+        return create_token(user_id), user_id
     else:
-        return None
+        return None, None
+
+def logout(user_id):
+    storage = redis_connect()
+    ret = storage.delete(user_id)
+    return ret
+    
+def create_token(user_id: str, expire=60*60*24):
+    storage = redis_connect()
+    key = user_id
+    value = str(uuid.uuid4())
+    print("Creating token: {} {} {}".format(key, expire, value))
+    ret = storage.setex(key, expire, value)
+    #TODO - check ret value
+    return value
 
 def get_all_polls(user_id: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")

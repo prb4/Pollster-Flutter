@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pollster_flutter/confirmation.dart';
 import 'package:pollster_flutter/models/contacts.dart';
@@ -34,6 +35,7 @@ class ContactsWidget extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("In ContactsWidget");
     return ProviderScope(child: _ContactsWidget(
       title: title,
       votes: votes));
@@ -52,6 +54,7 @@ class _ContactsWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    debugPrint("in _ContactsWidget");
     return MaterialApp(
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
@@ -168,30 +171,36 @@ class ContactsListing extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final myContactsWatcher = ref.watch(myContactsProvider);
-    return ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            primary: false,
-            itemCount: myContactsWatcher.contacts.length,
-            itemBuilder: (context, i) {
-              if (myContactsWatcher.contacts.isEmpty) {
-                return const Center(child: Text("No contacts found"));
-              } else {
-                return Card(
-                  child: ListTile(
-                    title: Text(myContactsWatcher.contacts[i].displayName),
-                    onTap: () {
-                      debugPrint("[-] Adding contact to list: ${i.toString()}");
-                      ref.read(myContactsProvider).addContact(i);
-                      debugPrint("Done adding contact to list");
-                    }
-                  )
-                );
-              }
-            }
-          );
-      }
+    debugPrint("in ContactsListing");
+    try{
+      return ListView.builder(
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        primary: false,
+        itemCount: myContactsWatcher.contacts.length,
+        itemBuilder: (context, i) {
+          if (myContactsWatcher.contacts.isEmpty) {
+            return const Center(child: Text("No contacts found"));
+          } else {
+            return Card(
+              child: ListTile(
+                title: Text(myContactsWatcher.contacts[i].displayName),
+                onTap: () {
+                  ref.read(myContactsProvider).addContact(i);
+                  debugPrint("[-] Added contact to list: ${i.toString()}");
+                }
+              )
+            );
+          }
+        }
+      );
+    }
+    on MissingPluginException catch(e) {
+      debugPrint("Missing plugin, bail: $e");
+      return Placeholder();
+    }
   }
+}
 
 
 class ContinueButton extends ConsumerWidget {

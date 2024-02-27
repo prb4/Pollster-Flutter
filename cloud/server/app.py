@@ -52,14 +52,32 @@ def login():
     data = request.get_json()
     pprint(data)
 
-    user_id = mid.validate_login(data['username'], data['password'])
+    accessToken, user_id = mid.validate_login(data['username'], data['password'])
     if user_id:
         data = {}
         data['message'] = "OK"
         data['user_id'] = user_id
+        data['accessToken'] = accessToken
+        pprint("Sending response: {}".format(data))
         return make_response(jsonify(data), 200)
     else:
         return make_response(jsonify(message="Login failure"), 200)
+
+@app.route("/api/v1/logout", methods=['POST'])
+def logout():
+    data = request.get_json()
+    pprint(data)
+
+    ret = mid.logout(data['userId'])
+    data = {}
+    if ret:
+        data['message'] = "OK"
+        data['detail'] = str(ret)
+        return make_response(jsonify(data), 200)
+    else:
+        data['message'] = "Error"
+        data['detail'] = "Logout failure: {}".format(str(ret))
+        return make_response(jsonify(data), 200)
 
 
 @app.route("/api/v1/signup", methods=['POST'])

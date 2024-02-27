@@ -314,12 +314,13 @@ class _BuildPollState extends State<BuildPoll> {
                         savePoll();
 
                         //final CreatedPoll createdPoll = CreatedPoll(title: title, poll_id: getUUID(), votes: polls);
-                        debugPrint("Moving to contacts");
+                        debugPrint("Moving to contacts!");
                         //TODO - likely an issue here when on a desktop, throws error: No implementation found for method requestPermission on channel github.com/QuisApp/flutter_contacts
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => ContactsWidget(title: title, votes: polls))
                         );
+                        
                       },
                     )
                   ]

@@ -12,4 +12,5 @@ class UserSession {
 
   String username = "";
   int userId = -1;
+  String accessToken = "";
 }
