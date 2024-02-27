@@ -12,7 +12,7 @@ String ip = "http://172.16.44.47:80/api/v1";
 
 Future<Poll> fetchPoll(String pollId) async {
   debugPrint("in fetchCreatedPoll: $pollId");
-  String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=$pollId";
+  String endpoint = "/poll?user_id=${UserSession().userId}&accessToken=${UserSession().accessToken}&poll_id=$pollId";
   Map<String, dynamic> jsonData = await fetch(endpoint);
 
   return Poll.fromJson(jsonData);
@@ -40,7 +40,7 @@ Future<Map<String, dynamic>> fetch(String endpoint) async {
 }
 
 Future<List<Map<String, dynamic>>> fetchList(String endpoint) async {
-  String address = ip + endpoint;
+  String address = ip + endpoint + "&accessToken=${UserSession().accessToken}";
   try {
     final response = await http.get(Uri.parse(address));
 
@@ -87,7 +87,7 @@ Future<List<Map<String, dynamic>>> fetchList(String endpoint) async {
 }
 
 Future<List<ReceivedVotes>> fetchPolls() async {
-  String address = ip + "fetch?user_id=${UserSession().userId.toString()}";
+  String address = ip + "fetch?user_id=${UserSession().userId.toString()}&accessToken=${UserSession().accessToken}";
 
   final response = await http
     .get(Uri.parse(address));
@@ -129,7 +129,7 @@ Future<List<ReceivedVotes>> fetchPolls() async {
 
 Future<List<PollMetadata>> fetchCreated() async {
   debugPrint("in fetchCreated");
-  String endpoint = "/polls?user_id=${UserSession().userId}&created=True";
+  String endpoint = "/polls?user_id=${UserSession().userId}&accessToken=${UserSession().accessToken}&created=True";
   List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
 
@@ -168,7 +168,7 @@ Future<List<PollMetadata>> fetchHistoricalReceived() async {
 
 Future<List<PollMetadata>> fetchReceieved() async {
   debugPrint("in fetchReceived");
-  String endpoint = "/polls?user_id=${UserSession().userId}&created=False";
+  String endpoint = "/polls?user_id=${UserSession().userId}&accessToken=${UserSession().accessToken}&created=False";
   List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
 
@@ -186,7 +186,7 @@ Future<List<PollMetadata>> fetchReceieved() async {
 
 Future<AnsweredPoll> fetchAnsweredPoll(String pollId) async {
   debugPrint("in fetchAnsweredPoll");
-  String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=${pollId.toString()}&created=False&open=False";
+  String endpoint = "/poll?user_id=${UserSession().userId}&accessToken=${UserSession().accessToken}&poll_id=${pollId.toString()}&created=False&open=False";
   Map<String, dynamic> data = await fetch(endpoint);
 
   List<AnsweredQuestion> answeredQuestions = [];
@@ -213,7 +213,7 @@ Future<AnsweredPoll> fetchAnsweredPoll(String pollId) async {
 
 Future<HistoricCreatedPoll> fetchCreatedPoll(String pollId) async {
   debugPrint("in fetchCreatedPoll");
-  String endpoint = "/poll?user_id=${UserSession().userId}&poll_id=${pollId.toString()}&created=True";
+  String endpoint = "/poll?user_id=${UserSession().userId}&accessToken=${UserSession().accessToken}&poll_id=${pollId.toString()}&created=True";
   Map<String, dynamic> data = await fetch(endpoint);
 
   debugPrint("Recipients: ${data['recipients'].toString()}");
@@ -254,7 +254,7 @@ Future<HistoricCreatedPoll> fetchCreatedPoll(String pollId) async {
 
 Future<List<PollMetadata>> fetchOpen() async {
   debugPrint("in fetchOpen");
-  String endpoint = "/polls?user_id=${UserSession().userId}&open=True&created=False";
+  String endpoint = "/polls?user_id=${UserSession().userId}&accessToken=${UserSession().accessToken}&open=True&created=False";
   List<Map<String, dynamic>> jsonData = await fetchList(endpoint);
 
 
@@ -274,8 +274,9 @@ Future<List<PollMetadata>> fetchOpen() async {
 
 Future<Map<String, dynamic>> sendPostRequest(Map<String, dynamic> data, String endpoint) async {
   String address = ip + endpoint;
+  data['accessToken'] = UserSession().accessToken;
 
-  debugPrint("SendingPostRequest");
+  debugPrint("SendingPostRequest: ${data.toString()}");
   final url = Uri.parse(address);
   final response = await http.post(
     url,
@@ -294,7 +295,7 @@ Future<Map<String, dynamic>> sendPostRequest(Map<String, dynamic> data, String e
     return jsonResponse;
   } else {
     debugPrint("Failed to send");
-    //TODO - how to handle
+      //TODO - how to handle
     throw Exception('Post failed');
   }
 }

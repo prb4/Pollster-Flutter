@@ -24,7 +24,7 @@ class DrawerMenu extends StatelessWidget{
               title: const Text("Logout"),
               onTap: () async {
                 debugPrint("Logging out of ${UserSession().username}");
-                Map<String, dynamic> data = {'userId' : UserSession().userId.toString()};
+                Map<String, dynamic> data = {'user_id' : UserSession().userId.toString()};
                 final respone = await sendPostRequest(data, "/logout");
                 if (respone['message'] == "OK") {
                   //Navigate back to the login screen

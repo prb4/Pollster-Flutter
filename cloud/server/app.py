@@ -9,6 +9,20 @@ import middleware as mid
 app = Flask(__name__)
 CORS(app)
 
+def validate_session(data):
+    print("[-] Validating token: {} for user: {}".format(data['accessToken'], data['user_id']))
+    ret = mid.validate_session(data['user_id'], data['accessToken'])
+    
+    if ret:
+        return True, None
+    else:
+        data = {}
+        data['message'] = "Error"
+        data['detail'] = "Invalid session"
+
+        resp = make_respone(jsonify(data), 200)
+        return False, resp
+
 @app.route("/api/v1/answer", methods=['POST'])
 def answer():
     if request.method == 'POST':
@@ -22,6 +36,10 @@ def answer():
         #data['answers']
         #ret = mid.mark_poll_as_answered(data['poll_id'], data['username'])
 
+        valid, resp = validate_session(data)
+        if not valid:
+            return resp
+
         ret = mid.answer_poll(data['poll_id'], data['user_id'], data['answers'])
 
         return make_response(jsonify(message="OK"), 200)
@@ -30,6 +48,11 @@ def answer():
 def forgot_password():
     data = request.get_json()
     pprint(data)
+    
+    valid, resp = validate_session(data)
+    if not valid:
+        return resp
+
 
     ret = mid.initiate_password_reset(data['email'])
 
@@ -40,6 +63,11 @@ def forgot_password():
 def reset_password():
     data = request.get_json()
     pprint(data)
+
+    valid, resp = validate_session(data)
+    if not valid:
+        return resp
+
 
     ret = mid.reset_password(data['email'])
     if ret:
@@ -68,7 +96,11 @@ def logout():
     data = request.get_json()
     pprint(data)
 
-    ret = mid.logout(data['userId'])
+    valid, resp = validate_session(data)
+    if not valid:
+        return resp
+
+    ret = mid.logout(data['user_id'])
     data = {}
     if ret:
         data['message'] = "OK"
@@ -84,6 +116,11 @@ def logout():
 def signup():
     data = request.get_json()
     pprint(data)
+
+    valid, resp = validate_session(data)
+    if not valid:
+        return resp
+
 
     msg, ret = mid.add_user(data['email'], data['password'], data['phoneNumber'])
 
@@ -105,6 +142,11 @@ def signup():
 @app.route("/api/v1/fetch", methods=['GET'])
 def fetch():
     data = request.args
+
+    valid, resp = validate_session(data)
+    if not valid:
+        return resp
+
     polls = mid.get_polls_open(data['user_id'])
     #TODO - add a return code
     return jsonify(polls)
@@ -116,6 +158,10 @@ def poll():
 
     if request.method == 'GET':
         data = request.args
+
+        valid, resp = validate_session(data)
+        if not valid:
+            return resp
 
         try:
             if "True" == data['created']:
@@ -142,6 +188,11 @@ def poll():
         data = request.json
         pprint(data)
 
+        valid, resp = validate_session(data)
+        if not valid:
+            return resp
+
+
         #TODO - fix to get around the contacts data structure from flutter
         contacts = [contact['id'] for contact in data['recipients']]
         mid.add_new_poll(data['user_id'], data, contacts)
@@ -153,6 +204,11 @@ def poll():
 def polls():
     data = request.args
     #data['user_id']
+
+    valid, resp = validate_session(data)
+    if not valid:
+        return resp
+
 
     resp = {}
 

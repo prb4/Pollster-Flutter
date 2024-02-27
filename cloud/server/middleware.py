@@ -10,6 +10,15 @@ def redis_connect():
     storage = redis.Redis(host=os.getenv("REDIS_SERVER"), port=6379, decode_responses=True)
     return storage
 
+def validate_session(user_id: str, accessToken: str) -> bool:
+    storage = redis_connect()
+    token = storage.get(user_id)
+    print("Token: {}\n Access Token: {}".format(token, accessToken))
+    if token == accessToken:
+        return True
+    else:
+        return False
+
 def validate_login(email:str, hashed_password:str):
 
     db = database.Database(database.host, database.user, database.password, "Pollster")
