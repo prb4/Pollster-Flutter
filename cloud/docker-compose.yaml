@@ -10,6 +10,12 @@ services:
     environment:
       - SERVER_PORT=5000
       - REDIS_SERVER=userSession
+      - DATABASE_USER=admin
+      - DATABASE_ADDRESS=database
+      - DATABASE_PW=''
+      #- DATABASE_USER=root
+      #- DATABASE_ADDRESS=localhost
+      #- DATABASE_PW=my-secret-pw
     #ports:
     #  - 5000:5000
     networks:

@@ -1,19 +1,22 @@
-import mysql.connector
 from typing import Union
 import json
 import uuid
 import datetime
+import os
 import pdb
 
 # docker run --network host --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql
 # mysql -h127.0.0.1 -u root -p
 
+host = os.getenv("DATABASE_ADDRESS")
+user = os.getenv("DATABASE_USER")
+password = os.getenv("DATABASE_PW")
 #host = "localhost"
-host = "database"
+#host = "database"
 #user = "root"
-user = "admin"
+#user = "admin"
 #password = "DatabasePassword8675309"
-password = ""
+#password = ""
 #password = "my-secret-pw"
 
 class Database():
