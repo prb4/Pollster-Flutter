@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pollster_flutter/feedback.dart';
 import 'package:pollster_flutter/http.dart';
 import 'package:pollster_flutter/user_session.dart';
 
@@ -14,9 +15,13 @@ class DrawerMenu extends StatelessWidget{
               child: Text("Drawer Header 1.0")
             ),
             ListTile(
-              title: const Text("TODO - Feedback"),
+              title: const Text("Feedback"),
               onTap: () {
                 debugPrint("Moving to feedback view");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UserFeedback()),
+                );
               },
                 
             ),

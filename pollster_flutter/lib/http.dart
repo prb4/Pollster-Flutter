@@ -275,6 +275,7 @@ Future<List<PollMetadata>> fetchOpen() async {
 Future<Map<String, dynamic>> sendPostRequest(Map<String, dynamic> data, String endpoint) async {
   String address = ip + endpoint;
   data['accessToken'] = UserSession().accessToken;
+  data['user_id'] = UserSession().userId;
 
   debugPrint("SendingPostRequest: ${data.toString()}");
   final url = Uri.parse(address);
