@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, make_response
+import base64
 from flask_cors import CORS
 import os
 from pprint import pprint
@@ -20,7 +21,7 @@ def validate_session(data):
         data['message'] = "Error"
         data['detail'] = "Invalid session"
 
-        resp = make_respone(jsonify(data), 200)
+        resp = make_response(jsonify(data), 200)
         return False, resp
 
 @app.route("/api/v1/answer", methods=['POST'])
@@ -43,6 +44,36 @@ def answer():
         ret = mid.answer_poll(data['poll_id'], data['user_id'], data['answers'])
 
         return make_response(jsonify(message="OK"), 200)
+
+@app.route("/api/v1/feedback", methods=['POST'])
+def feedback():
+    if request.method == 'POST':
+        #Create a poll
+        data = request.json
+        pprint(data)
+
+        #data['poll_id']
+        #data['username']
+        #data['user_id']
+        #data['answers']
+        #ret = mid.mark_poll_as_answered(data['poll_id'], data['username'])
+
+        valid, resp = validate_session(data)
+        if not valid:
+            return resp
+
+        pprint(data)
+
+        if data['encoded'] == True:
+            decoded_msg = base64.b64decode(data['message']).decode()
+            print("Decoded message: {}".format(decoded_msg))
+        else:
+            decoded_msg = data['message']
+
+        ret = mid.submit_feedback(str(data['user_id']), decoded_msg)
+            
+        return make_response(jsonify(message="OK"), 200)
+
 
 @app.route("/api/v1/password/forgot", methods=['POST'])
 def forgot_password():
@@ -116,11 +147,6 @@ def logout():
 def signup():
     data = request.get_json()
     pprint(data)
-
-    valid, resp = validate_session(data)
-    if not valid:
-        return resp
-
 
     msg, ret = mid.add_user(data['email'], data['password'], data['phoneNumber'])
 

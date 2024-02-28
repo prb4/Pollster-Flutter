@@ -44,6 +44,23 @@ class Database():
         cursor = self.dataBase.cursor()
         cursor.execute(statement)
 
+    def submit_feedback(self, user_id: str, feedback: str):
+        '''
+        Enter the feedback into the database.
+        '''
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        
+        print("Submitting: {} {} {}".format(user_id, timestamp, feedback))
+
+        sql = "INSERT INTO FEEDBACK (USERID, FEEDBACK, CREATED) VALUES (%s, %s, %s)"
+        val = (user_id, feedback, timestamp,)
+
+        cursor = self.dataBase.cursor()
+        cursor.execute(sql, val)
+        ret = self.dataBase.commit()
+
+        print(ret)
+
     def get_password(self, user_id: int):
         '''
         Returns open polls that a user needs to answer
@@ -432,4 +449,12 @@ if __name__ == "__main__":
                         ANSWERED BOOLEAN NOT NULL
                         )"""
     database.create_table(recipient_table_statement)
+
+    feedback_table_statement = """CREATE TABLE IF NOT EXISTS FEEDBACK (
+                        ID INT AUTO_INCREMENT PRIMARY KEY,
+                        USERID INT NOT NULL,
+                        FEEDBACK VARCHAR(1000) NOT NULL,
+                        CREATED DATE NOT NULL
+                        )"""
+    database.create_table(feedback_table_statement)
 

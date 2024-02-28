@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pollster_flutter/feedback.dart';
 import 'package:pollster_flutter/http.dart';
+import 'package:pollster_flutter/login.dart';
 import 'package:pollster_flutter/user_session.dart';
 
 class DrawerMenu extends StatelessWidget{
@@ -12,7 +13,7 @@ class DrawerMenu extends StatelessWidget{
         child: ListView(
           children: [
             const DrawerHeader(
-              child: Text("Drawer Header 1.0")
+              child: Text("Pollpal")
             ),
             ListTile(
               title: const Text("Feedback"),
@@ -35,8 +36,13 @@ class DrawerMenu extends StatelessWidget{
                   //Navigate back to the login screen
                   //Navigator.popUntil(context, ModalRoute.withName('/login'));
                   //Navigator.pushNamed(context, '/login');
-                  Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
+                    Navigator.pushAndRemoveUntil<void>(
+                      context,
+                      MaterialPageRoute<void>(builder: (BuildContext context) => LoginPage()),
+                      ModalRoute.withName('/login'),
+                    );
+                  //Navigator.of(context)
+                  //  .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false);
                 } else {
                   debugPrint("[!] Error logging out of user session: userId: ${UserSession().userId.toString()}");
                 }

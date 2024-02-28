@@ -46,6 +46,13 @@ def create_token(user_id: str, expire=60*60*24):
     #TODO - check ret value
     return value
 
+def submit_feedback(user_id: str, feedback: str):
+    db = database.Database(database.host, database.user, database.password, "Pollster")
+
+    db.submit_feedback(user_id, feedback)
+
+    
+   
 def get_all_polls(user_id: str):
     db = database.Database(database.host, database.user, database.password, "Pollster")
 
